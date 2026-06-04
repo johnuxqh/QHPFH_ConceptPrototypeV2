@@ -34,7 +34,7 @@ else
     private bool IsHomePage => NavigationState.ActivePrimaryKey == "home";
     private bool IsBedAndWardHubPage =>
         NavigationState.ActivePrimaryKey == "bed" &&
-        NavigationState.ActiveSubItem == "Bed and Ward Hub";
+        NavigationState.ActiveSubItem == "DD Hub";
 
     private bool IsBedManagementPage =>
         NavigationState.ActivePrimaryKey == "bed" &&
@@ -42,7 +42,7 @@ else
 
     private bool IsWardOperationsPage =>
         NavigationState.ActivePrimaryKey == "bed" &&
-        NavigationState.ActiveSubItem == "Ward View";
+        NavigationState.ActiveSubItem == "Ward Operations";
 
     private bool IsAllocationCentrePage =>
         NavigationState.ActivePrimaryKey == "bed" &&

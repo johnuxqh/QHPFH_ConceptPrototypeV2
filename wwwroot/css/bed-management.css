@@ -368,7 +368,7 @@
 .bed-mgmt-page .bm-overview-gridcards.v2 .bm-overview-gridcard{background:#fcfeff;box-shadow:0 1px 2px rgba(17,41,71,.08)}
 @media (max-width:980px){.bed-mgmt-page .bm-v2-ops-strip{grid-template-columns:1fr}.bed-mgmt-page .bm-view-row{width:100%}.bed-mgmt-page .bm-toolbar-actions{width:100%}}
 
-/* Ward View updates */
+/* Ward Operations updates */
 .ward-ops{--bm-action-icon-size:16px}
 .ward-ops .ward-summary-strip{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:10px}
 .ward-ops .bm-info-icon{font-size:.95rem;color:#315f95;vertical-align:middle}
