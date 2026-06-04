@@ -618,3 +618,456 @@ button, input { font: inherit; }
 .qld-title-wrap{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
 .qld-page-title{font-size:clamp(.72rem,.78vw,.9rem);font-weight:500;color:#51627d}
 .theme-dark .qld-page-title{color:#b9c8de}
+
+/* Figma alignment pass: match the signed-off QH chrome while keeping current Blazor functionality. */
+:root {
+  --pfh-header-height: 50px;
+  --pfh-primary-nav-height: 38px;
+  --pfh-secondary-nav-height: 34px;
+  --pfh-app-bg: #ffffff;
+  --pfh-menu-surface: #ffffff;
+  --pfh-border-default: #d9e2ef;
+  --pfh-active-shell: #eef5ff;
+  --pfh-ink: #07184a;
+}
+
+.app-shell.theme-light {
+  background: #fff;
+  color: var(--pfh-ink);
+}
+
+.theme-light .concept-header {
+  background: #fff;
+  border-bottom: 1px solid #dbe4f0;
+  box-shadow: 0 2px 10px rgba(10, 35, 80, .04);
+}
+
+.qld-header-row {
+  height: var(--pfh-header-height);
+  padding: 0 16px;
+  gap: 18px;
+}
+
+.qld-brand {
+  min-width: 470px;
+  gap: 18px;
+}
+
+.qld-logo {
+  height: 30px;
+}
+
+.qld-divider {
+  height: 30px;
+  width: 2px;
+  background: #6f63ff;
+  opacity: .75;
+}
+
+.qld-title {
+  color: #06145f;
+  font-size: clamp(1.18rem, 1.24vw, 1.42rem);
+  letter-spacing: -.025em;
+}
+
+.qld-actions {
+  gap: 14px;
+}
+
+.qld-search {
+  width: min(30vw, 390px);
+  height: 32px;
+  border-color: #cbd7e8;
+  border-radius: 4px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.qld-search-icon {
+  width: 34px;
+  color: #395481;
+}
+
+.qld-search-input {
+  color: #172b59;
+  font-size: .78rem;
+}
+
+.qld-search-input::placeholder {
+  color: #6279a5;
+  opacity: 1;
+}
+
+.qld-search-button {
+  width: 34px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: #31558e;
+  background: transparent;
+  border-left: 1px solid #d9e2ef;
+}
+
+.qld-notification {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #111d3f;
+}
+
+.qld-notification span {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #e51b23;
+  color: #fff;
+  font-size: .58rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.qld-avatar {
+  width: 30px;
+  min-width: 30px;
+}
+
+.qld-profile-name {
+  color: #1b2743;
+  font-weight: 600;
+  font-size: .82rem;
+}
+
+.primary-nav {
+  position: relative;
+}
+
+.primary-nav-track,
+.sub-nav-track {
+  padding-left: 0;
+  background: #fff;
+}
+
+.home-link,
+.nav-link,
+.sub-nav-link {
+  color: #07184a;
+  padding: 0 16px;
+  font-size: .74rem;
+  font-weight: 600;
+}
+
+.home-link {
+  width: 40px;
+  padding: 0;
+}
+
+.nav-link.selected,
+.home-link.selected,
+.sub-nav-link.selected {
+  color: #0046d5;
+  background: #f4f8ff;
+  box-shadow: inset 0 -2px 0 #0046d5;
+}
+
+.sub-nav-track {
+  padding-left: 122px;
+}
+
+.nav-context-strip {
+  position: absolute;
+  right: 16px;
+  bottom: 0;
+  height: var(--pfh-secondary-nav-height);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #07184a;
+  font-size: .72rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.nav-context-strip strong {
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #fff2ef;
+  border: 1px solid #ffd5cf;
+  color: #d43725;
+  font-size: .7rem;
+}
+
+.main-content {
+  background: #fff;
+}
+
+.main-content-inner {
+  max-width: none;
+}
+
+.bed-management-page {
+  padding: 16px;
+  background: #fff;
+}
+
+/* Bed & Ward hub launch surface */
+.bed-ward-hub-page {
+  gap: 16px;
+}
+
+.bwh-hero,
+.bwh-metric-grid article,
+.bwh-workspace-card,
+.bwh-panel {
+  border: 1px solid #dce5f2;
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(17, 42, 82, .05);
+}
+
+.bwh-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  border-radius: 8px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #fff 0%, #f5f9ff 100%);
+}
+
+.bwh-kicker {
+  margin: 0 0 4px;
+  color: #0046d5;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.bwh-hero h2 {
+  margin: 0;
+  color: #06145f;
+  font-size: 1.45rem;
+}
+
+.bwh-hero p {
+  margin: 4px 0 0;
+  color: #526884;
+  font-size: .86rem;
+}
+
+.bwh-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bwh-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.bwh-metric-grid article {
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+.bwh-metric-grid span,
+.bwh-metric-grid small,
+.bwh-workspace-card p,
+.bwh-workspace-card span,
+.bwh-ward-row span {
+  color: #526884;
+}
+
+.bwh-metric-grid span,
+.bwh-workspace-card p {
+  display: block;
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.bwh-metric-grid strong {
+  display: block;
+  margin: 8px 0 4px;
+  color: #06145f;
+  font-size: 1.7rem;
+}
+
+.bwh-metric-grid small {
+  font-size: .74rem;
+}
+
+.bwh-workspace-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 14px;
+  align-items: start;
+}
+
+.bwh-workspace-list {
+  display: grid;
+  gap: 10px;
+}
+
+.bwh-workspace-list h3,
+.bwh-panel h3 {
+  margin: 0 0 2px;
+  color: #06145f;
+  font-size: 1rem;
+}
+
+.bwh-workspace-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.bwh-workspace-card h4 {
+  margin: 3px 0 4px;
+  color: #12244a;
+  font-size: .96rem;
+}
+
+.bwh-workspace-card span {
+  font-size: .78rem;
+}
+
+.bwh-panel {
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  gap: 9px;
+}
+
+.bwh-ward-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border-top: 1px solid #edf2f8;
+  padding-top: 9px;
+}
+
+.bwh-ward-row:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.bwh-ward-row strong,
+.bwh-ward-row span {
+  display: block;
+}
+
+.bwh-ward-row strong {
+  color: #12244a;
+  font-size: .82rem;
+}
+
+.bwh-ward-row span {
+  font-size: .72rem;
+}
+
+.bwh-ward-row em {
+  min-width: 70px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  text-align: center;
+  font-style: normal;
+  font-size: .68rem;
+  font-weight: 800;
+}
+
+.bwh-ward-row em.critical,
+.bwh-ward-row em.high {
+  background: #fff2ef;
+  color: #d43725;
+  border: 1px solid #ffd5cf;
+}
+
+.bwh-ward-row em.medium {
+  background: #fff7ed;
+  color: #c56700;
+  border: 1px solid #fbd8a8;
+}
+
+.bwh-ward-row em.low {
+  background: #edf8f2;
+  color: #027a48;
+  border: 1px solid #bfe7d1;
+}
+
+/* Replace earlier hand-drawn launchpad styling with the approved product visual language. */
+.concept-home-launchpad {
+  padding: 16px;
+}
+
+.pfh-launchpad-welcome,
+.pfh-launchpad-frame,
+.pfh-launchpad-lane,
+.pfh-launchpad-footer section,
+.shortcut-grid a,
+.pfh-launchpad-flow-strip div {
+  border-color: #dce5f2;
+  box-shadow: 0 8px 22px rgba(17, 42, 82, .05);
+}
+
+.pfh-launchpad-welcome,
+.pfh-launchpad-frame {
+  border-radius: 10px;
+  background: #fff;
+}
+
+.pfh-launchpad-welcome {
+  border: 1px solid #cfe0f5;
+  background: linear-gradient(135deg, #f7fbff 0%, #fff 72%);
+}
+
+.pfh-launchpad-frame {
+  border: 1px solid #dce5f2;
+  box-shadow: none;
+}
+
+.pfh-launchpad-header {
+  border-bottom: 1px solid #e7edf6;
+}
+
+.pfh-launchpad-header h1,
+.pfh-launchpad-lane h3,
+.pfh-launchpad-footer h5 {
+  color: #06145f;
+}
+
+.pfh-launchpad-lane,
+.shortcut-grid a,
+.pfh-launchpad-flow-strip div {
+  border-radius: 8px;
+  background: #fff;
+}
+
+.pfh-launchpad-chart {
+  border-color: #c8d7ea;
+  background: linear-gradient(135deg, #f8fbff, #fff);
+  color: #61728c;
+}
+
+@media (max-width: 1100px) {
+  .qld-brand { min-width: 0; }
+  .qld-search { width: min(40vw, 320px); }
+  .bwh-metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bwh-workspace-grid { grid-template-columns: 1fr; }
+}
