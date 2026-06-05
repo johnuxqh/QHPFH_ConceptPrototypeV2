@@ -54,14 +54,14 @@
                     {
                         <div>
                             <dt>Selected HHS</dt>
-                            <dd>@SelectedHhs</dd>
+                            <dd>@DisplayHhs</dd>
                         </div>
                     }
                     @if (SelectedLevel is BedManagementLevel.Facility or BedManagementLevel.Ward)
                     {
                         <div>
                             <dt>Selected facility</dt>
-                            <dd>@SelectedFacility</dd>
+                            <dd>@DisplayFacility</dd>
                         </div>
                     }
                     @if (SelectedLevel is BedManagementLevel.Facility)
@@ -75,7 +75,7 @@
                     {
                         <div>
                             <dt>Selected ward</dt>
-                            <dd>@SelectedWard</dd>
+                            <dd>@DisplayWard</dd>
                         </div>
                     }
                 </dl>
@@ -107,39 +107,9 @@
 @code {
     private BedManagementLevel SelectedLevel { get; set; } = BedManagementLevel.Statewide;
     private BedManagementVersion SelectedVersion { get; set; } = BedManagementVersion.V2Balanced;
-    private string SelectedHhs { get; set; } = "Metro North HHS";
-    private string SelectedFacility { get; set; } = "Royal Brisbane and Women's Hospital";
-    private string SelectedWard { get; set; } = "Ward 9A";
-
-    private static readonly string[] HhsOptions =
-    [
-        "Metro North HHS",
-        "Metro South HHS",
-        "Gold Coast HHS",
-        "Cairns and Hinterland HHS"
-    ];
-
-    private static readonly Dictionary<string, string[]> FacilitiesByHhs = new()
-    {
-        ["Metro North HHS"] = ["Royal Brisbane and Women's Hospital", "The Prince Charles Hospital", "Redcliffe Hospital"],
-        ["Metro South HHS"] = ["Princess Alexandra Hospital", "Logan Hospital", "QEII Jubilee Hospital"],
-        ["Gold Coast HHS"] = ["Gold Coast University Hospital", "Robina Hospital"],
-        ["Cairns and Hinterland HHS"] = ["Cairns Hospital", "Innisfail Hospital"]
-    };
-
-    private static readonly Dictionary<string, string[]> WardsByFacility = new()
-    {
-        ["Royal Brisbane and Women's Hospital"] = ["Ward 9A", "Ward 8B", "Emergency Short Stay"],
-        ["The Prince Charles Hospital"] = ["Ward 2A", "Ward 3B", "Cardiac Stepdown"],
-        ["Redcliffe Hospital"] = ["Medical Ward", "Surgical Ward"],
-        ["Princess Alexandra Hospital"] = ["Ward 4E", "Ward 5D", "Transit Lounge"],
-        ["Logan Hospital"] = ["Ward 3A", "Ward 4B"],
-        ["QEII Jubilee Hospital"] = ["Ward 1A", "Ward 2B"],
-        ["Gold Coast University Hospital"] = ["Ward C6", "Ward D5", "Paediatrics"],
-        ["Robina Hospital"] = ["Ward M1", "Ward S2"],
-        ["Cairns Hospital"] = ["Ward 5 South", "Ward 6 North"],
-        ["Innisfail Hospital"] = ["General Ward", "Rehabilitation Ward"]
-    };
+    private string SelectedHhs { get; set; } = BedManagementDemoData.GetDefaultHhsId();
+    private string SelectedFacility { get; set; } = BedManagementDemoData.QchFacilityId;
+    private string SelectedWard { get; set; } = BedManagementDemoData.Ward8AId;
 
     private static readonly BedManagementReference[] References =
     [
@@ -157,15 +127,31 @@
         new(BedManagementLevel.Ward, BedManagementVersion.V3Operational, "Ward operational view for immediate bed state, tasks, constraints and allocation readiness.", "ward-v3-operational.png")
     ];
 
-    private IReadOnlyList<string> FacilityOptions => FacilitiesByHhs.TryGetValue(SelectedHhs, out var facilities) ? facilities : [];
+    private IReadOnlyList<BedManagementOption> HhsOptions => BedManagementDemoData.GetHhsOptions();
 
-    private IReadOnlyList<string> WardOptions => WardsByFacility.TryGetValue(SelectedFacility, out var wards) ? wards : [];
+    private IReadOnlyList<BedManagementOption> FacilityOptions => BedManagementDemoData.GetFacilityOptions(SelectedHhs);
+
+    private IReadOnlyList<BedManagementOption> WardOptions => BedManagementDemoData.GetWardOptions(SelectedFacility);
 
     private BedManagementReference CurrentReference => References.Single(reference => reference.Level == SelectedLevel && reference.Version == SelectedVersion);
+
+    private CapacitySnapshot CurrentSnapshot => SelectedLevel switch
+    {
+        BedManagementLevel.Hhs => BedManagementDemoData.GetHhsSnapshot(SelectedHhs) ?? BedManagementDemoData.GetStatewideSnapshot(),
+        BedManagementLevel.Facility => BedManagementDemoData.GetFacilitySnapshot(SelectedFacility) ?? BedManagementDemoData.GetStatewideSnapshot(),
+        BedManagementLevel.Ward => BedManagementDemoData.GetWardSnapshot(SelectedWard) ?? BedManagementDemoData.GetStatewideSnapshot(),
+        _ => BedManagementDemoData.GetStatewideSnapshot()
+    };
 
     private string DisplayLevel => GetLevelLabel(SelectedLevel);
 
     private string DisplayVersion => GetVersionLabel(SelectedVersion);
+
+    private string DisplayHhs => BedManagementDemoData.GetHhsLabel(SelectedHhs);
+
+    private string DisplayFacility => BedManagementDemoData.GetFacilityLabel(SelectedFacility);
+
+    private string DisplayWard => BedManagementDemoData.GetWardLabel(SelectedWard);
 
     private string CurrentIcon => SelectedVersion switch
     {
@@ -191,15 +177,15 @@
     private Task OnHhsChanged(string hhs)
     {
         SelectedHhs = hhs;
-        SelectedFacility = FacilityOptions.FirstOrDefault() ?? string.Empty;
-        SelectedWard = WardOptions.FirstOrDefault() ?? string.Empty;
+        SelectedFacility = BedManagementDemoData.GetDefaultFacilityId(SelectedHhs);
+        SelectedWard = BedManagementDemoData.GetDefaultWardId(SelectedFacility);
         return Task.CompletedTask;
     }
 
     private Task OnFacilityChanged(string facility)
     {
         SelectedFacility = facility;
-        SelectedWard = WardOptions.FirstOrDefault() ?? string.Empty;
+        SelectedWard = BedManagementDemoData.GetDefaultWardId(SelectedFacility);
         return Task.CompletedTask;
     }
 
@@ -218,19 +204,19 @@
 
     private void EnsureScopeIsValid()
     {
-        if (!HhsOptions.Contains(SelectedHhs))
+        if (!HhsOptions.Any(option => option.Value == SelectedHhs))
         {
-            SelectedHhs = HhsOptions[0];
+            SelectedHhs = BedManagementDemoData.GetDefaultHhsId();
         }
 
-        if (!FacilityOptions.Contains(SelectedFacility))
+        if (!FacilityOptions.Any(option => option.Value == SelectedFacility))
         {
-            SelectedFacility = FacilityOptions.FirstOrDefault() ?? string.Empty;
+            SelectedFacility = BedManagementDemoData.GetDefaultFacilityId(SelectedHhs);
         }
 
-        if (!WardOptions.Contains(SelectedWard))
+        if (!WardOptions.Any(option => option.Value == SelectedWard))
         {
-            SelectedWard = WardOptions.FirstOrDefault() ?? string.Empty;
+            SelectedWard = BedManagementDemoData.GetDefaultWardId(SelectedFacility);
         }
     }
 
@@ -255,10 +241,10 @@
 
     private string GetLevelIntent() => SelectedLevel switch
     {
-        BedManagementLevel.Statewide => "Scope: Level and version only; HHS, facility and ward filters are hidden.",
-        BedManagementLevel.Hhs => "Scope: HHS selection drives regional placeholder content.",
-        BedManagementLevel.Facility => "Scope: Facility view treats ward as All Wards and keeps it read-only.",
-        BedManagementLevel.Ward => "Scope: Ward view exposes all selectors for local operational focus.",
+        BedManagementLevel.Statewide => $"Scope: one statewide hierarchy with {CurrentSnapshot.PhysicalBeds} demo physical beds aggregated from HHS, facility and ward children.",
+        BedManagementLevel.Hhs => $"Scope: HHS selection reads from the shared hierarchy; {CurrentSnapshot.OccupancyPercentage}% occupancy is derived from child facilities.",
+        BedManagementLevel.Facility => $"Scope: Facility view treats ward as All Wards and derives {CurrentSnapshot.AvailableBeds} available beds from child wards.",
+        BedManagementLevel.Ward => $"Scope: Ward view exposes all selectors; {CurrentSnapshot.Label} has {CurrentSnapshot.ExpectedAdmissions} expected admissions and {CurrentSnapshot.PlannedDischarges} planned discharges.",
         _ => string.Empty
     };
 

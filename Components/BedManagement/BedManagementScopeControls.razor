@@ -28,7 +28,7 @@
             <select id="bm-hhs" value="@SelectedHhs" @onchange="HandleHhsChanged">
                 @foreach (var hhs in HhsOptions)
                 {
-                    <option value="@hhs">@hhs</option>
+                    <option value="@hhs.Value">@hhs.Label</option>
                 }
             </select>
         </div>
@@ -41,7 +41,7 @@
             <select id="bm-facility" value="@SelectedFacility" @onchange="HandleFacilityChanged">
                 @foreach (var facility in FacilityOptions)
                 {
-                    <option value="@facility">@facility</option>
+                    <option value="@facility.Value">@facility.Label</option>
                 }
             </select>
         </div>
@@ -54,7 +54,7 @@
             <select id="bm-ward" value="@SelectedWard" @onchange="HandleWardChanged">
                 @foreach (var ward in WardOptions)
                 {
-                    <option value="@ward">@ward</option>
+                    <option value="@ward.Value">@ward.Label</option>
                 }
             </select>
         </div>
@@ -74,9 +74,9 @@
     [Parameter] public string SelectedHhs { get; set; } = string.Empty;
     [Parameter] public string SelectedFacility { get; set; } = string.Empty;
     [Parameter] public string SelectedWard { get; set; } = string.Empty;
-    [Parameter] public IReadOnlyList<string> HhsOptions { get; set; } = [];
-    [Parameter] public IReadOnlyList<string> FacilityOptions { get; set; } = [];
-    [Parameter] public IReadOnlyList<string> WardOptions { get; set; } = [];
+    [Parameter] public IReadOnlyList<BedManagementOption> HhsOptions { get; set; } = [];
+    [Parameter] public IReadOnlyList<BedManagementOption> FacilityOptions { get; set; } = [];
+    [Parameter] public IReadOnlyList<BedManagementOption> WardOptions { get; set; } = [];
     [Parameter] public EventCallback<BedManagementLevel> SelectedLevelChanged { get; set; }
     [Parameter] public EventCallback<BedManagementVersion> SelectedVersionChanged { get; set; }
     [Parameter] public EventCallback<string> SelectedHhsChanged { get; set; }
