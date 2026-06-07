@@ -102,6 +102,31 @@
             }
         </section>
     </main>
+
+    <details class="bm-p3-preview">
+        <summary>P3 component preview — selected context</summary>
+        <div class="bm-p3-preview-body">
+            <OperationalBanner Snapshot="@CurrentSnapshot" Message="Reusable component preview only — the P1 placeholder framework remains the active screen." Tone="Preview" />
+            <MetricTileRow Snapshot="@CurrentSnapshot" />
+            <FlowSwimlanePanel Snapshot="@CurrentSnapshot" />
+            <div class="bm-p3-preview-grid">
+                <InsightCardGrid Signals="@CurrentInsightSignals" Version="@SelectedVersion" />
+                <PerformanceTable Title="Selected context summary" Rows="@CurrentPerformanceRows" />
+                <CoordinationPanel Events="@CurrentEvents" />
+                <ActionTracker Signals="@CurrentOperationalSignals" />
+                <AllocationSummary Snapshot="@CurrentSnapshot" />
+                <CleaningStatusPanel Beds="@CurrentBeds" />
+                <TransferQueuePanel Beds="@CurrentBeds" />
+            </div>
+            <UtilityActionStrip />
+            <div class="bm-p3-preview-utilities">
+                <ChatPreviewPanel />
+                <ReportsPreviewPanel />
+                <DowntimePreviewPanel />
+                <OnCallPreviewPanel />
+            </div>
+        </div>
+    </details>
 </section>
 
 @code {
@@ -152,6 +177,41 @@
     private string DisplayFacility => BedManagementDemoData.GetFacilityLabel(SelectedFacility);
 
     private string DisplayWard => BedManagementDemoData.GetWardLabel(SelectedWard);
+
+    private Ward? CurrentWard => BedManagementDemoData.GetWard(SelectedWard);
+
+    private Facility? CurrentFacility => BedManagementDemoData.GetFacility(SelectedFacility);
+
+    private HhsNetwork? CurrentHhs => BedManagementDemoData.GetHhs(SelectedHhs);
+
+    private IReadOnlyList<Bed> CurrentBeds => SelectedLevel switch
+    {
+        BedManagementLevel.Ward => CurrentWard?.Beds ?? [],
+        BedManagementLevel.Facility => CurrentFacility?.Wards.SelectMany(ward => ward.Beds).ToArray() ?? [],
+        BedManagementLevel.Hhs => CurrentHhs?.Facilities.SelectMany(facility => facility.Wards).SelectMany(ward => ward.Beds).ToArray() ?? [],
+        _ => BedManagementDemoData.State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.Beds).ToArray()
+    };
+
+    private IReadOnlyList<InsightSignal> CurrentInsightSignals => SelectedLevel switch
+    {
+        BedManagementLevel.Facility => CurrentFacility?.Signals ?? [],
+        BedManagementLevel.Hhs => CurrentHhs?.Signals ?? [],
+        BedManagementLevel.Ward => CurrentFacility?.Signals ?? [],
+        _ => BedManagementDemoData.State.Signals
+    };
+
+    private IReadOnlyList<OperationalEvent> CurrentEvents => SelectedLevel == BedManagementLevel.Ward
+        ? CurrentWard?.OperationalEvents ?? []
+        : CurrentFacility?.OperationalEvents ?? [];
+
+    private IReadOnlyList<OperationalSignal> CurrentOperationalSignals => CurrentWard?.OperationalSignals ?? [];
+
+    private IReadOnlyList<PerformanceRow> CurrentPerformanceRows =>
+    [
+        new("Occupancy", $"{CurrentSnapshot.OccupancyPercentage}%", CurrentSnapshot.EscalationStatus, CurrentSnapshot.Label),
+        new("Available beds", CurrentSnapshot.AvailableBeds.ToString(), CurrentSnapshot.AvailableBeds > 0 ? "Available" : "Watch", "Derived from selected child data"),
+        new("Planned discharges", CurrentSnapshot.PlannedDischarges.ToString(), "Flow", $"{CurrentSnapshot.ExpectedAdmissions} expected admissions")
+    ];
 
     private string CurrentIcon => SelectedVersion switch
     {

@@ -218,3 +218,5 @@ public sealed class OperationalSignal
     public string DueLabel { get; init; } = string.Empty;
     public string Severity { get; init; } = "Info";
 }
+
+public sealed record PerformanceRow(string Label, string Value, string Status = "Info", string Detail = "");
