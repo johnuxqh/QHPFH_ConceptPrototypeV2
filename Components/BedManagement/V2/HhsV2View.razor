@@ -1,0 +1,31 @@
+@using QHPFH_ConceptPrototype.Components.BedManagement.Shared
+
+<section class="bm-v2-view" aria-label="HHS V2 balanced view">
+    <OperationalBanner Snapshot="@Snapshot" Message="@($"Regional coordination and facility pressure for {Hhs.Name}.")" Tone="Balanced" />
+    <MetricTileRow Snapshot="@Snapshot" />
+    <FlowSwimlanePanel Snapshot="@Snapshot" />
+    <div class="bm-v2-primary-grid">
+        <PerformanceTable Title="Facility pressure comparison" Rows="@FacilityRows" />
+        <InsightCardGrid Signals="@Hhs.Signals" Version="@BedManagementVersion.V2Balanced" />
+    </div>
+    <div class="bm-v2-secondary-grid">
+        <CoordinationPanel Events="@Events" />
+        <ActionTracker Signals="@Actions" />
+    </div>
+    <UtilityActionStrip />
+</section>
+
+@code {
+    [Parameter, EditorRequired] public HhsNetwork Hhs { get; set; } = default!;
+
+    private CapacitySnapshot Snapshot => BedManagementDemoData.GetHhsSnapshot(Hhs.Id)!;
+
+    private IReadOnlyList<PerformanceRow> FacilityRows => Hhs.Facilities.Select(facility =>
+    {
+        var snapshot = BedManagementDemoData.GetFacilitySnapshot(facility.Id)!;
+        return new PerformanceRow(facility.ShortName, $"{snapshot.OccupancyPercentage}%", facility.EscalationStatus, $"{snapshot.AvailableBeds} available · ED {facility.EdPressureIndicator}");
+    }).ToArray();
+
+    private IReadOnlyList<OperationalEvent> Events => Hhs.Facilities.SelectMany(facility => facility.OperationalEvents).Take(5).ToArray();
+    private IReadOnlyList<OperationalSignal> Actions => Hhs.Facilities.SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Take(5).ToArray();
+}

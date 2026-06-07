@@ -1,0 +1,35 @@
+@using QHPFH_ConceptPrototype.Components.BedManagement.Shared
+
+<section class="bm-v2-view" aria-label="Facility V2 balanced view">
+    <OperationalBanner Snapshot="@Snapshot" Message="@($"Whole-facility bed coordination for {Facility.Name}. Ward scope remains All Wards.")" Tone="Balanced" />
+    <MetricTileRow Snapshot="@Snapshot" />
+    <FlowSwimlanePanel Snapshot="@Snapshot" />
+    <div class="bm-v2-primary-grid">
+        <PerformanceTable Title="Ward pressure comparison" Rows="@WardRows" />
+        <InsightCardGrid Signals="@Facility.Signals" Version="@BedManagementVersion.V2Balanced" />
+    </div>
+    <div class="bm-v2-triple-grid">
+        <AllocationSummary Snapshot="@Snapshot" />
+        <CleaningStatusPanel Beds="@Beds" />
+        <TransferQueuePanel Beds="@Beds" />
+    </div>
+    <div class="bm-v2-secondary-grid">
+        <CoordinationPanel Events="@Facility.OperationalEvents" />
+        <ActionTracker Signals="@Actions" />
+    </div>
+    <UtilityActionStrip />
+</section>
+
+@code {
+    [Parameter, EditorRequired] public Facility Facility { get; set; } = default!;
+
+    private CapacitySnapshot Snapshot => BedManagementDemoData.GetFacilitySnapshot(Facility.Id)!;
+    private IReadOnlyList<Bed> Beds => Facility.Wards.SelectMany(ward => ward.Beds).ToArray();
+    private IReadOnlyList<OperationalSignal> Actions => Facility.Wards.SelectMany(ward => ward.OperationalSignals).Take(5).ToArray();
+
+    private IReadOnlyList<PerformanceRow> WardRows => Facility.Wards.Select(ward =>
+    {
+        var snapshot = BedManagementDemoData.GetWardSnapshot(ward.Id)!;
+        return new PerformanceRow(ward.Name, $"{snapshot.OccupancyPercentage}%", ward.EscalationStatus, $"{snapshot.AvailableBeds} available · {snapshot.ExpectedAdmissions} admissions");
+    }).ToArray();
+}

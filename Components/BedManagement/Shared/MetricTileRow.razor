@@ -1,0 +1,18 @@
+<section class="bm-shared-metrics" aria-label="Capacity metrics">
+    @foreach (var metric in Metrics)
+    {
+        <div class="bm-shared-metric"><span>@metric.Label</span><strong>@metric.Value</strong></div>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+
+    private IEnumerable<(string Label, string Value)> Metrics =>
+    [
+        ("Physical beds", Snapshot.PhysicalBeds.ToString()), ("Open beds", Snapshot.OpenBeds.ToString()),
+        ("Occupied", Snapshot.OccupiedBeds.ToString()), ("Available", Snapshot.AvailableBeds.ToString()),
+        ("Pending cleaning", Snapshot.PendingCleaning.ToString()), ("Maintenance", Snapshot.PendingMaintenance.ToString()),
+        ("Closed", Snapshot.ClosedBeds.ToString()), ("Occupancy", $"{Snapshot.OccupancyPercentage}%")
+    ];
+}

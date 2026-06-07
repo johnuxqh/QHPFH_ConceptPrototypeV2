@@ -1,0 +1,5 @@
+<section class="bm-shared-panel bm-shared-compact" aria-label="Allocation summary">
+    <header><h3>Allocation summary</h3></header>
+    <div class="bm-shared-swimlanes"><div><span>Expected admissions</span><strong>@Snapshot.ExpectedAdmissions</strong></div><div><span>Available beds</span><strong>@Snapshot.AvailableBeds</strong></div><div><span>Transfer requests</span><strong>@Snapshot.TransferRequests</strong></div></div>
+</section>
+@code { [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!; }
