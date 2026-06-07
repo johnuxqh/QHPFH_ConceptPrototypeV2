@@ -1,0 +1,318 @@
+@using QHPFH_ConceptPrototype.Components.BedManagement.Shared
+
+<section class="page-shell-card bm-reset-page" aria-labelledby="bm-reset-title">
+    <header class="bm-reset-hero">
+        <div>
+            <p class="bm-reset-eyebrow">Patient Flow Hub / Bed Management reset</p>
+            <h1 id="bm-reset-title">Bed Management</h1>
+            <p class="bm-reset-summary">Release 2 framework for moving between Statewide, HHS, Facility and Ward views without changing the stable PFH shell.</p>
+        </div>
+        <div class="bm-reset-hero-card" aria-label="Preferred release direction">
+            <img src="images/icons/dd-bed-default.png" alt="" />
+            <div>
+                <span>Preferred direction</span>
+                <strong>V2 Balanced</strong>
+            </div>
+        </div>
+    </header>
+
+    <BedManagementScopeControls
+        SelectedLevel="@SelectedLevel"
+        SelectedVersion="@SelectedVersion"
+        SelectedHhs="@SelectedHhs"
+        SelectedFacility="@SelectedFacility"
+        SelectedWard="@SelectedWard"
+        HhsOptions="@HhsOptions"
+        FacilityOptions="@FacilityOptions"
+        WardOptions="@WardOptions"
+        SelectedLevelChanged="OnLevelChanged"
+        SelectedVersionChanged="OnVersionChanged"
+        SelectedHhsChanged="OnHhsChanged"
+        SelectedFacilityChanged="OnFacilityChanged"
+        SelectedWardChanged="OnWardChanged" />
+
+    <main class="bm-reset-workspace" aria-live="polite">
+        <article class="bm-reset-placeholder">
+            <div class="bm-reset-placeholder__main">
+                <div class="bm-reset-view-badge">
+                    <img src="@CurrentIcon" alt="" />
+                    <span>@DisplayLevel / @DisplayVersion</span>
+                </div>
+                <h2>@DisplayLevel — @DisplayVersion</h2>
+                <p>@CurrentReference.Purpose</p>
+
+                <dl class="bm-reset-scope-list">
+                    <div>
+                        <dt>Selected level</dt>
+                        <dd>@DisplayLevel</dd>
+                    </div>
+                    <div>
+                        <dt>Selected version</dt>
+                        <dd>@DisplayVersion</dd>
+                    </div>
+                    @if (SelectedLevel is BedManagementLevel.Hhs or BedManagementLevel.Facility or BedManagementLevel.Ward)
+                    {
+                        <div>
+                            <dt>Selected HHS</dt>
+                            <dd>@DisplayHhs</dd>
+                        </div>
+                    }
+                    @if (SelectedLevel is BedManagementLevel.Facility or BedManagementLevel.Ward)
+                    {
+                        <div>
+                            <dt>Selected facility</dt>
+                            <dd>@DisplayFacility</dd>
+                        </div>
+                    }
+                    @if (SelectedLevel is BedManagementLevel.Facility)
+                    {
+                        <div>
+                            <dt>Selected ward</dt>
+                            <dd>All Wards</dd>
+                        </div>
+                    }
+                    @if (SelectedLevel is BedManagementLevel.Ward)
+                    {
+                        <div>
+                            <dt>Selected ward</dt>
+                            <dd>@DisplayWard</dd>
+                        </div>
+                    }
+                </dl>
+            </div>
+
+            <aside class="bm-reset-placeholder__side" aria-label="Reference status">
+                <span class="bm-reset-pill">Reference recognised</span>
+                <h3>@CurrentReference.ReferenceFile</h3>
+                <p>The matching reference screen exists in <code>assets/reference/bed-management-reset/</code>.</p>
+                <div class="bm-reset-intent-list">
+                    <span>@GetLevelIntent()</span>
+                    <span>@GetVersionIntent()</span>
+                </div>
+            </aside>
+        </article>
+
+        <section class="bm-reset-matrix" aria-label="Available placeholder combinations">
+            @foreach (var reference in References)
+            {
+                <button type="button" class="bm-reset-matrix-item @(IsCurrentReference(reference) ? "is-active" : null)" @onclick="() => SelectReference(reference)">
+                    <span>@GetLevelLabel(reference.Level)</span>
+                    <strong>@GetVersionLabel(reference.Version)</strong>
+                </button>
+            }
+        </section>
+    </main>
+
+    <details class="bm-p3-preview">
+        <summary>P3 component preview — selected context</summary>
+        <div class="bm-p3-preview-body">
+            <OperationalBanner Snapshot="@CurrentSnapshot" Message="Reusable component preview only — the P1 placeholder framework remains the active screen." Tone="Preview" />
+            <MetricTileRow Snapshot="@CurrentSnapshot" />
+            <FlowSwimlanePanel Snapshot="@CurrentSnapshot" />
+            <div class="bm-p3-preview-grid">
+                <InsightCardGrid Signals="@CurrentInsightSignals" Version="@SelectedVersion" />
+                <PerformanceTable Title="Selected context summary" Rows="@CurrentPerformanceRows" />
+                <CoordinationPanel Events="@CurrentEvents" />
+                <ActionTracker Signals="@CurrentOperationalSignals" />
+                <AllocationSummary Snapshot="@CurrentSnapshot" />
+                <CleaningStatusPanel Beds="@CurrentBeds" />
+                <TransferQueuePanel Beds="@CurrentBeds" />
+            </div>
+            <UtilityActionStrip />
+            <div class="bm-p3-preview-utilities">
+                <ChatPreviewPanel />
+                <ReportsPreviewPanel />
+                <DowntimePreviewPanel />
+                <OnCallPreviewPanel />
+            </div>
+        </div>
+    </details>
+</section>
+
+@code {
+    private BedManagementLevel SelectedLevel { get; set; } = BedManagementLevel.Statewide;
+    private BedManagementVersion SelectedVersion { get; set; } = BedManagementVersion.V2Balanced;
+    private string SelectedHhs { get; set; } = BedManagementDemoData.GetDefaultHhsId();
+    private string SelectedFacility { get; set; } = BedManagementDemoData.QchFacilityId;
+    private string SelectedWard { get; set; } = BedManagementDemoData.Ward8AId;
+
+    private static readonly BedManagementReference[] References =
+    [
+        new(BedManagementLevel.Statewide, BedManagementVersion.V1DataInsights, "Statewide data and insights view for system-wide occupancy, pressure and flow signals.", "state-v1-data-insights.png"),
+        new(BedManagementLevel.Statewide, BedManagementVersion.V2Balanced, "Statewide balanced view combining executive signals with operational decision cues for Release 2.", "state-v2-balanced.png"),
+        new(BedManagementLevel.Statewide, BedManagementVersion.V3Operational, "Statewide operational command view for time-critical escalation and coordination patterns.", "state-v3-operational.png"),
+        new(BedManagementLevel.Hhs, BedManagementVersion.V1DataInsights, "HHS data and insights view for service-level performance, constraints and trend review.", "hhs-v1-data-insights.png"),
+        new(BedManagementLevel.Hhs, BedManagementVersion.V2Balanced, "HHS balanced view for regional bed pressure, facility variance and decision support.", "hhs-v2-balanced.png"),
+        new(BedManagementLevel.Hhs, BedManagementVersion.V3Operational, "HHS operational view for cross-facility escalation, transfers and surge response.", "hhs-v3-operational.png"),
+        new(BedManagementLevel.Facility, BedManagementVersion.V1DataInsights, "Facility data and insights view for whole-site occupancy, discharge and demand analysis.", "facility-v1-data-insights.png"),
+        new(BedManagementLevel.Facility, BedManagementVersion.V2Balanced, "Facility balanced view for bed management huddles, flow risks and prioritised actions.", "facility-v2-balanced.png"),
+        new(BedManagementLevel.Facility, BedManagementVersion.V3Operational, "Facility operational view for real-time site command, patient movement and escalation.", "facility-v3-operational.png"),
+        new(BedManagementLevel.Ward, BedManagementVersion.V1DataInsights, "Ward data and insights view for local demand, staffing constraints and discharge readiness.", "ward-v1-data-insights.png"),
+        new(BedManagementLevel.Ward, BedManagementVersion.V2Balanced, "Ward balanced view for bedside flow decisions, constraints and next-best actions.", "ward-v2-balanced.png"),
+        new(BedManagementLevel.Ward, BedManagementVersion.V3Operational, "Ward operational view for immediate bed state, tasks, constraints and allocation readiness.", "ward-v3-operational.png")
+    ];
+
+    private IReadOnlyList<BedManagementOption> HhsOptions => BedManagementDemoData.GetHhsOptions();
+
+    private IReadOnlyList<BedManagementOption> FacilityOptions => BedManagementDemoData.GetFacilityOptions(SelectedHhs);
+
+    private IReadOnlyList<BedManagementOption> WardOptions => BedManagementDemoData.GetWardOptions(SelectedFacility);
+
+    private BedManagementReference CurrentReference => References.Single(reference => reference.Level == SelectedLevel && reference.Version == SelectedVersion);
+
+    private CapacitySnapshot CurrentSnapshot => SelectedLevel switch
+    {
+        BedManagementLevel.Hhs => BedManagementDemoData.GetHhsSnapshot(SelectedHhs) ?? BedManagementDemoData.GetStatewideSnapshot(),
+        BedManagementLevel.Facility => BedManagementDemoData.GetFacilitySnapshot(SelectedFacility) ?? BedManagementDemoData.GetStatewideSnapshot(),
+        BedManagementLevel.Ward => BedManagementDemoData.GetWardSnapshot(SelectedWard) ?? BedManagementDemoData.GetStatewideSnapshot(),
+        _ => BedManagementDemoData.GetStatewideSnapshot()
+    };
+
+    private string DisplayLevel => GetLevelLabel(SelectedLevel);
+
+    private string DisplayVersion => GetVersionLabel(SelectedVersion);
+
+    private string DisplayHhs => BedManagementDemoData.GetHhsLabel(SelectedHhs);
+
+    private string DisplayFacility => BedManagementDemoData.GetFacilityLabel(SelectedFacility);
+
+    private string DisplayWard => BedManagementDemoData.GetWardLabel(SelectedWard);
+
+    private Ward? CurrentWard => BedManagementDemoData.GetWard(SelectedWard);
+
+    private Facility? CurrentFacility => BedManagementDemoData.GetFacility(SelectedFacility);
+
+    private HhsNetwork? CurrentHhs => BedManagementDemoData.GetHhs(SelectedHhs);
+
+    private IReadOnlyList<Bed> CurrentBeds => SelectedLevel switch
+    {
+        BedManagementLevel.Ward => CurrentWard?.Beds ?? [],
+        BedManagementLevel.Facility => CurrentFacility?.Wards.SelectMany(ward => ward.Beds).ToArray() ?? [],
+        BedManagementLevel.Hhs => CurrentHhs?.Facilities.SelectMany(facility => facility.Wards).SelectMany(ward => ward.Beds).ToArray() ?? [],
+        _ => BedManagementDemoData.State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.Beds).ToArray()
+    };
+
+    private IReadOnlyList<InsightSignal> CurrentInsightSignals => SelectedLevel switch
+    {
+        BedManagementLevel.Facility => CurrentFacility?.Signals ?? [],
+        BedManagementLevel.Hhs => CurrentHhs?.Signals ?? [],
+        BedManagementLevel.Ward => CurrentFacility?.Signals ?? [],
+        _ => BedManagementDemoData.State.Signals
+    };
+
+    private IReadOnlyList<OperationalEvent> CurrentEvents => SelectedLevel == BedManagementLevel.Ward
+        ? CurrentWard?.OperationalEvents ?? []
+        : CurrentFacility?.OperationalEvents ?? [];
+
+    private IReadOnlyList<OperationalSignal> CurrentOperationalSignals => CurrentWard?.OperationalSignals ?? [];
+
+    private IReadOnlyList<PerformanceRow> CurrentPerformanceRows =>
+    [
+        new("Occupancy", $"{CurrentSnapshot.OccupancyPercentage}%", CurrentSnapshot.EscalationStatus, CurrentSnapshot.Label),
+        new("Available beds", CurrentSnapshot.AvailableBeds.ToString(), CurrentSnapshot.AvailableBeds > 0 ? "Available" : "Watch", "Derived from selected child data"),
+        new("Planned discharges", CurrentSnapshot.PlannedDischarges.ToString(), "Flow", $"{CurrentSnapshot.ExpectedAdmissions} expected admissions")
+    ];
+
+    private string CurrentIcon => SelectedVersion switch
+    {
+        BedManagementVersion.V1DataInsights => "images/icons/activity-lightgrey.png",
+        BedManagementVersion.V2Balanced => "images/icons/dd-bed-green.png",
+        BedManagementVersion.V3Operational => "images/icons/operation-pressure-lightgrey.png",
+        _ => "images/icons/dd-bed-default.png"
+    };
+
+    private Task OnLevelChanged(BedManagementLevel level)
+    {
+        SelectedLevel = level;
+        EnsureScopeIsValid();
+        return Task.CompletedTask;
+    }
+
+    private Task OnVersionChanged(BedManagementVersion version)
+    {
+        SelectedVersion = version;
+        return Task.CompletedTask;
+    }
+
+    private Task OnHhsChanged(string hhs)
+    {
+        SelectedHhs = hhs;
+        SelectedFacility = BedManagementDemoData.GetDefaultFacilityId(SelectedHhs);
+        SelectedWard = BedManagementDemoData.GetDefaultWardId(SelectedFacility);
+        return Task.CompletedTask;
+    }
+
+    private Task OnFacilityChanged(string facility)
+    {
+        SelectedFacility = facility;
+        SelectedWard = BedManagementDemoData.GetDefaultWardId(SelectedFacility);
+        return Task.CompletedTask;
+    }
+
+    private Task OnWardChanged(string ward)
+    {
+        SelectedWard = ward;
+        return Task.CompletedTask;
+    }
+
+    private void SelectReference(BedManagementReference reference)
+    {
+        SelectedLevel = reference.Level;
+        SelectedVersion = reference.Version;
+        EnsureScopeIsValid();
+    }
+
+    private void EnsureScopeIsValid()
+    {
+        if (!HhsOptions.Any(option => option.Value == SelectedHhs))
+        {
+            SelectedHhs = BedManagementDemoData.GetDefaultHhsId();
+        }
+
+        if (!FacilityOptions.Any(option => option.Value == SelectedFacility))
+        {
+            SelectedFacility = BedManagementDemoData.GetDefaultFacilityId(SelectedHhs);
+        }
+
+        if (!WardOptions.Any(option => option.Value == SelectedWard))
+        {
+            SelectedWard = BedManagementDemoData.GetDefaultWardId(SelectedFacility);
+        }
+    }
+
+    private bool IsCurrentReference(BedManagementReference reference) => reference.Level == SelectedLevel && reference.Version == SelectedVersion;
+
+    private static string GetLevelLabel(BedManagementLevel level) => level switch
+    {
+        BedManagementLevel.Statewide => "Statewide",
+        BedManagementLevel.Hhs => "HHS",
+        BedManagementLevel.Facility => "Facility",
+        BedManagementLevel.Ward => "Ward",
+        _ => level.ToString()
+    };
+
+    private static string GetVersionLabel(BedManagementVersion version) => version switch
+    {
+        BedManagementVersion.V1DataInsights => "V1 Data & Insights",
+        BedManagementVersion.V2Balanced => "V2 Balanced",
+        BedManagementVersion.V3Operational => "V3 Operational",
+        _ => version.ToString()
+    };
+
+    private string GetLevelIntent() => SelectedLevel switch
+    {
+        BedManagementLevel.Statewide => $"Scope: one statewide hierarchy with {CurrentSnapshot.PhysicalBeds} demo physical beds aggregated from HHS, facility and ward children.",
+        BedManagementLevel.Hhs => $"Scope: HHS selection reads from the shared hierarchy; {CurrentSnapshot.OccupancyPercentage}% occupancy is derived from child facilities.",
+        BedManagementLevel.Facility => $"Scope: Facility view treats ward as All Wards and derives {CurrentSnapshot.AvailableBeds} available beds from child wards.",
+        BedManagementLevel.Ward => $"Scope: Ward view exposes all selectors; {CurrentSnapshot.Label} has {CurrentSnapshot.ExpectedAdmissions} expected admissions and {CurrentSnapshot.PlannedDischarges} planned discharges.",
+        _ => string.Empty
+    };
+
+    private string GetVersionIntent() => SelectedVersion switch
+    {
+        BedManagementVersion.V1DataInsights => "Version intent: insight-first structure for trends, indicators and context.",
+        BedManagementVersion.V2Balanced => "Version intent: preferred Release 2 direction balancing insights with action.",
+        BedManagementVersion.V3Operational => "Version intent: operationally dense structure for command-state decisions.",
+        _ => string.Empty
+    };
+}
