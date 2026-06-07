@@ -1,0 +1,29 @@
+@using QHPFH_ConceptPrototype.Components.BedManagement.Shared
+
+<section class="bm-v2-view bm-v2-view--ward" aria-label="Ward V2 balanced view">
+    <OperationalBanner Snapshot="@Snapshot" Message="@($"Ward review: monitor capacity, coordinate constraints and prepare the next bed decisions for {Ward.Name}.")" Tone="Balanced" />
+    <FlowSwimlanePanel Snapshot="@Snapshot" />
+    <div class="bm-v2-ward-review-grid">
+        <div class="bm-v2-emphasis-table"><PerformanceTable Title="Bed status and next review" Rows="@BedRows" /></div>
+        <div class="bm-v2-stack bm-v2-stack--review">
+            <CleaningStatusPanel Beds="@Ward.Beds" />
+            <TransferQueuePanel Beds="@Ward.Beds" />
+        </div>
+    </div>
+    <MetricTileRow Snapshot="@Snapshot" />
+    <div class="bm-v2-secondary-grid bm-v2-secondary-grid--compact">
+        <CoordinationPanel Events="@Ward.OperationalEvents" />
+        <ActionTracker Signals="@Ward.OperationalSignals" />
+    </div>
+    <UtilityActionStrip />
+</section>
+
+@code {
+    [Parameter, EditorRequired] public Ward Ward { get; set; } = default!;
+    private CapacitySnapshot Snapshot => BedManagementDemoData.GetWardSnapshot(Ward.Id)!;
+    private IReadOnlyList<PerformanceRow> BedRows => Ward.Beds.Select(bed => new PerformanceRow(
+        bed.Label,
+        bed.Status.ToString(),
+        bed.IsOccupied ? bed.AssignedPatient?.AcuityLabel ?? "Occupied" : bed.Status.ToString(),
+        string.IsNullOrWhiteSpace(bed.NextExpectedAction) ? bed.OperationalNote : bed.NextExpectedAction)).ToArray();
+}
