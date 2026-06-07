@@ -1,0 +1,17 @@
+<section class="bm-shared-panel" aria-label="Insight signals">
+    <header><h3>Patient journey signals</h3><span>@VersionLabel</span></header>
+    <div class="bm-shared-card-grid">
+        @foreach (var signal in VisibleSignals)
+        {
+            <article><span class="bm-shared-status">@signal.Severity</span><strong>@signal.Label</strong><p>@signal.Detail</p></article>
+        }
+        @if (!VisibleSignals.Any()) { <p class="bm-shared-empty">No patient journey signals for this version.</p> }
+    </div>
+</section>
+
+@code {
+    [Parameter] public IReadOnlyList<InsightSignal> Signals { get; set; } = [];
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V2Balanced;
+    private IReadOnlyList<InsightSignal> VisibleSignals => Signals.Where(signal => signal.SupportedVersion == Version).ToArray();
+    private string VersionLabel => Version switch { BedManagementVersion.V1DataInsights => "V1 Data & Insights", BedManagementVersion.V2Balanced => "V2 Balanced", _ => "V3 Operational" };
+}

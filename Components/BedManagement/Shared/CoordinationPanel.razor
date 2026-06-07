@@ -1,0 +1,8 @@
+<section class="bm-shared-panel" aria-label="Flow coordination events">
+    <header><h3>Flow coordination</h3><span>@Events.Count recent</span></header>
+    <div class="bm-shared-list">
+        @foreach (var item in Events.Take(5)) { <div><time>@item.TimeLabel</time><span class="bm-shared-status">@item.Severity</span><p><strong>@item.Type</strong> · @item.Summary</p></div> }
+        @if (Events.Count == 0) { <p class="bm-shared-empty">No recent flow coordination events.</p> }
+    </div>
+</section>
+@code { [Parameter] public IReadOnlyList<OperationalEvent> Events { get; set; } = []; }
