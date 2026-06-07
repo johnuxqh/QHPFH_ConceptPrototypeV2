@@ -32,81 +32,89 @@
         SelectedFacilityChanged="OnFacilityChanged"
         SelectedWardChanged="OnWardChanged" />
 
-    <main class="bm-reset-workspace" aria-live="polite">
-        <article class="bm-reset-placeholder">
-            <div class="bm-reset-placeholder__main">
-                <div class="bm-reset-view-badge">
-                    <img src="@CurrentIcon" alt="" />
-                    <span>@DisplayLevel / @DisplayVersion</span>
-                </div>
-                <h2>@DisplayLevel — @DisplayVersion</h2>
-                <p>@CurrentReference.Purpose</p>
-
-                <dl class="bm-reset-scope-list">
-                    <div>
-                        <dt>Selected level</dt>
-                        <dd>@DisplayLevel</dd>
-                    </div>
-                    <div>
-                        <dt>Selected version</dt>
-                        <dd>@DisplayVersion</dd>
-                    </div>
-                    @if (SelectedLevel is BedManagementLevel.Hhs or BedManagementLevel.Facility or BedManagementLevel.Ward)
-                    {
-                        <div>
-                            <dt>Selected HHS</dt>
-                            <dd>@DisplayHhs</dd>
-                        </div>
-                    }
-                    @if (SelectedLevel is BedManagementLevel.Facility or BedManagementLevel.Ward)
-                    {
-                        <div>
-                            <dt>Selected facility</dt>
-                            <dd>@DisplayFacility</dd>
-                        </div>
-                    }
-                    @if (SelectedLevel is BedManagementLevel.Facility)
-                    {
-                        <div>
-                            <dt>Selected ward</dt>
-                            <dd>All Wards</dd>
-                        </div>
-                    }
-                    @if (SelectedLevel is BedManagementLevel.Ward)
-                    {
-                        <div>
-                            <dt>Selected ward</dt>
-                            <dd>@DisplayWard</dd>
-                        </div>
-                    }
-                </dl>
-            </div>
-
-            <aside class="bm-reset-placeholder__side" aria-label="Reference status">
-                <span class="bm-reset-pill">Reference recognised</span>
-                <h3>@CurrentReference.ReferenceFile</h3>
-                <p>The matching reference screen exists in <code>assets/reference/bed-management-reset/</code>.</p>
-                <div class="bm-reset-intent-list">
-                    <span>@GetLevelIntent()</span>
-                    <span>@GetVersionIntent()</span>
-                </div>
-            </aside>
-        </article>
-
-        <section class="bm-reset-matrix" aria-label="Available placeholder combinations">
-            @foreach (var reference in References)
+    <main class="bm-reset-workspace @(SelectedVersion == BedManagementVersion.V2Balanced ? "bm-reset-workspace--v2" : null)" aria-live="polite">
+        @if (SelectedVersion == BedManagementVersion.V2Balanced)
+        {
+            @switch (SelectedLevel)
             {
-                <button type="button" class="bm-reset-matrix-item @(IsCurrentReference(reference) ? "is-active" : null)" @onclick="() => SelectReference(reference)">
-                    <span>@GetLevelLabel(reference.Level)</span><strong>@GetVersionLabel(reference.Version)</strong>
-                </button>
+                case BedManagementLevel.Hhs when CurrentHhs is not null:
+                    <HhsV2View Hhs="@CurrentHhs" />
+                    break;
+                case BedManagementLevel.Facility when CurrentFacility is not null:
+                    <FacilityV2View Facility="@CurrentFacility" />
+                    break;
+                case BedManagementLevel.Ward when CurrentWard is not null:
+                    <WardV2View Ward="@CurrentWard" />
+                    break;
+                default:
+                    <StatewideV2View State="@BedManagementDemoData.State" />
+                    break;
             }
-        </section>
+        }
+        else
+        {
+            <article class="bm-reset-placeholder">
+                <div class="bm-reset-placeholder__main">
+                    <div class="bm-reset-view-badge">
+                        <img src="@CurrentIcon" alt="" />
+                        <span>@DisplayLevel / @DisplayVersion</span>
+                    </div>
+                    <h2>@DisplayLevel — @DisplayVersion</h2>
+                    <p>@CurrentReference.Purpose</p>
+
+                    <dl class="bm-reset-scope-list">
+                        <div><dt>Selected level</dt><dd>@DisplayLevel</dd></div>
+                        <div><dt>Selected version</dt><dd>@DisplayVersion</dd></div>
+                        @if (SelectedLevel is BedManagementLevel.Hhs or BedManagementLevel.Facility or BedManagementLevel.Ward)
+                        { <div><dt>Selected HHS</dt><dd>@DisplayHhs</dd></div> }
+                        @if (SelectedLevel is BedManagementLevel.Facility or BedManagementLevel.Ward)
+                        { <div><dt>Selected facility</dt><dd>@DisplayFacility</dd></div> }
+                        @if (SelectedLevel is BedManagementLevel.Facility)
+                        { <div><dt>Selected ward</dt><dd>All Wards</dd></div> }
+                        @if (SelectedLevel is BedManagementLevel.Ward)
+                        { <div><dt>Selected ward</dt><dd>@DisplayWard</dd></div> }
+                    </dl>
+                </div>
+                <aside class="bm-reset-placeholder__side" aria-label="Reference status">
+                    <span class="bm-reset-pill">Reference recognised</span>
+                    <h3>@CurrentReference.ReferenceFile</h3>
+                    <p>The matching reference screen exists in <code>assets/reference/bed-management-reset/</code>.</p>
+                    <div class="bm-reset-intent-list"><span>@GetLevelIntent()</span><span>@GetVersionIntent()</span></div>
+                </aside>
+            </article>
+        }
+
+        @if (SelectedVersion == BedManagementVersion.V2Balanced)
+        {
+            <details class="bm-reset-matrix-disclosure">
+                <summary>View all level and version variants</summary>
+                <section class="bm-reset-matrix" aria-label="Available placeholder combinations">
+                    @foreach (var reference in References)
+                    {
+                        <button type="button" class="bm-reset-matrix-item @(IsCurrentReference(reference) ? "is-active" : null)" @onclick="() => SelectReference(reference)">
+                            <span>@GetLevelLabel(reference.Level)</span><strong>@GetVersionLabel(reference.Version)</strong>
+                        </button>
+                    }
+                </section>
+            </details>
+        }
+        else
+        {
+            <section class="bm-reset-matrix" aria-label="Available placeholder combinations">
+                @foreach (var reference in References)
+                {
+                    <button type="button" class="bm-reset-matrix-item @(IsCurrentReference(reference) ? "is-active" : null)" @onclick="() => SelectReference(reference)">
+                        <span>@GetLevelLabel(reference.Level)</span><strong>@GetVersionLabel(reference.Version)</strong>
+                    </button>
+                }
+            </section>
+        }
     </main>
 
     <details class="bm-p3-preview">
         <summary>P3 component preview — selected context</summary>
         <div class="bm-p3-preview-body">
-            <OperationalBanner Snapshot="@CurrentSnapshot" Message="Reusable component preview only — the P1 placeholder framework remains the active screen." Tone="Preview" />
+            <OperationalBanner Snapshot="@CurrentSnapshot" Message="Reusable component preview only — retained below the core screens for component review." Tone="Preview" />
             <MetricTileRow Snapshot="@CurrentSnapshot" />
             <FlowSwimlanePanel Snapshot="@CurrentSnapshot" />
             <div class="bm-p3-preview-grid">
