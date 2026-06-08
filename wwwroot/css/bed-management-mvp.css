@@ -7,44 +7,31 @@
   color: var(--pfh-text-primary, #1d2939);
 }
 
-.bm-module-bar {
-  position: sticky;
-  top: 0;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 7px 10px;
-  border-bottom: 1px solid var(--pfh-border, #d9e2ec);
-  background: var(--pfh-surface, #ffffff);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+/* Bed Management projects its title and controls into the existing shell header. */
+.bm-header-title-suffix {
+  font-weight: 700;
 }
 
-.bm-module-title {
-  display: flex;
-  align-items: baseline;
+.qld-actions > .bm-reset-controls {
+  flex: 0 1 auto;
   gap: 7px;
-  flex: 0 0 auto;
-  min-width: 0;
-  padding-right: 12px;
-  border-right: 1px solid var(--pfh-border, #d9e2ec);
 }
 
-.bm-module-title span {
-  color: var(--pfh-text-muted, #667085);
-  font-size: 0.68rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.qld-actions > .bm-reset-controls .bm-reset-control {
+  gap: 4px;
 }
 
-.bm-module-title h1 {
-  margin: 0;
-  color: var(--pfh-text-primary, #101828);
-  font-size: 1rem;
-  line-height: 1.2;
-  white-space: nowrap;
+.qld-actions > .bm-reset-controls .bm-reset-control select,
+.qld-actions > .bm-reset-controls .bm-reset-readonly-value {
+  min-height: 28px;
+  min-width: 96px;
+  max-width: 150px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.qld-actions:has(> .bm-reset-controls) .qld-search {
+  width: min(19vw, 259px);
 }
 
 .bm-reset-view-badge img {
@@ -147,7 +134,7 @@
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.16);
 }
 
-.bm-shared-context--module .bm-shared-context__popover {
+.bm-shared-context--navigation .bm-shared-context__popover {
   right: 0;
   left: auto;
 }
@@ -343,7 +330,6 @@
   color: #edf4ff;
 }
 
-.theme-dark .bm-module-bar,
 .theme-dark .bm-shared-context__popover,
 .theme-dark .bm-reset-scope-list div,
 .theme-dark .bm-reset-matrix,
@@ -377,31 +363,6 @@
 }
 
 @media (max-width: 860px) {
-  .bm-module-bar {
-    position: static;
-    flex-wrap: wrap;
-  }
-
-  .bm-reset-controls {
-    order: 3;
-    flex-basis: 100%;
-    flex-wrap: wrap;
-  }
-
-  .bm-reset-control {
-    flex: 1 1 180px;
-  }
-
-  .bm-reset-control select,
-  .bm-reset-readonly-value {
-    flex: 1 1 auto;
-    max-width: none;
-  }
-
-  .bm-shared-context--module {
-    margin-left: auto;
-  }
-
   .bm-reset-scope-list,
   .bm-reset-matrix {
     grid-template-columns: 1fr;
