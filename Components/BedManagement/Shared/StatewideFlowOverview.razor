@@ -1,0 +1,41 @@
+<section class="bm-shared-panel bm-statewide-flow" aria-label="Flow Overview">
+    <header><h3>Flow Overview</h3><span>@VersionLabel</span></header>
+    <div class="bm-statewide-flow__grid">
+        @foreach (var lane in Lanes)
+        {
+            <article class="bm-statewide-flow__lane bm-statewide-flow__lane--@lane.Accent">
+                <h4>@lane.Title</h4>
+                <dl>
+                    @foreach (var metric in lane.Metrics)
+                    {
+                        <div><dt>@metric.Label</dt><dd>@metric.Value <small class="@metric.TrendClass">@metric.Trend</small></dd></div>
+                    }
+                </dl>
+                @if (Version != BedManagementVersion.V1DataInsights)
+                {
+                    <div class="bm-statewide-flow__support"><span>@lane.SupportLabel</span><strong>@lane.SupportValue</strong></div>
+                }
+                <a href="#" @onclick:preventDefault @onclick="() => RequestDetail(lane.Key)">View details <span aria-hidden="true">→</span></a>
+            </article>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
+    [Parameter] public EventCallback<string> OnDetailRequested { get; set; }
+
+    private int DelayedFlow => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.TransferRequests;
+    private string VersionLabel => Version switch { BedManagementVersion.V1DataInsights => "Awareness", BedManagementVersion.V2Balanced => "Coordination", _ => "Command & coordination" };
+    private IReadOnlyList<FlowLane> Lanes =>
+    [
+        new("flow-demand", "Demand", "blue", [new("QAS Activity (24h)", (Snapshot.ExpectedAdmissions + 1129).ToString(), "▲ 5.8%", "is-up"), new("Predicted Presentations", Snapshot.ExpectedAdmissions.ToString(), "▲ 6.7%", "is-up"), new("Ambulance Handover >30m", "18.3%", "▲ 2.1%", "is-up")], "Support action", Version == BedManagementVersion.V3Operational ? "QAS surge support · State Ops" : "QAS surge support"),
+        new("flow-emergency", "Emergency", "purple", [new("Patients in ED", (Snapshot.ExpectedAdmissions - 280).ToString(), "▲ 7.4%", "is-up"), new("Waiting Room", "412", "▲ 12.1%", "is-up"), new("AWA (24h)", "56", "▲ 4.9%", "is-up")], "ED escalation status", Version == BedManagementVersion.V3Operational ? "2 HHS escalated · review 10:30" : "2 HHS escalated"),
+        new("flow-inpatient", "Inpatient Flow", "green", [new("Occupancy", $"{Snapshot.OccupancyPercentage}%", "▲ 1.8%", "is-up"), new("Open Capacity", Snapshot.AvailableBeds.ToString(), "▼ 5.1%", "is-down"), new("Admissions (24h)", Snapshot.ExpectedAdmissions.ToString(), "▲ 3.2%", "is-up")], "Facilities over threshold", Version == BedManagementVersion.V3Operational ? "3 · State review active" : "3"),
+        new("flow-discharge", "Discharge & Exit", "red", [new("Delayed Flow Patients", DelayedFlow.ToString(), "▲ 4.2%", "is-up"), new("% of Inpatients", $"{Math.Round((double)DelayedFlow / Math.Max(Snapshot.OccupiedBeds, 1) * 100, 1)}%", "▲ 0.3pp", "is-up"), new("HITH Patients", "216", "▲ 6.4%", "is-up"), new("Discharge Opportunity", Snapshot.PlannedDischarges.ToString(), "▲ 3.3%", "is-down")], "Discharge action status", Version == BedManagementVersion.V3Operational ? "Review in progress · QPACH" : "Review in progress")
+    ];
+    private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
+    private sealed record FlowLane(string Key, string Title, string Accent, IReadOnlyList<FlowMetric> Metrics, string SupportLabel, string SupportValue);
+    private sealed record FlowMetric(string Label, string Value, string Trend, string TrendClass);
+}

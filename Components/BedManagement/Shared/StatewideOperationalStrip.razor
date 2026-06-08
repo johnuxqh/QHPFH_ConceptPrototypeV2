@@ -15,7 +15,7 @@
         {
             <div class="bm-statewide-status-item @GetPressureClass(item.Snapshot)">
                 <span>@item.Hhs.Name signal</span>
-                <strong>@item.Snapshot.EscalationStatus</strong>
+                <strong>@GetDisplayStatus(item.Snapshot)</strong>
                 <small>@item.Snapshot.OccupancyPercentage% occupied · @item.Snapshot.AvailableBeds available</small>
                 <a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-details")'>View details</a>
             </div>
@@ -23,7 +23,7 @@
     }
     else if (Mode == BedManagementVersion.V2Balanced)
     {
-        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>HHS above BAU</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-escalations")'>View escalations</a></div>
+        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>HHS escalated</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-escalations")'>View escalations</a></div>
         <div class="bm-statewide-status-item is-watch"><span>State support actions</span><strong>@SupportActionCount</strong><small>Active priorities</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-actions")'>View actions</a></div>
         <div class="bm-statewide-status-item"><span>HHS requiring review</span><strong>@ReviewCount</strong><small>Pressure watch</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-support")'>View HHS summary</a></div>
         <div class="bm-statewide-status-item"><span>Next coordination check</span><strong>@NextCoordination</strong><small>Statewide review</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-call")'>View schedule</a></div>
@@ -53,4 +53,5 @@
     private string NextCoordination => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).FirstOrDefault()?.TimeLabel ?? "Review due";
     private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
     private static string GetPressureClass(CapacitySnapshot snapshot) => snapshot.EscalationStatus == "BAU" ? "is-normal" : snapshot.OccupancyPercentage >= 90 ? "is-alert" : "is-watch";
+    private static string GetDisplayStatus(CapacitySnapshot snapshot) => snapshot.EscalationStatus == "BAU" ? "Normal operations" : snapshot.EscalationStatus;
 }
