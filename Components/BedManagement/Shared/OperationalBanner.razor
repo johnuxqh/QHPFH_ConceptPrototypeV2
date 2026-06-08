@@ -1,8 +1,12 @@
-<section class="bm-shared-banner bm-tone-@Tone.ToLowerInvariant()" aria-label="Patient journey context">
-    <div><span>Patient journey context</span><strong>@Snapshot.Label</strong></div>
-    <p>@(string.IsNullOrWhiteSpace(Message) ? $"{Snapshot.OccupancyPercentage}% occupied · {Snapshot.AvailableBeds} available · {Snapshot.LastUpdatedLabel}" : Message)</p>
-    <span class="bm-shared-status">@Snapshot.EscalationStatus</span>
-</section>
+<details class="bm-shared-context bm-tone-@Tone.ToLowerInvariant()" aria-label="Patient journey context">
+    <summary class="bm-shared-status">@Snapshot.EscalationStatus</summary>
+    <div class="bm-shared-context__popover">
+        <span>Patient journey context</span>
+        <strong>@Snapshot.Label</strong>
+        <p>@(string.IsNullOrWhiteSpace(Message) ? $"{Snapshot.OccupancyPercentage}% occupied · {Snapshot.AvailableBeds} available · {Snapshot.LastUpdatedLabel}" : Message)</p>
+        <small>@Snapshot.OccupancyPercentage% occupied · @Snapshot.AvailableBeds available · @Snapshot.LastUpdatedLabel</small>
+    </div>
+</details>
 
 @code {
     [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
