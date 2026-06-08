@@ -4,28 +4,39 @@
 @using QHPFH_ConceptPrototype.Components.BedManagement.V3
 
 <section class="page-shell-card bm-reset-page" aria-labelledby="bm-reset-title">
-    <header class="bm-reset-hero">
-        <div>
-            <p class="bm-reset-eyebrow">Patient Flow Hub / Bed Management</p>
+    <header class="bm-module-bar">
+        <div class="bm-module-title">
+            <span>Bed &amp; Ward</span>
             <h1 id="bm-reset-title">Bed Management</h1>
-            <p class="bm-reset-summary">Operational decision support across Statewide, HHS, Facility and Ward flow.</p>
         </div>
-    </header>
 
-    <BedManagementScopeControls
-        SelectedLevel="@SelectedLevel"
-        SelectedVersion="@SelectedVersion"
-        SelectedHhs="@SelectedHhs"
-        SelectedFacility="@SelectedFacility"
-        SelectedWard="@SelectedWard"
-        HhsOptions="@HhsOptions"
-        FacilityOptions="@FacilityOptions"
-        WardOptions="@WardOptions"
-        SelectedLevelChanged="OnLevelChanged"
-        SelectedVersionChanged="OnVersionChanged"
-        SelectedHhsChanged="OnHhsChanged"
-        SelectedFacilityChanged="OnFacilityChanged"
-        SelectedWardChanged="OnWardChanged" />
+        <BedManagementScopeControls
+            SelectedLevel="@SelectedLevel"
+            SelectedVersion="@SelectedVersion"
+            SelectedHhs="@SelectedHhs"
+            SelectedFacility="@SelectedFacility"
+            SelectedWard="@SelectedWard"
+            HhsOptions="@HhsOptions"
+            FacilityOptions="@FacilityOptions"
+            WardOptions="@WardOptions"
+            SelectedLevelChanged="OnLevelChanged"
+            SelectedVersionChanged="OnVersionChanged"
+            SelectedHhsChanged="OnHhsChanged"
+            SelectedFacilityChanged="OnFacilityChanged"
+            SelectedWardChanged="OnWardChanged" />
+
+        @if (SelectedLevel == BedManagementLevel.Statewide)
+        {
+            <details class="bm-shared-context bm-shared-context--module">
+                <summary class="bm-shared-status">Statewide Watch</summary>
+                <div class="bm-shared-context__popover">
+                    <strong>@CurrentReference.Purpose</strong>
+                    <p>Selected scope: @DisplayLevel · @DisplayVersion.</p>
+                    <p>Look first at the statewide status strip, pressure overview and HHS performance priorities.</p>
+                </div>
+            </details>
+        }
+    </header>
 
     <main class="bm-reset-workspace @GetWorkspaceClass()" aria-live="polite">
         @if (SelectedVersion == BedManagementVersion.V1DataInsights)
