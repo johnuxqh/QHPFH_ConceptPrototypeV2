@@ -1,0 +1,41 @@
+@using QHPFH_ConceptPrototype.Components.BedManagement.Shared
+
+<section class="bm-v3-view bm-v3-view--hhs" aria-label="HHS V3 operational view">
+    <OperationalBanner Snapshot="@Snapshot" Message="Regional operational coordination: direct intervention toward constrained facilities, transfer pressure and discharge barriers." Tone="Operational" />
+    <div class="bm-v3-command-strip" aria-label="HHS preview actions">
+        <div><span>Regional action desk</span><strong>@SelectedPreview</strong><small>Preview only · no action is saved</small></div>
+        <button type="button" @onclick='() => SelectPreview("Facility intervention review prepared")'>Review facilities</button>
+        <button type="button" @onclick='() => SelectPreview("Support escalation preview prepared")'>Prepare escalation</button>
+        <button type="button" @onclick='() => SelectPreview("Transfer queue preview opened")'>Open transfer queue</button>
+    </div>
+    <MetricTileRow Snapshot="@Snapshot" />
+    <div class="bm-v3-primary-grid">
+        <div class="bm-v3-emphasis-table"><PerformanceTable Title="Facility intervention and support queue" Rows="@FacilityRows" /></div>
+        <div class="bm-v3-stack">
+            <ActionTracker Signals="@Actions" />
+            <AllocationSummary Snapshot="@Snapshot" />
+        </div>
+    </div>
+    <div class="bm-v3-triple-grid">
+        <TransferQueuePanel Beds="@Beds" />
+        <CleaningStatusPanel Beds="@Beds" />
+        <CoordinationPanel Events="@Events" />
+    </div>
+    <UtilityActionStrip />
+</section>
+
+@code {
+    [Parameter, EditorRequired] public HhsNetwork Hhs { get; set; } = default!;
+    private string SelectedPreview { get; set; } = "Select a demo action";
+    private CapacitySnapshot Snapshot => BedManagementDemoData.GetHhsSnapshot(Hhs.Id)!;
+    private IReadOnlyList<Bed> Beds => Hhs.Facilities.SelectMany(facility => facility.Wards).SelectMany(ward => ward.Beds).ToArray();
+    private IReadOnlyList<PerformanceRow> FacilityRows => Hhs.Facilities.Select(facility =>
+    {
+        var snapshot = BedManagementDemoData.GetFacilitySnapshot(facility.Id)!;
+        var priority = facility.EscalationStatus == "BAU" ? "Monitor" : "Intervene";
+        return new PerformanceRow(facility.ShortName, priority, facility.EscalationStatus, $"{snapshot.OccupancyPercentage}% occupied · discharge {facility.DischargePressureIndicator} · transfer {facility.TransferPressureIndicator} · {snapshot.AvailableBeds} available");
+    }).OrderBy(row => row.Status == "BAU").ToArray();
+    private IReadOnlyList<OperationalEvent> Events => Hhs.Facilities.SelectMany(facility => facility.OperationalEvents).Take(5).ToArray();
+    private IReadOnlyList<OperationalSignal> Actions => Hhs.Facilities.SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Take(5).ToArray();
+    private void SelectPreview(string preview) => SelectedPreview = preview;
+}

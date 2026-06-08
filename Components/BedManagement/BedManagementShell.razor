@@ -1,6 +1,7 @@
 @using QHPFH_ConceptPrototype.Components.BedManagement.Shared
 @using QHPFH_ConceptPrototype.Components.BedManagement.V1
 @using QHPFH_ConceptPrototype.Components.BedManagement.V2
+@using QHPFH_ConceptPrototype.Components.BedManagement.V3
 
 <section class="page-shell-card bm-reset-page" aria-labelledby="bm-reset-title">
     <header class="bm-reset-hero">
@@ -70,6 +71,24 @@
                     break;
             }
         }
+        else if (SelectedVersion == BedManagementVersion.V3Operational)
+        {
+            @switch (SelectedLevel)
+            {
+                case BedManagementLevel.Hhs when CurrentHhs is not null:
+                    <HhsV3View Hhs="@CurrentHhs" />
+                    break;
+                case BedManagementLevel.Facility when CurrentFacility is not null:
+                    <FacilityV3View Facility="@CurrentFacility" />
+                    break;
+                case BedManagementLevel.Ward when CurrentWard is not null:
+                    <WardV3View Ward="@CurrentWard" />
+                    break;
+                default:
+                    <StatewideV3View State="@BedManagementDemoData.State" />
+                    break;
+            }
+        }
         else
         {
             <article class="bm-reset-placeholder">
@@ -103,7 +122,7 @@
             </article>
         }
 
-        @if (SelectedVersion is BedManagementVersion.V1DataInsights or BedManagementVersion.V2Balanced)
+        @if (SelectedVersion is BedManagementVersion.V1DataInsights or BedManagementVersion.V2Balanced or BedManagementVersion.V3Operational)
         {
             <details class="bm-reset-matrix-disclosure">
                 <summary>View all level and version variants</summary>
@@ -244,6 +263,7 @@
     {
         BedManagementVersion.V1DataInsights => "bm-reset-workspace--v1",
         BedManagementVersion.V2Balanced => "bm-reset-workspace--v2",
+        BedManagementVersion.V3Operational => "bm-reset-workspace--v3",
         _ => string.Empty
     };
 
