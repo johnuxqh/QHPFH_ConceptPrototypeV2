@@ -2,7 +2,7 @@
 
 <section class="bm-v1-view bm-v1-view--statewide bm-statewide-dashboard" aria-label="Statewide V1 data and insights view">
     <StatewideOperationalStrip State="@State" Snapshot="@Snapshot" OnDetailRequested="OpenDetail" Mode="@BedManagementVersion.V1DataInsights" />
-    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" OnDetailRequested="OpenDetail" />
+    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" Version="@BedManagementVersion.V1DataInsights" OnDetailRequested="OpenDetail" />
 
     <div class="bm-statewide-primary bm-statewide-primary--v1">
         <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
@@ -10,7 +10,7 @@
     </div>
 
     <div class="bm-statewide-insights"><InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" ContextLabel="State insights" /></div>
-    <div class="bm-v1-emphasis-table bm-statewide-performance"><PerformanceTable Title="HHS performance summary" Rows="@HhsRows" /></div>
+    <div class="bm-v1-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V1DataInsights" Title="Statewide HHS performance summary" /></div>
 </section>
 
 <StatewideDetailSlideout State="@State" Snapshot="@Snapshot" DetailKey="@_detailKey" OnClose="CloseDetail" />
@@ -21,10 +21,4 @@
     private void OpenDetail(string detailKey) => _detailKey = detailKey;
     private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
-    private IReadOnlyList<PerformanceRow> HhsRows => State.HhsNetworks.Select(hhs =>
-    {
-        var snapshot = BedManagementDemoData.GetHhsSnapshot(hhs.Id)!;
-        var support = snapshot.EscalationStatus == "BAU" ? "Monitor" : "Support required";
-        return new PerformanceRow(hhs.Name, $"{snapshot.OccupancyPercentage}%", snapshot.EscalationStatus, $"{support} · {snapshot.AvailableBeds} available · {snapshot.ExpectedAdmissions} admissions vs {snapshot.PlannedDischarges} discharges");
-    }).OrderBy(row => row.Status == "BAU").ToArray();
 }

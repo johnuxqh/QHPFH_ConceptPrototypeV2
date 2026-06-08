@@ -1,0 +1,133 @@
+<section class="bm-shared-panel bm-statewide-performance-table" aria-label="Statewide HHS performance table">
+    <header>
+        <div>
+            <h3>@Title</h3>
+            <p>@Description</p>
+        </div>
+    </header>
+
+    <div class="bm-statewide-performance-table__scroll" role="region" aria-label="Statewide HHS performance rows" tabindex="0">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">HHS</th>
+                    <th scope="col">Occupancy</th>
+                    <th scope="col">Available Beds</th>
+                    <th scope="col">Admissions</th>
+                    <th scope="col">Discharges</th>
+                    <th scope="col">Delayed Flow Patients</th>
+                    <th scope="col">Pressure Tier</th>
+                    <th scope="col">Escalation Status</th>
+                    <th scope="col">State Support Action</th>
+                    <th scope="col">Trend</th>
+                    <th scope="col">vs Yesterday</th>
+                    <th scope="col">Last Update</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hhs in OrderedHhs)
+                {
+                    var snapshot = BedManagementDemoData.GetHhsSnapshot(hhs.Id)!;
+                    <tr>
+                        <th scope="row">@hhs.Name</th>
+                        <td><strong>@snapshot.OccupancyPercentage%</strong></td>
+                        <td>@snapshot.AvailableBeds</td>
+                        <td>@snapshot.ExpectedAdmissions</td>
+                        <td>@snapshot.PlannedDischarges</td>
+                        <td>@GetDelayedFlow(snapshot)</td>
+                        <td><span class="bm-statewide-performance-table__tier @GetTierClass(snapshot)">@GetPressureTier(snapshot)</span></td>
+                        <td>@snapshot.EscalationStatus</td>
+                        <td>@GetSupportAction(snapshot)</td>
+                        <td>@GetTrend(snapshot)</td>
+                        <td>@GetYesterdayVariance(snapshot)</td>
+                        <td>@snapshot.LastUpdatedLabel</td>
+                        <td><button type="button">@GetActionLabel()</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <footer class="bm-statewide-performance-table__footer" aria-label="Statewide HHS performance pagination">
+        <span>Rows per page: 10</span>
+        <span>1–@HhsCount of @HhsCount</span>
+    </footer>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
+    [Parameter] public string Title { get; set; } = "Statewide HHS performance";
+
+    private string Description => Version switch
+    {
+        BedManagementVersion.V1DataInsights => "HHS-level capacity, flow and trend indicators derived from the current demo snapshot.",
+        BedManagementVersion.V2Balanced => "Escalation and support summary for statewide coordination review.",
+        BedManagementVersion.V3Operational => "Operational command summary of HHS pressure, support actions and next review entry points.",
+        _ => "HHS performance summary."
+    };
+
+    private int HhsCount => State.HhsNetworks.Count;
+
+    private IEnumerable<HhsNetwork> OrderedHhs => State.HhsNetworks
+        .OrderBy(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.EscalationStatus == "BAU")
+        .ThenByDescending(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.OccupancyPercentage);
+
+    private static int GetDelayedFlow(CapacitySnapshot snapshot) => snapshot.PendingCleaning + snapshot.PendingMaintenance + snapshot.TransferRequests;
+
+    private static string GetPressureTier(CapacitySnapshot snapshot)
+    {
+        if (!string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) || snapshot.OccupancyPercentage >= 90)
+        {
+            return "High pressure";
+        }
+
+        return snapshot.OccupancyPercentage >= 80 || GetDelayedFlow(snapshot) > 0 ? "Watch" : "Stable";
+    }
+
+    private static string GetTierClass(CapacitySnapshot snapshot) => GetPressureTier(snapshot) switch
+    {
+        "High pressure" => "is-high",
+        "Watch" => "is-watch",
+        _ => "is-stable"
+    };
+
+    private string GetSupportAction(CapacitySnapshot snapshot) => Version switch
+    {
+        BedManagementVersion.V1DataInsights => string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) ? "Monitor trend" : "Flag for review",
+        BedManagementVersion.V2Balanced => string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) ? "Maintain visibility" : "Coordinate state support",
+        BedManagementVersion.V3Operational => string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) ? "Stand by" : "Review and open support",
+        _ => "Monitor"
+    };
+
+    private static string GetTrend(CapacitySnapshot snapshot)
+    {
+        var netDemand = snapshot.ExpectedAdmissions - snapshot.PlannedDischarges;
+        if (snapshot.OccupancyPercentage >= 90 || netDemand > 1)
+        {
+            return "↑ pressure";
+        }
+
+        return netDemand < 0 ? "↓ easing" : "→ steady";
+    }
+
+    private static string GetYesterdayVariance(CapacitySnapshot snapshot)
+    {
+        var netDemand = snapshot.ExpectedAdmissions - snapshot.PlannedDischarges;
+        return netDemand switch
+        {
+            > 0 => $"+{netDemand} demand",
+            < 0 => $"{netDemand} demand",
+            _ => "No net change"
+        };
+    }
+
+    private string GetActionLabel() => Version switch
+    {
+        BedManagementVersion.V1DataInsights => "View",
+        BedManagementVersion.V2Balanced => "View / Summary",
+        BedManagementVersion.V3Operational => "Review / Open",
+        _ => "View"
+    };
+}

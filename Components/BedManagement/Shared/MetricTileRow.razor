@@ -6,9 +6,18 @@
             <article class="bm-shared-metric bm-statewide-kpi bm-statewide-kpi--@metric.Accent">
                 <div class="bm-statewide-kpi__heading">
                     <span class="bm-statewide-kpi__label">@metric.Label</span>
-                    <button type="button" class="bm-statewide-kpi__info" aria-label="Preview details for @metric.Label" @onclick="() => RequestDetail(metric.Key)">
-                        <img src="@GetInfoIconPath(metric)" alt="" />
-                    </button>
+                    @if (CanOpenDetail(metric))
+                    {
+                        <button type="button" class="bm-statewide-kpi__info bm-statewide-kpi__info--opens" title="@metric.Tooltip" aria-label="Open coordination detail for @metric.Label: @metric.Tooltip" data-tooltip="@metric.Tooltip" @onclick="() => RequestDetail(metric.Key)">
+                            <img src="@GetInfoIconPath(metric)" alt="" />
+                        </button>
+                    }
+                    else
+                    {
+                        <span class="bm-statewide-kpi__info bm-statewide-kpi__info--tooltip" role="img" tabindex="0" title="@metric.Tooltip" aria-label="@metric.Label explanation: @metric.Tooltip" data-tooltip="@metric.Tooltip">
+                            <img src="@GetInfoIconPath(metric)" alt="" />
+                        </span>
+                    }
                 </div>
                 <div class="bm-statewide-kpi__main">
                     <span class="bm-statewide-kpi__icon" aria-hidden="true"><img src="@GetMetricIconPath(metric)" alt="" /></span>
@@ -33,6 +42,7 @@ else
 @code {
     [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
     [Parameter] public bool AwarenessMode { get; set; }
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V2Balanced;
     [Parameter] public EventCallback<string> OnDetailRequested { get; set; }
 
     private bool IsStatewideAwareness => AwarenessMode && Snapshot.Id == BedManagementDemoData.StateId;
@@ -40,13 +50,20 @@ else
 
     private IReadOnlyList<StatewideMetric> StatewideMetrics =>
     [
-        new("kpi-inpatients", "Inpatients", Snapshot.OccupiedBeds.ToString(), "Patients occupying open beds statewide", "patient", "default", "blue"),
-        new("kpi-available", "Available Beds", Snapshot.AvailableBeds.ToString(), "Ready capacity across the network", "open-bed", "green", "green"),
-        new("kpi-occupancy", "Occupancy", $"{Snapshot.OccupancyPercentage}%", "Current use of open statewide beds", "occupied-bed", "orange", "orange"),
-        new("kpi-demand", "Predicted ED Demand", Snapshot.ExpectedAdmissions.ToString(), "Expected admissions in current snapshot", "admission", "orange", "orange"),
-        new("kpi-delayed", "Delayed Flow Cohort", DelayedFlowCohort.ToString(), "Cleaning, maintenance and transfer constraints", "ddp-flow", "red", "red"),
-        new("kpi-discharges", "Discharges Today", Snapshot.PlannedDischarges.ToString(), "Planned discharge opportunities today", "activity", "green", "green")
+        new("kpi-inpatients", "Inpatients", Snapshot.OccupiedBeds.ToString(), "Patients occupying open beds statewide", "Current occupied beds shows the statewide inpatient load, helping teams understand how much open capacity is already committed.", "patient", "default", "blue"),
+        new("kpi-available", "Available Beds", Snapshot.AvailableBeds.ToString(), "Ready capacity across the network", "Available beds are open, unoccupied beds visible now; they matter because they represent immediate placement capacity.", "open-bed", "green", "green"),
+        new("kpi-occupancy", "Occupancy", $"{Snapshot.OccupancyPercentage}%", "Current use of open statewide beds", "Occupancy compares occupied beds with open beds, signalling pressure before demand exceeds safe visible capacity.", "occupied-bed", "orange", "orange"),
+        new("kpi-demand", "Predicted ED Demand", Snapshot.ExpectedAdmissions.ToString(), "Expected admissions in current snapshot", "Predicted ED demand uses expected admissions to show likely incoming pressure and where coordination may be needed.", "admission", "orange", "orange"),
+        new("kpi-delayed", "Delayed Flow Cohort", DelayedFlowCohort.ToString(), "Cleaning, maintenance and transfer constraints", "Delayed flow combines cleaning, maintenance and transfer constraints, highlighting patients or beds that may block movement.", "ddp-flow", "red", "red"),
+        new("kpi-discharges", "Discharges Today", Snapshot.PlannedDischarges.ToString(), "Planned discharge opportunities today", "Planned discharges identify capacity that can be protected or accelerated to offset admissions and reduce pressure.", "activity", "green", "green")
     ];
+
+    private bool CanOpenDetail(StatewideMetric metric) => Version switch
+    {
+        BedManagementVersion.V3Operational => true,
+        BedManagementVersion.V2Balanced => metric.Key is "kpi-demand" or "kpi-delayed" or "kpi-discharges",
+        _ => false
+    };
 
     private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
     private static string GetInfoIconPath(StatewideMetric metric) =>
@@ -71,5 +88,5 @@ else
             ("Closed", Snapshot.ClosedBeds.ToString()), ("Occupancy", $"{Snapshot.OccupancyPercentage}%")
         ];
 
-    private sealed record StatewideMetric(string Key, string Label, string Value, string Detail, string Icon, string IconTone, string Accent);
+    private sealed record StatewideMetric(string Key, string Label, string Value, string Detail, string Tooltip, string Icon, string IconTone, string Accent);
 }

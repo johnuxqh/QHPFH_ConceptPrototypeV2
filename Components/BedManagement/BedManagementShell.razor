@@ -128,31 +128,6 @@
             </article>
         }
 
-        @if (SelectedVersion is BedManagementVersion.V1DataInsights or BedManagementVersion.V2Balanced or BedManagementVersion.V3Operational)
-        {
-            <details class="bm-reset-matrix-disclosure">
-                <summary>View all level and version variants</summary>
-                <section class="bm-reset-matrix" aria-label="Available placeholder combinations">
-                    @foreach (var reference in References)
-                    {
-                        <button type="button" class="bm-reset-matrix-item @(IsCurrentReference(reference) ? "is-active" : null)" @onclick="() => SelectReference(reference)">
-                            <span>@GetLevelLabel(reference.Level)</span><strong>@GetVersionLabel(reference.Version)</strong>
-                        </button>
-                    }
-                </section>
-            </details>
-        }
-        else
-        {
-            <section class="bm-reset-matrix" aria-label="Available placeholder combinations">
-                @foreach (var reference in References)
-                {
-                    <button type="button" class="bm-reset-matrix-item @(IsCurrentReference(reference) ? "is-active" : null)" @onclick="() => SelectReference(reference)">
-                        <span>@GetLevelLabel(reference.Level)</span><strong>@GetVersionLabel(reference.Version)</strong>
-                    </button>
-                }
-            </section>
-        }
     </main>
 </section>
 
