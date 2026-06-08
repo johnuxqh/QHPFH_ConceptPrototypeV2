@@ -50,6 +50,19 @@ else
 
     private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
 
+    private bool IsStatewideAwareness => AwarenessMode && Snapshot.Id == BedManagementDemoData.StateId;
+    private int DelayedFlowCohort => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.TransferRequests;
+
+    private IReadOnlyList<StatewideMetric> StatewideMetrics =>
+    [
+        new("IP", "Inpatients", Snapshot.OccupiedBeds.ToString(), "statewide", "inpatients"),
+        new("AB", "Available Beds", Snapshot.AvailableBeds.ToString(), "ready statewide", "available"),
+        new("%", "Occupancy", $"{Snapshot.OccupancyPercentage}%", "of open beds", "occupancy"),
+        new("ED", "Predicted ED Demand", Snapshot.ExpectedAdmissions.ToString(), "expected today", "demand"),
+        new("DF", "Delayed Flow Cohort", DelayedFlowCohort.ToString(), "flow constraints", "delayed"),
+        new("DC", "Discharges Today", Snapshot.PlannedDischarges.ToString(), "planned today", "discharges")
+    ];
+
     private IEnumerable<(string Label, string Value)> Metrics => AwarenessMode
         ?
         [
