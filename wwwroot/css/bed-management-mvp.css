@@ -412,3 +412,22 @@
 .bm-v2-view--ward .bm-shared-metrics { opacity: .92; }
 .theme-dark .bm-reset-matrix-disclosure { background: rgba(17, 30, 52, .94); border-color: rgba(226, 232, 240, .16); }
 @media (max-width: 1180px) { .bm-v2-awareness-grid, .bm-v2-coordination-grid, .bm-v2-facility-decision-grid, .bm-v2-ward-review-grid { grid-template-columns: 1fr; } .bm-reset-matrix-disclosure .bm-reset-matrix { grid-template-columns: repeat(3, minmax(120px, 1fr)); } }
+
+/* P5 V1 awareness mode: lighter, scan-first compositions using shared P3 primitives. */
+.bm-reset-workspace--v1 { grid-template-columns: minmax(0, 1fr); }
+.bm-v1-view { display: grid; gap: 12px; min-width: 0; }
+.bm-v1-view .bm-shared-banner { padding-block: 14px; background: linear-gradient(90deg, var(--pfh-surface, #fff), var(--pfh-surface-subtle, #f7fbff)); }
+.bm-v1-view .bm-shared-metrics--awareness { grid-template-columns: repeat(5, minmax(110px, 1fr)); gap: 10px; }
+.bm-v1-view .bm-shared-metrics--awareness .bm-shared-metric { padding: 12px; }
+.bm-v1-view .bm-shared-metrics--awareness .bm-shared-metric strong { font-size: 1.35rem; }
+.bm-v1-awareness-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(270px, .75fr); gap: 12px; align-items: start; }
+.bm-v1-view .bm-shared-panel { max-height: 300px; overflow: auto; padding: 14px; }
+.bm-v1-view .bm-shared-card-grid { grid-template-columns: 1fr; }
+.bm-v1-view .bm-shared-table-row { grid-template-columns: minmax(110px, 1fr) minmax(220px, 2fr) auto auto; padding: 11px 0; }
+.bm-v1-emphasis-table > .bm-shared-panel { border-color: rgba(0, 94, 184, .24); box-shadow: 0 4px 12px rgba(15, 23, 42, .04); }
+.bm-v1-emphasis-table > .bm-shared-panel header { padding-bottom: 8px; border-bottom: 1px solid rgba(0, 94, 184, .14); }
+.bm-v1-view--ward .bm-v1-emphasis-table > .bm-shared-panel { max-height: 350px; }
+.theme-dark .bm-v1-view .bm-shared-banner { background: linear-gradient(90deg, rgba(17, 30, 52, .94), rgba(12, 22, 38, .9)); }
+@media (max-width: 1180px) { .bm-v1-awareness-grid { grid-template-columns: 1fr; } }
+@media (max-width: 860px) { .bm-v1-view .bm-shared-metrics--awareness { grid-template-columns: repeat(2, minmax(100px, 1fr)); } .bm-v1-view .bm-shared-table-row { grid-template-columns: 1fr; } }
+.bm-v1-awareness-grid--single { grid-template-columns: minmax(0, 1fr); }
