@@ -189,7 +189,14 @@
     private Facility? CurrentFacility => BedManagementDemoData.GetFacility(SelectedFacility);
 
     private HhsNetwork? CurrentHhs => BedManagementDemoData.GetHhs(SelectedHhs);
-
+    private CapacitySnapshot CurrentSnapshot => SelectedLevel switch
+    {
+        BedManagementLevel.Statewide => BedManagementDemoData.GetStatewideSnapshot(),
+        BedManagementLevel.Hhs => BedManagementDemoData.GetHhsSnapshot(SelectedHhs)!,
+        BedManagementLevel.Facility => BedManagementDemoData.GetFacilitySnapshot(SelectedFacility)!,
+        BedManagementLevel.Ward => BedManagementDemoData.GetWardSnapshot(SelectedWard)!,
+        _ => BedManagementDemoData.GetStatewideSnapshot()
+    };
     private string GetWorkspaceClass() => SelectedVersion switch
     {
         BedManagementVersion.V1DataInsights => "bm-reset-workspace--v1",
