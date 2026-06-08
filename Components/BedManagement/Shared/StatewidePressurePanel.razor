@@ -5,7 +5,8 @@
     </header>
     <div class="bm-statewide-pressure-layout">
         <div class="bm-statewide-pressure-map" aria-label="Visual pressure intelligence by Queensland HHS">
-            <div class="bm-statewide-pressure-map__regions">
+            <img class="bm-statewide-pressure-map__image" src="images/maps/qld-hhs-pressure-map.png" alt="Prototype Queensland HHS pressure map" onerror="this.hidden=true" />
+            <div class="bm-statewide-pressure-map__regions" aria-label="Prototype pressure map placeholder regions">
                 @foreach (var item in MapRegions)
                 {
                     <button type="button" class="bm-statewide-pressure-region @item.CssClass" style="@item.Position" aria-label="@item.Name, @item.Tier, @item.Reason, @item.Status" data-tooltip="@($"{item.Name} · {item.Tier} · {item.Reason} · {item.Status}")"></button>
