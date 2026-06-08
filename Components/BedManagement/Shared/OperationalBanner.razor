@@ -1,5 +1,5 @@
-<section class="bm-shared-banner bm-tone-@Tone.ToLowerInvariant()" aria-label="Operational context">
-    <div><span>Operational context</span><strong>@Snapshot.Label</strong></div>
+<section class="bm-shared-banner bm-tone-@Tone.ToLowerInvariant()" aria-label="Patient journey context">
+    <div><span>Patient journey context</span><strong>@Snapshot.Label</strong></div>
     <p>@(string.IsNullOrWhiteSpace(Message) ? $"{Snapshot.OccupancyPercentage}% occupied · {Snapshot.AvailableBeds} available · {Snapshot.LastUpdatedLabel}" : Message)</p>
     <span class="bm-shared-status">@Snapshot.EscalationStatus</span>
 </section>

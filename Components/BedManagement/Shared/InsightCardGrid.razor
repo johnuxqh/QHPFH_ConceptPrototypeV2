@@ -1,11 +1,11 @@
 <section class="bm-shared-panel" aria-label="Insight signals">
-    <header><h3>Insights</h3><span>@VersionLabel</span></header>
+    <header><h3>Patient journey signals</h3><span>@VersionLabel</span></header>
     <div class="bm-shared-card-grid">
         @foreach (var signal in VisibleSignals)
         {
             <article><span class="bm-shared-status">@signal.Severity</span><strong>@signal.Label</strong><p>@signal.Detail</p></article>
         }
-        @if (!VisibleSignals.Any()) { <p class="bm-shared-empty">No signals for this version.</p> }
+        @if (!VisibleSignals.Any()) { <p class="bm-shared-empty">No patient journey signals for this version.</p> }
     </div>
 </section>
 

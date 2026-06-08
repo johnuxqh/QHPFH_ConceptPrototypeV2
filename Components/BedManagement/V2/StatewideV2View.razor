@@ -7,7 +7,7 @@
         <FlowSwimlanePanel Snapshot="@Snapshot" />
         <InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" />
     </div>
-    <div class="bm-v2-emphasis-table"><PerformanceTable Title="HHS performance and pressure" Rows="@HhsRows" /></div>
+    <div class="bm-v2-emphasis-table"><PerformanceTable Title="HHS utilisation, flow and support needs" Rows="@HhsRows" /></div>
     <div class="bm-v2-secondary-grid bm-v2-secondary-grid--compact">
         <CoordinationPanel Events="@CoordinationEvents" />
         <ActionTracker Signals="@Actions" />
@@ -21,7 +21,7 @@
     private IReadOnlyList<PerformanceRow> HhsRows => State.HhsNetworks.Select(hhs =>
     {
         var snapshot = BedManagementDemoData.GetHhsSnapshot(hhs.Id)!;
-        return new PerformanceRow(hhs.Name, $"{snapshot.OccupancyPercentage}%", snapshot.EscalationStatus, $"{snapshot.AvailableBeds} available · {snapshot.TransferRequests} transfers");
+        return new PerformanceRow(hhs.Name, $"{snapshot.OccupancyPercentage}%", snapshot.EscalationStatus, $"{snapshot.AvailableBeds} capacity · {snapshot.TransferRequests} transfers · {snapshot.PlannedDischarges} discharge opportunities");
     }).ToArray();
     private IReadOnlyList<OperationalEvent> CoordinationEvents => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).Take(4).ToArray();
     private IReadOnlyList<OperationalSignal> Actions => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Take(4).ToArray();
