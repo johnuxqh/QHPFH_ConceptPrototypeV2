@@ -2,7 +2,7 @@
 
 <section class="bm-v2-view bm-v2-view--statewide bm-statewide-dashboard" aria-label="Statewide V2 balanced coordination view">
     <StatewideOperationalStrip State="@State" Snapshot="@Snapshot" OnDetailRequested="OpenDetail" Mode="@BedManagementVersion.V2Balanced" />
-    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" OnDetailRequested="OpenDetail" />
+    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" Version="@BedManagementVersion.V2Balanced" OnDetailRequested="OpenDetail" />
 
     <div class="bm-statewide-primary bm-statewide-primary--v2">
         <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
@@ -14,7 +14,7 @@
         <CoordinationPanel Events="@CoordinationEvents" />
         <InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" ContextLabel="Decision support" />
     </div>
-    <div class="bm-v2-emphasis-table bm-statewide-performance"><PerformanceTable Title="HHS performance and support summary" Rows="@HhsRows" /></div>
+    <div class="bm-v2-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V2Balanced" Title="Statewide HHS performance and support summary" /></div>
 </section>
 
 <StatewideDetailSlideout State="@State" Snapshot="@Snapshot" DetailKey="@_detailKey" OnClose="CloseDetail" />
@@ -25,11 +25,6 @@
     private void OpenDetail(string detailKey) => _detailKey = detailKey;
     private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
-    private IReadOnlyList<PerformanceRow> HhsRows => State.HhsNetworks.Select(hhs =>
-    {
-        var snapshot = BedManagementDemoData.GetHhsSnapshot(hhs.Id)!;
-        return new PerformanceRow(hhs.Name, $"{snapshot.OccupancyPercentage}%", snapshot.EscalationStatus, $"{snapshot.AvailableBeds} capacity · {snapshot.TransferRequests} transfers · {snapshot.PlannedDischarges} discharge opportunities");
-    }).OrderBy(row => row.Status == "BAU").ToArray();
     private IReadOnlyList<OperationalEvent> CoordinationEvents => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).Take(4).ToArray();
     private IReadOnlyList<OperationalSignal> Actions => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Take(4).ToArray();
 }

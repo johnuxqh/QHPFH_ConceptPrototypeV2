@@ -1384,3 +1384,146 @@
   .bm-statewide-dashboard > .bm-shared-metrics--statewide-kpis { grid-template-columns: 1fr; }
   .bm-statewide-slideout { width: min(100vw, 390px); }
 }
+
+/* P8.6 Statewide KPI explanations and HHS performance table recovery. */
+.bm-statewide-dashboard > .bm-shared-metrics--statewide-kpis .bm-statewide-kpi {
+  overflow: visible;
+}
+
+.bm-statewide-kpi__info {
+  position: relative;
+  z-index: 4;
+}
+
+.bm-statewide-kpi__info--tooltip { cursor: help; }
+
+.bm-statewide-kpi__info::after {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 8px);
+  right: -8px;
+  width: min(220px, 48vw);
+  padding: 8px 10px;
+  border: 1px solid var(--pfh-border, #d0d5dd);
+  border-radius: 7px;
+  background: var(--pfh-surface, #ffffff);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
+  color: var(--pfh-text-primary, #101828);
+  content: attr(data-tooltip);
+  font-size: 0.67rem;
+  font-weight: 650;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  text-align: left;
+  transform: translateY(-3px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  visibility: hidden;
+}
+
+.bm-statewide-kpi__info:hover::after,
+.bm-statewide-kpi__info:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.bm-statewide-performance-table header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.bm-statewide-performance-table header p {
+  margin: 0;
+  color: var(--pfh-text-muted, #667085);
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.bm-statewide-performance-table__scroll {
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.bm-statewide-performance-table table {
+  width: 100%;
+  min-width: 1680px;
+  border-collapse: collapse;
+  color: var(--pfh-text-secondary, #475467);
+  font-size: 0.7rem;
+}
+
+.bm-statewide-performance-table th,
+.bm-statewide-performance-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--pfh-border, #e4e7ec);
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.bm-statewide-performance-table thead th {
+  background: var(--pfh-surface-subtle, #f7f9fc);
+  color: var(--pfh-text-muted, #667085);
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.bm-statewide-performance-table tbody th {
+  color: var(--pfh-text-primary, #101828);
+  font-size: 0.73rem;
+}
+
+.bm-statewide-performance-table tbody tr:hover {
+  background: color-mix(in srgb, var(--pfh-primary-blue, #005eb8) 4%, transparent);
+}
+
+.bm-statewide-performance-table__tier {
+  display: inline-flex;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(102, 112, 133, 0.1);
+  color: #475467;
+  font-weight: 800;
+}
+
+.bm-statewide-performance-table__tier.is-high { background: rgba(217, 45, 32, 0.1); color: #b42318; }
+.bm-statewide-performance-table__tier.is-watch { background: rgba(247, 144, 9, 0.12); color: #b54708; }
+.bm-statewide-performance-table__tier.is-stable { background: rgba(3, 152, 85, 0.1); color: #027a48; }
+
+.bm-statewide-performance-table td button {
+  padding: 5px 8px;
+  border: 1px solid rgba(0, 94, 184, 0.24);
+  border-radius: 6px;
+  background: rgba(0, 94, 184, 0.07);
+  color: var(--pfh-primary-blue, #005eb8);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.bm-statewide-performance-table td button:hover,
+.bm-statewide-performance-table td button:focus-visible { background: rgba(0, 94, 184, 0.14); }
+
+.bm-statewide-performance-table__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 24px;
+  padding-top: 9px;
+  color: var(--pfh-text-muted, #667085);
+  font-size: 0.68rem;
+  font-weight: 750;
+}
+
+.theme-dark .bm-statewide-kpi__info::after,
+.theme-dark .bm-statewide-performance-table thead th {
+  border-color: rgba(226, 232, 240, 0.16);
+  background: #111e34;
+  color: #edf4ff;
+}
+
+@media (max-width: 720px) {
+  .bm-statewide-performance-table__footer { justify-content: space-between; }
+}
