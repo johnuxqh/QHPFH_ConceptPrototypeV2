@@ -7,11 +7,11 @@
                 <div class="bm-statewide-kpi__heading">
                     <span class="bm-statewide-kpi__label">@metric.Label</span>
                     <button type="button" class="bm-statewide-kpi__info" aria-label="Preview details for @metric.Label" @onclick="() => RequestDetail(metric.Key)">
-                        <img src="images/icons/info-@metric.IconTone.png" alt="" />
+                        <img src="@GetInfoIconPath(metric)" alt="" />
                     </button>
                 </div>
                 <div class="bm-statewide-kpi__main">
-                    <span class="bm-statewide-kpi__icon" aria-hidden="true"><img src="images/icons/@metric.Icon-@metric.IconTone.png" alt="" /></span>
+                    <span class="bm-statewide-kpi__icon" aria-hidden="true"><img src="@GetMetricIconPath(metric)" alt="" /></span>
                     <strong class="bm-statewide-kpi__number">@metric.Value</strong>
                 </div>
                 <span class="bm-statewide-kpi__subtitle">@metric.Detail</span>
@@ -49,7 +49,11 @@ else
     ];
 
     private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
-
+    private static string GetInfoIconPath(StatewideMetric metric) =>
+        $"images/icons/info-{metric.IconTone}.png";
+    
+    private static string GetMetricIconPath(StatewideMetric metric) =>
+        $"images/icons/{metric.Icon}-{metric.IconTone}.png";
     private IEnumerable<(string Label, string Value)> Metrics => AwarenessMode
         ?
         [
