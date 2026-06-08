@@ -463,3 +463,288 @@
 .theme-dark .bm-v3-emphasis-table > .bm-shared-panel header { background: rgba(17, 30, 52, .98); }
 @media (max-width: 1180px) { .bm-v3-primary-grid, .bm-v3-facility-grid, .bm-v3-ward-grid, .bm-v3-secondary-grid, .bm-v3-triple-grid { grid-template-columns: 1fr; } .bm-v3-command-strip { flex-wrap: wrap; justify-content: flex-start; } .bm-v3-command-strip div { flex-basis: 100%; } }
 @media (max-width: 760px) { .bm-v3-view .bm-shared-table-row { grid-template-columns: 1fr; } .bm-v3-command-strip button { flex: 1 1 140px; } }
+
+/* P7 Figma/reference alignment pass: presentation-only tuning across the stable Bed Management hierarchy. */
+.bm-reset-page {
+  gap: 16px;
+}
+
+.bm-reset-controls {
+  position: sticky;
+  top: 8px;
+  z-index: 3;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.bm-shared-banner,
+.bm-shared-panel,
+.bm-shared-metric,
+.bm-shared-utility,
+.bm-v3-command-strip {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.bm-shared-banner strong {
+  color: var(--pfh-primary-blue, #005eb8);
+  font-size: 1.02rem;
+}
+
+.bm-shared-panel header {
+  min-height: 24px;
+}
+
+.bm-shared-panel h3 {
+  color: var(--pfh-text-primary, #101828);
+  letter-spacing: -0.01em;
+}
+
+.bm-shared-list > div,
+.bm-shared-table-row {
+  transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.bm-shared-list > div:hover,
+.bm-shared-table-row:hover {
+  background: rgba(0, 94, 184, 0.045);
+}
+
+.bm-shared-table-row strong {
+  color: var(--pfh-text-primary, #101828);
+}
+
+.bm-shared-table-row span {
+  color: var(--pfh-text-secondary, #475467);
+  line-height: 1.35;
+}
+
+.bm-shared-table-row b {
+  justify-self: start;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(0, 94, 184, 0.08);
+  color: var(--pfh-primary-blue, #005eb8);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.bm-shared-swimlanes div {
+  border: 1px solid rgba(0, 94, 184, 0.08);
+}
+
+.bm-shared-swimlanes strong,
+.bm-shared-metric strong {
+  color: var(--pfh-text-primary, #101828);
+}
+
+/* Priority 1: Facility V3 is the bed manager's primary operational workspace. */
+.bm-v3-view--facility {
+  gap: 10px;
+}
+
+.bm-v3-view--facility .bm-shared-banner {
+  grid-template-columns: minmax(140px, 0.62fr) minmax(420px, 2.1fr) minmax(180px, auto);
+  padding: 12px 16px;
+  border-left-width: 6px;
+}
+
+.bm-v3-view--facility .bm-v3-command-strip {
+  align-items: stretch;
+  padding: 8px;
+  border-color: rgba(0, 94, 184, 0.42);
+}
+
+.bm-v3-view--facility .bm-v3-command-strip div {
+  min-width: 300px;
+  padding: 2px 8px 2px 0;
+}
+
+.bm-v3-view--facility .bm-v3-command-strip strong {
+  color: var(--pfh-text-primary, #101828);
+  font-size: 0.88rem;
+}
+
+.bm-v3-view--facility .bm-v3-command-strip button:first-of-type,
+.bm-v3-view--facility .bm-v3-command-strip button:nth-of-type(2) {
+  background: var(--pfh-primary-blue, #005eb8);
+  color: #ffffff;
+}
+
+.bm-v3-view--facility .bm-shared-metrics {
+  grid-template-columns: repeat(8, minmax(92px, 1fr));
+  gap: 7px;
+}
+
+.bm-v3-view--facility .bm-shared-metric {
+  min-height: 62px;
+  padding: 8px 10px;
+}
+
+.bm-v3-view--facility .bm-shared-metric strong {
+  font-size: 1.16rem;
+}
+
+.bm-v3-view--facility .bm-v3-facility-grid {
+  grid-template-columns: minmax(0, 2.18fr) minmax(300px, 0.68fr);
+  gap: 12px;
+}
+
+.bm-v3-view--facility .bm-v3-emphasis-table > .bm-shared-panel {
+  max-height: 420px;
+  border-color: rgba(0, 94, 184, 0.62);
+  box-shadow: 0 10px 24px rgba(0, 94, 184, 0.1);
+}
+
+.bm-v3-view--facility .bm-shared-table-row {
+  grid-template-columns: minmax(118px, 0.78fr) minmax(300px, 2.1fr) minmax(92px, auto) minmax(104px, auto);
+  gap: 10px;
+  padding: 9px 0;
+  font-size: 0.82rem;
+}
+
+.bm-v3-view--facility .bm-v3-stack--facility .bm-shared-panel {
+  max-height: 136px;
+}
+
+.bm-v3-view--facility .bm-v3-stack--facility .bm-shared-panel:first-child {
+  max-height: 176px;
+  border-color: rgba(0, 94, 184, 0.34);
+}
+
+.bm-v3-view--facility .bm-v3-triple-grid {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr) minmax(0, 0.92fr);
+  gap: 10px;
+}
+
+.bm-v3-view--facility .bm-v3-triple-grid .bm-shared-panel {
+  max-height: 178px;
+}
+
+/* Priority 2: Facility V2 stays balanced, with coordination visible after the decision queue. */
+.bm-v2-view--facility {
+  gap: 11px;
+}
+
+.bm-v2-view--facility .bm-v2-facility-decision-grid {
+  grid-template-columns: minmax(0, 1.95fr) minmax(300px, 0.72fr);
+  gap: 12px;
+}
+
+.bm-v2-view--facility .bm-v2-emphasis-table > .bm-shared-panel {
+  max-height: 360px;
+  border-color: rgba(0, 94, 184, 0.46);
+}
+
+.bm-v2-view--facility .bm-shared-table-row {
+  grid-template-columns: minmax(120px, 0.9fr) minmax(260px, 1.8fr) minmax(80px, auto) minmax(90px, auto);
+  padding: 9px 0;
+}
+
+.bm-v2-view--facility > .bm-shared-panel[aria-label="Patient flow and discharge"] {
+  border-color: rgba(0, 94, 184, 0.22);
+}
+
+.bm-v2-view--facility .bm-v2-coordination-grid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 0.9fr);
+}
+
+/* Priority 3: Ward V3 keeps operational scan speed without over-emphasising transactions. */
+.bm-v3-view--ward .bm-v3-command-strip {
+  border-color: rgba(0, 94, 184, 0.24);
+  background: var(--pfh-surface, #ffffff);
+}
+
+.bm-v3-view--ward .bm-v3-command-strip button {
+  background: var(--pfh-surface-subtle, #f2f4f7);
+  color: var(--pfh-text-secondary, #475467);
+}
+
+.bm-v3-view--ward .bm-v3-ward-grid {
+  grid-template-columns: minmax(0, 1.72fr) minmax(300px, 0.78fr);
+  gap: 10px;
+}
+
+.bm-v3-view--ward .bm-v3-emphasis-table > .bm-shared-panel {
+  max-height: 390px;
+}
+
+.bm-v3-view--ward .bm-shared-table-row {
+  grid-template-columns: minmax(90px, 0.72fr) minmax(260px, 1.9fr) minmax(92px, auto) minmax(120px, auto);
+  padding: 8px 0;
+}
+
+.bm-v3-view--ward .bm-shared-metrics {
+  grid-template-columns: repeat(8, minmax(82px, 1fr));
+}
+
+/* Priority 4: Statewide and HHS views remain concise escalation and coordination surfaces. */
+.bm-v3-view--statewide .bm-v3-primary-grid,
+.bm-v3-view--hhs .bm-v3-primary-grid {
+  grid-template-columns: minmax(0, 1.75fr) minmax(290px, 0.72fr);
+}
+
+.bm-v3-view--statewide .bm-v3-emphasis-table > .bm-shared-panel,
+.bm-v3-view--hhs .bm-v3-emphasis-table > .bm-shared-panel {
+  max-height: 310px;
+}
+
+.bm-v3-view--statewide .bm-shared-panel,
+.bm-v3-view--hhs .bm-shared-panel {
+  max-height: 190px;
+}
+
+.bm-v2-view--statewide .bm-shared-panel,
+.bm-v2-view--hhs .bm-shared-panel {
+  max-height: 210px;
+}
+
+.theme-dark .bm-shared-table-row:hover,
+.theme-dark .bm-shared-list > div:hover {
+  background: rgba(107, 174, 255, 0.08);
+}
+
+.theme-dark .bm-shared-table-row b {
+  background: rgba(107, 174, 255, 0.14);
+  color: #9fc9ff;
+}
+
+.theme-dark .bm-v3-view--facility .bm-v3-command-strip button:first-of-type,
+.theme-dark .bm-v3-view--facility .bm-v3-command-strip button:nth-of-type(2) {
+  background: #69a7ff;
+  color: #071626;
+}
+
+@media (max-width: 1180px) {
+  .bm-reset-controls {
+    position: static;
+  }
+
+  .bm-v3-view--facility .bm-shared-banner,
+  .bm-v3-view--facility .bm-v3-facility-grid,
+  .bm-v3-view--facility .bm-v3-triple-grid,
+  .bm-v2-view--facility .bm-v2-facility-decision-grid,
+  .bm-v2-view--facility .bm-v2-coordination-grid,
+  .bm-v3-view--ward .bm-v3-ward-grid,
+  .bm-v3-view--statewide .bm-v3-primary-grid,
+  .bm-v3-view--hhs .bm-v3-primary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bm-v3-view--facility .bm-v3-command-strip div {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .bm-shared-banner,
+  .bm-v3-view--facility .bm-shared-banner,
+  .bm-v3-view--facility .bm-shared-metrics,
+  .bm-v3-view--ward .bm-shared-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .bm-v3-view--facility .bm-shared-table-row,
+  .bm-v2-view--facility .bm-shared-table-row,
+  .bm-v3-view--ward .bm-shared-table-row {
+    grid-template-columns: 1fr;
+  }
+}
