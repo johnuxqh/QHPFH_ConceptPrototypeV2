@@ -3,6 +3,10 @@
         <span>State operational status</span>
         <strong>@Snapshot.EscalationStatus</strong>
         <small>@Snapshot.LastUpdatedLabel</small>
+        @if (Mode == BedManagementVersion.V3Operational)
+        {
+            <button type="button" class="bm-statewide-status-command bm-statewide-status-command--lead" @onclick='() => RequestDetail("status-overview")'>Open state summary</button>
+        }
     </div>
 
     @if (Mode == BedManagementVersion.V1DataInsights)
@@ -10,18 +14,26 @@
         @foreach (var item in HhsSnapshots.Take(4))
         {
             <div class="bm-statewide-status-item @GetPressureClass(item.Snapshot)">
-                <span>@item.Hhs.Name</span>
+                <span>@item.Hhs.Name signal</span>
                 <strong>@item.Snapshot.EscalationStatus</strong>
                 <small>@item.Snapshot.OccupancyPercentage% occupied · @item.Snapshot.AvailableBeds available</small>
+                <a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-details")'>View details</a>
             </div>
         }
     }
+    else if (Mode == BedManagementVersion.V2Balanced)
+    {
+        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>HHS above BAU</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-escalations")'>View escalations</a></div>
+        <div class="bm-statewide-status-item is-watch"><span>State support actions</span><strong>@SupportActionCount</strong><small>Active priorities</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-actions")'>View actions</a></div>
+        <div class="bm-statewide-status-item"><span>HHS requiring review</span><strong>@ReviewCount</strong><small>Pressure watch</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-support")'>View HHS summary</a></div>
+        <div class="bm-statewide-status-item"><span>Next coordination check</span><strong>@NextCoordination</strong><small>Statewide review</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-call")'>View schedule</a></div>
+    }
     else
     {
-        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>HHS above BAU</small></div>
-        <div class="bm-statewide-status-item is-watch"><span>State support actions</span><strong>@SupportActionCount</strong><small>Active priorities</small></div>
-        <div class="bm-statewide-status-item"><span>HHS requiring review</span><strong>@ReviewCount</strong><small>Pressure watch</small></div>
-        <div class="bm-statewide-status-item"><span>Next coordination check</span><strong>@NextCoordination</strong><small>Statewide review</small></div>
+        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>Require active coordination</small><button type="button" class="bm-statewide-status-command" @onclick='() => RequestDetail("status-escalations")'>Open escalation summary</button></div>
+        <div class="bm-statewide-status-item is-watch"><span>Active state support actions</span><strong>@SupportActionCount</strong><small>Across the state network</small><button type="button" class="bm-statewide-status-command" @onclick='() => RequestDetail("status-actions")'>Review support</button></div>
+        <div class="bm-statewide-status-item"><span>HHS requiring support</span><strong>@ReviewCount</strong><small>Pressure or escalation signal</small><button type="button" class="bm-statewide-status-command" @onclick='() => RequestDetail("status-support")'>Review support</button></div>
+        <div class="bm-statewide-status-item"><span>Next coordination call</span><strong>@NextCoordination</strong><small>Statewide command check-in</small><button type="button" class="bm-statewide-status-command bm-statewide-status-command--primary" @onclick='() => RequestDetail("status-call")'>Join call</button></div>
     }
 </section>
 
@@ -29,6 +41,7 @@
     [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
     [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
     [Parameter] public BedManagementVersion Mode { get; set; } = BedManagementVersion.V2Balanced;
+    [Parameter] public EventCallback<string> OnDetailRequested { get; set; }
 
     private IReadOnlyList<(HhsNetwork Hhs, CapacitySnapshot Snapshot)> HhsSnapshots => State.HhsNetworks
         .Select(hhs => (hhs, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!))
@@ -38,5 +51,6 @@
     private int ReviewCount => HhsSnapshots.Count(item => item.Snapshot.OccupancyPercentage >= 80);
     private int SupportActionCount => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Count();
     private string NextCoordination => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).FirstOrDefault()?.TimeLabel ?? "Review due";
+    private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
     private static string GetPressureClass(CapacitySnapshot snapshot) => snapshot.EscalationStatus == "BAU" ? "is-normal" : snapshot.OccupancyPercentage >= 90 ? "is-alert" : "is-watch";
 }

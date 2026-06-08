@@ -1,13 +1,54 @@
-<section class="bm-shared-metrics @(AwarenessMode ? "bm-shared-metrics--awareness" : null)" aria-label="Capacity metrics">
-    @foreach (var metric in Metrics)
-    {
-        <div class="bm-shared-metric"><span>@metric.Label</span><strong>@metric.Value</strong></div>
-    }
-</section>
+@if (IsStatewideAwareness)
+{
+    <section class="bm-shared-metrics bm-shared-metrics--awareness bm-shared-metrics--statewide-kpis" aria-label="Statewide capacity metrics">
+        @foreach (var metric in StatewideMetrics)
+        {
+            <article class="bm-shared-metric bm-statewide-kpi bm-statewide-kpi--@metric.Accent">
+                <div class="bm-statewide-kpi__heading">
+                    <span class="bm-statewide-kpi__label">@metric.Label</span>
+                    <button type="button" class="bm-statewide-kpi__info" aria-label="Preview details for @metric.Label" @onclick="() => RequestDetail(metric.Key)">
+                        <img src="images/icons/info-@metric.IconTone.png" alt="" />
+                    </button>
+                </div>
+                <div class="bm-statewide-kpi__main">
+                    <span class="bm-statewide-kpi__icon" aria-hidden="true"><img src="images/icons/@metric.Icon-@metric.IconTone.png" alt="" /></span>
+                    <strong class="bm-statewide-kpi__number">@metric.Value</strong>
+                </div>
+                <span class="bm-statewide-kpi__subtitle">@metric.Detail</span>
+                <span class="bm-statewide-kpi__trend" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </article>
+        }
+    </section>
+}
+else
+{
+    <section class="bm-shared-metrics @(AwarenessMode ? "bm-shared-metrics--awareness" : null)" aria-label="Capacity metrics">
+        @foreach (var metric in Metrics)
+        {
+            <div class="bm-shared-metric"><span>@metric.Label</span><strong>@metric.Value</strong></div>
+        }
+    </section>
+}
 
 @code {
     [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
     [Parameter] public bool AwarenessMode { get; set; }
+    [Parameter] public EventCallback<string> OnDetailRequested { get; set; }
+
+    private bool IsStatewideAwareness => AwarenessMode && Snapshot.Id == BedManagementDemoData.StateId;
+    private int DelayedFlowCohort => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.TransferRequests;
+
+    private IReadOnlyList<StatewideMetric> StatewideMetrics =>
+    [
+        new("kpi-inpatients", "Inpatients", Snapshot.OccupiedBeds.ToString(), "Patients occupying open beds statewide", "patient", "default", "blue"),
+        new("kpi-available", "Available Beds", Snapshot.AvailableBeds.ToString(), "Ready capacity across the network", "open-bed", "green", "green"),
+        new("kpi-occupancy", "Occupancy", $"{Snapshot.OccupancyPercentage}%", "Current use of open statewide beds", "occupied-bed", "orange", "orange"),
+        new("kpi-demand", "Predicted ED Demand", Snapshot.ExpectedAdmissions.ToString(), "Expected admissions in current snapshot", "admission", "orange", "orange"),
+        new("kpi-delayed", "Delayed Flow Cohort", DelayedFlowCohort.ToString(), "Cleaning, maintenance and transfer constraints", "ddp-flow", "red", "red"),
+        new("kpi-discharges", "Discharges Today", Snapshot.PlannedDischarges.ToString(), "Planned discharge opportunities today", "activity", "green", "green")
+    ];
+
+    private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
 
     private IEnumerable<(string Label, string Value)> Metrics => AwarenessMode
         ?
@@ -25,4 +66,6 @@
             ("Pending cleaning", Snapshot.PendingCleaning.ToString()), ("Maintenance", Snapshot.PendingMaintenance.ToString()),
             ("Closed", Snapshot.ClosedBeds.ToString()), ("Occupancy", $"{Snapshot.OccupancyPercentage}%")
         ];
+
+    private sealed record StatewideMetric(string Key, string Label, string Value, string Detail, string Icon, string IconTone, string Accent);
 }
