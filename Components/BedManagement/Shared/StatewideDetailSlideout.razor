@@ -1,0 +1,97 @@
+@if (!string.IsNullOrWhiteSpace(DetailKey))
+{
+    <button type="button" class="bm-statewide-slideout__backdrop" aria-label="Close detail preview" @onclick="Close"></button>
+    <aside class="bm-statewide-slideout" aria-label="@Panel.Title detail preview">
+        <header class="bm-statewide-slideout__header">
+            <div><span>Preview only</span><h2>@Panel.Title</h2></div>
+            <button type="button" class="bm-statewide-slideout__close" aria-label="Close detail preview" @onclick="Close">×</button>
+        </header>
+
+        <div class="bm-statewide-slideout__content">
+            <section class="bm-statewide-slideout__hero">
+                <span>@Panel.Eyebrow</span>
+                <strong>@Panel.Value</strong>
+                <p>@Panel.Interpretation</p>
+                <div class="bm-statewide-slideout__trend" aria-label="Illustrative trend placeholder"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </section>
+
+            <section class="bm-statewide-slideout__section" aria-label="Supporting detail">
+                <h3>Supporting detail</h3>
+                <dl class="bm-statewide-slideout__rows">
+                    @foreach (var row in Panel.Rows)
+                    {
+                        <div><dt>@row.Label</dt><dd>@row.Value</dd></div>
+                    }
+                </dl>
+            </section>
+
+            @if (IsStatusDetail)
+            {
+                <section class="bm-statewide-slideout__section" aria-label="Related HHS">
+                    <h3>Related HHS</h3>
+                    <div class="bm-statewide-slideout__links">
+                        @foreach (var item in RelatedHhs.Take(5))
+                        {
+                            <button type="button"><span>@item.Hhs.Name</span><strong>@item.Snapshot.EscalationStatus · @item.Snapshot.OccupancyPercentage%</strong></button>
+                        }
+                    </div>
+                </section>
+            }
+            else
+            {
+                <section class="bm-statewide-slideout__section" aria-label="System signals">
+                    <h3>System signals</h3>
+                    <div class="bm-statewide-slideout__links">
+                        @foreach (var signal in State.Signals.Take(4))
+                        {
+                            <button type="button"><span>@signal.Label</span><strong>@signal.Detail</strong></button>
+                        }
+                    </div>
+                </section>
+            }
+
+            <p class="bm-statewide-slideout__note">This panel demonstrates a future drill-in pattern only. No action is saved and no workflow is started.</p>
+        </div>
+    </aside>
+}
+
+@code {
+    [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    [Parameter] public string? DetailKey { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private bool IsStatusDetail => DetailKey?.StartsWith("status-", StringComparison.Ordinal) == true;
+    private int DelayedFlowCohort => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.TransferRequests;
+    private int EscalatedCount => RelatedHhs.Count(item => item.Snapshot.EscalationStatus != "BAU");
+    private int ReviewCount => RelatedHhs.Count(item => item.Snapshot.OccupancyPercentage >= 80);
+    private int SupportActionCount => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Count();
+    private string NextCoordination => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).FirstOrDefault()?.TimeLabel ?? "Review due";
+
+    private IReadOnlyList<(HhsNetwork Hhs, CapacitySnapshot Snapshot)> RelatedHhs => State.HhsNetworks
+        .Select(hhs => (hhs, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!))
+        .OrderByDescending(item => item.Item2.OccupancyPercentage)
+        .ToArray();
+
+    private SlideoutPanel Panel => DetailKey switch
+    {
+        "kpi-inpatients" => MetricPanel("Inpatients", Snapshot.OccupiedBeds.ToString(), "STATEWIDE CURRENT CENSUS", "Current occupied beds provide a statewide view of inpatient load.", [("Open beds", Snapshot.OpenBeds.ToString()), ("Available beds", Snapshot.AvailableBeds.ToString()), ("Occupancy", $"{Snapshot.OccupancyPercentage}%")]),
+        "kpi-available" => MetricPanel("Available Beds", Snapshot.AvailableBeds.ToString(), "READY CAPACITY", "Available beds indicate immediately visible capacity in the current snapshot.", [("Physical beds", Snapshot.PhysicalBeds.ToString()), ("Open beds", Snapshot.OpenBeds.ToString()), ("Pending cleaning", Snapshot.PendingCleaning.ToString())]),
+        "kpi-occupancy" => MetricPanel("Occupancy", $"{Snapshot.OccupancyPercentage}%", "STATEWIDE OPEN BED USE", "Occupancy summarises the proportion of open beds currently occupied.", [("Occupied beds", Snapshot.OccupiedBeds.ToString()), ("Open beds", Snapshot.OpenBeds.ToString()), ("HHS requiring review", ReviewCount.ToString())]),
+        "kpi-demand" => MetricPanel("Predicted ED Demand", Snapshot.ExpectedAdmissions.ToString(), "EXPECTED ADMISSIONS", "Expected admissions are used here as the existing demo-data signal for near-term demand.", [("Expected admissions", Snapshot.ExpectedAdmissions.ToString()), ("Available beds", Snapshot.AvailableBeds.ToString()), ("Planned discharges", Snapshot.PlannedDischarges.ToString())]),
+        "kpi-delayed" => MetricPanel("Delayed Flow Cohort", DelayedFlowCohort.ToString(), "FLOW CONSTRAINTS", "This demo cohort combines existing cleaning, maintenance and transfer concern signals.", [("Transfer concerns", Snapshot.TransferRequests.ToString()), ("Pending cleaning", Snapshot.PendingCleaning.ToString()), ("Pending maintenance", Snapshot.PendingMaintenance.ToString())]),
+        "kpi-discharges" => MetricPanel("Discharges Today", Snapshot.PlannedDischarges.ToString(), "PLANNED OPPORTUNITY", "Planned discharges show the current statewide opportunity recorded in the snapshot.", [("Planned discharges", Snapshot.PlannedDischarges.ToString()), ("Expected admissions", Snapshot.ExpectedAdmissions.ToString()), ("Available beds", Snapshot.AvailableBeds.ToString())]),
+        "status-escalations" => StatusPanel("Open Escalations", EscalatedCount.ToString(), "STATE COORDINATION", "HHS above BAU are shown for coordination awareness only.", [("Owner", "State coordination"), ("Status", $"{EscalatedCount} open"), ("Next update", NextCoordination)]),
+        "status-actions" => StatusPanel("Active State Support Actions", SupportActionCount.ToString(), "SUPPORT VISIBILITY", "Existing operational signals are summarised as active support priorities.", [("Owner", "State support team"), ("Status", "Active priorities"), ("Next update", NextCoordination)]),
+        "status-support" => StatusPanel("HHS Requiring Support", ReviewCount.ToString(), "PRESSURE REVIEW", "HHS at or above the review threshold are visible for support planning.", [("Owner", "State coordination"), ("Status", "Review required"), ("Next update", NextCoordination)]),
+        "status-call" => StatusPanel("Next Coordination Call", NextCoordination, "SCHEDULE PREVIEW", "This is a preview of how coordination call context could be surfaced.", [("Owner", "State coordination"), ("Status", "Scheduled"), ("Open escalations", EscalatedCount.ToString())]),
+        "status-overview" => StatusPanel("State Operational Summary", Snapshot.EscalationStatus, "OPERATIONAL COMMAND", "A compact summary of statewide pressure and support visibility.", [("Open escalations", EscalatedCount.ToString()), ("Active support actions", SupportActionCount.ToString()), ("Next coordination", NextCoordination)]),
+        _ => StatusPanel("Statewide Signal Detail", Snapshot.EscalationStatus, "SYSTEM INSIGHTS", "Current pressure and support signals are displayed as preview-only context.", [("Occupancy", $"{Snapshot.OccupancyPercentage}%"), ("HHS requiring review", ReviewCount.ToString()), ("Last updated", Snapshot.LastUpdatedLabel)])
+    };
+
+    private static SlideoutPanel MetricPanel(string title, string value, string eyebrow, string interpretation, IReadOnlyList<(string Label, string Value)> rows) => new(title, value, eyebrow, interpretation, rows);
+    private static SlideoutPanel StatusPanel(string title, string value, string eyebrow, string interpretation, IReadOnlyList<(string Label, string Value)> rows) => new(title, value, eyebrow, interpretation, rows);
+    private Task Close() => OnClose.InvokeAsync();
+
+    private sealed record SlideoutPanel(string Title, string Value, string Eyebrow, string Interpretation, IReadOnlyList<(string Label, string Value)> Rows);
+}

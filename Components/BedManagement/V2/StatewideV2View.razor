@@ -1,8 +1,8 @@
 @using QHPFH_ConceptPrototype.Components.BedManagement.Shared
 
 <section class="bm-v2-view bm-v2-view--statewide bm-statewide-dashboard" aria-label="Statewide V2 balanced coordination view">
-    <StatewideOperationalStrip State="@State" Snapshot="@Snapshot" Mode="@BedManagementVersion.V2Balanced" />
-    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" />
+    <StatewideOperationalStrip State="@State" Snapshot="@Snapshot" OnDetailRequested="OpenDetail" Mode="@BedManagementVersion.V2Balanced" />
+    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" OnDetailRequested="OpenDetail" />
 
     <div class="bm-statewide-primary bm-statewide-primary--v2">
         <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
@@ -17,8 +17,13 @@
     <div class="bm-v2-emphasis-table bm-statewide-performance"><PerformanceTable Title="HHS performance and support summary" Rows="@HhsRows" /></div>
 </section>
 
+<StatewideDetailSlideout State="@State" Snapshot="@Snapshot" DetailKey="@_detailKey" OnClose="CloseDetail" />
+
 @code {
     [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
+    private string? _detailKey;
+    private void OpenDetail(string detailKey) => _detailKey = detailKey;
+    private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
     private IReadOnlyList<PerformanceRow> HhsRows => State.HhsNetworks.Select(hhs =>
     {
