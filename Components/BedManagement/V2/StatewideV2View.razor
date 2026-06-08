@@ -1,17 +1,20 @@
 @using QHPFH_ConceptPrototype.Components.BedManagement.Shared
 
-<section class="bm-v2-view bm-v2-view--statewide" aria-label="Statewide V2 balanced view">
-    <OperationalBanner Snapshot="@Snapshot" Message="Statewide support view: identify escalated HHS pressure, capacity constraints and where intervention is required." Tone="Balanced" />
-    <div class="bm-v2-emphasis-table"><PerformanceTable Title="HHS pressure and support priorities" Rows="@HhsRows" /></div>
-    <MetricTileRow Snapshot="@Snapshot" />
-    <div class="bm-v2-awareness-grid">
-        <FlowSwimlanePanel Snapshot="@Snapshot" />
-        <InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" />
-    </div>
-    <div class="bm-v2-secondary-grid bm-v2-secondary-grid--compact">
-        <CoordinationPanel Events="@CoordinationEvents" />
+<section class="bm-v2-view bm-v2-view--statewide bm-statewide-dashboard" aria-label="Statewide V2 balanced coordination view">
+    <StatewideOperationalStrip State="@State" Snapshot="@Snapshot" Mode="@BedManagementVersion.V2Balanced" />
+    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" />
+
+    <div class="bm-statewide-primary bm-statewide-primary--v2">
+        <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
         <ActionTracker Signals="@Actions" />
+        <FlowSwimlanePanel Snapshot="@Snapshot" />
     </div>
+
+    <div class="bm-statewide-coordination">
+        <CoordinationPanel Events="@CoordinationEvents" />
+        <InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" ContextLabel="Decision support" />
+    </div>
+    <div class="bm-v2-emphasis-table bm-statewide-performance"><PerformanceTable Title="HHS performance and support summary" Rows="@HhsRows" /></div>
 </section>
 
 @code {

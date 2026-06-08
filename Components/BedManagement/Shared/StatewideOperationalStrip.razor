@@ -1,0 +1,42 @@
+<section class="bm-statewide-status-strip bm-statewide-status-strip--@Mode.ToString().ToLowerInvariant()" aria-label="State operational status">
+    <div class="bm-statewide-status-lead">
+        <span>State operational status</span>
+        <strong>@Snapshot.EscalationStatus</strong>
+        <small>@Snapshot.LastUpdatedLabel</small>
+    </div>
+
+    @if (Mode == BedManagementVersion.V1DataInsights)
+    {
+        @foreach (var item in HhsSnapshots.Take(4))
+        {
+            <div class="bm-statewide-status-item @GetPressureClass(item.Snapshot)">
+                <span>@item.Hhs.Name</span>
+                <strong>@item.Snapshot.EscalationStatus</strong>
+                <small>@item.Snapshot.OccupancyPercentage% occupied · @item.Snapshot.AvailableBeds available</small>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>HHS above BAU</small></div>
+        <div class="bm-statewide-status-item is-watch"><span>State support actions</span><strong>@SupportActionCount</strong><small>Active priorities</small></div>
+        <div class="bm-statewide-status-item"><span>HHS requiring review</span><strong>@ReviewCount</strong><small>Pressure watch</small></div>
+        <div class="bm-statewide-status-item"><span>Next coordination check</span><strong>@NextCoordination</strong><small>Statewide review</small></div>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    [Parameter] public BedManagementVersion Mode { get; set; } = BedManagementVersion.V2Balanced;
+
+    private IReadOnlyList<(HhsNetwork Hhs, CapacitySnapshot Snapshot)> HhsSnapshots => State.HhsNetworks
+        .Select(hhs => (hhs, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!))
+        .OrderByDescending(item => item.Item2.OccupancyPercentage)
+        .ToArray();
+    private int EscalatedCount => HhsSnapshots.Count(item => item.Snapshot.EscalationStatus != "BAU");
+    private int ReviewCount => HhsSnapshots.Count(item => item.Snapshot.OccupancyPercentage >= 80);
+    private int SupportActionCount => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Count();
+    private string NextCoordination => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).FirstOrDefault()?.TimeLabel ?? "Review due";
+    private static string GetPressureClass(CapacitySnapshot snapshot) => snapshot.EscalationStatus == "BAU" ? "is-normal" : snapshot.OccupancyPercentage >= 90 ? "is-alert" : "is-watch";
+}

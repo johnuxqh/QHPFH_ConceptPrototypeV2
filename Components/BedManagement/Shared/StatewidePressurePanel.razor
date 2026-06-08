@@ -1,0 +1,38 @@
+<section class="bm-shared-panel bm-statewide-pressure" aria-label="Statewide pressure overview">
+    <header><h3>Queensland pressure overview</h3><span>@PressureCount HHS above BAU</span></header>
+    <div class="bm-statewide-pressure-layout">
+        <div class="bm-statewide-pressure-visual" aria-hidden="true">
+            <span>State capacity pressure</span>
+            <strong>@Snapshot.OccupancyPercentage%</strong>
+            <div class="bm-statewide-pressure-scale"><i style="width: @($"{Math.Min(Snapshot.OccupancyPercentage, 100)}%")"></i></div>
+            <div class="bm-statewide-pressure-summary">
+                <div><b>@Snapshot.AvailableBeds</b><small>available</small></div>
+                <div><b>@Snapshot.TransferRequests</b><small>transfers</small></div>
+                <div><b>@Constraints</b><small>constraints</small></div>
+            </div>
+        </div>
+        <ol class="bm-statewide-pressure-ranking">
+            @foreach (var item in RankedHhs)
+            {
+                <li class="@GetPressureClass(item.Snapshot)">
+                    <div><strong>@item.Hhs.Name</strong><span>@item.Snapshot.EscalationStatus</span></div>
+                    <div class="bm-statewide-pressure-bar"><i style="width: @($"{Math.Min(item.Snapshot.OccupancyPercentage, 100)}%")"></i></div>
+                    <b>@item.Snapshot.OccupancyPercentage%</b>
+                </li>
+            }
+        </ol>
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+
+    private IReadOnlyList<(HhsNetwork Hhs, CapacitySnapshot Snapshot)> RankedHhs => State.HhsNetworks
+        .Select(hhs => (hhs, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!))
+        .OrderByDescending(item => item.Item2.OccupancyPercentage)
+        .ToArray();
+    private int PressureCount => RankedHhs.Count(item => item.Snapshot.EscalationStatus != "BAU");
+    private int Constraints => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.ClosedBeds;
+    private static string GetPressureClass(CapacitySnapshot snapshot) => snapshot.EscalationStatus == "BAU" ? "is-normal" : snapshot.OccupancyPercentage >= 90 ? "is-alert" : "is-watch";
+}

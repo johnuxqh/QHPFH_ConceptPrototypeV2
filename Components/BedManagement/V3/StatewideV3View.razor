@@ -1,19 +1,20 @@
 @using QHPFH_ConceptPrototype.Components.BedManagement.Shared
 
-<section class="bm-v3-view bm-v3-view--statewide" aria-label="Statewide V3 operational view">
-    <OperationalBanner Snapshot="@Snapshot" Message="Statewide operational command: prioritise escalated HHS pressure, cross-HHS support and system constraints." Tone="Operational" />
-    <div class="bm-v3-primary-grid">
-        <div class="bm-v3-emphasis-table"><PerformanceTable Title="HHS escalation and cross-system support priorities" Rows="@HhsRows" /></div>
-        <div class="bm-v3-stack">
-            <ActionTracker Signals="@Actions" />
-            <FlowSwimlanePanel Snapshot="@Snapshot" />
-        </div>
+<section class="bm-v3-view bm-v3-view--statewide bm-statewide-dashboard" aria-label="Statewide V3 operational command view">
+    <StatewideOperationalStrip State="@State" Snapshot="@Snapshot" Mode="@BedManagementVersion.V3Operational" />
+    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" />
+
+    <div class="bm-statewide-primary bm-statewide-primary--v3">
+        <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
+        <ActionTracker Signals="@Actions" />
+        <FlowSwimlanePanel Snapshot="@Snapshot" />
     </div>
-    <MetricTileRow Snapshot="@Snapshot" />
-    <div class="bm-v3-secondary-grid">
+
+    <div class="bm-statewide-coordination bm-statewide-coordination--v3">
         <CoordinationPanel Events="@CoordinationEvents" />
         <InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V3Operational" ContextLabel="System action priorities" />
     </div>
+    <div class="bm-v3-emphasis-table bm-statewide-performance"><PerformanceTable Title="HHS escalation and cross-system support priorities" Rows="@HhsRows" /></div>
 </section>
 
 @code {
