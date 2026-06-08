@@ -2,8 +2,8 @@
 
 <section class="bm-v1-view bm-v1-view--ward" aria-label="Ward V1 awareness view">
     <OperationalBanner Snapshot="@Snapshot" Message="@($"Ward awareness: focus on movement risks, discharge readiness, transfer concerns and constraints in {Ward.Name}.")" Tone="Awareness" />
+    <div class="bm-v1-emphasis-table"><PerformanceTable Title="Movement blockers and readiness priorities" Rows="@AwarenessRows" /></div>
     <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" />
-    <div class="bm-v1-emphasis-table"><PerformanceTable Title="Key movement risks and readiness indicators" Rows="@AwarenessRows" /></div>
 </section>
 
 @code {

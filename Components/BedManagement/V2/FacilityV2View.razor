@@ -2,22 +2,21 @@
 
 <section class="bm-v2-view bm-v2-view--facility" aria-label="Facility V2 balanced view">
     <OperationalBanner Snapshot="@Snapshot" Message="@($"Bed manager SAFEST view: protect early discharge, resolve barriers and balance flow across all wards at {Facility.ShortName}.")" Tone="Balanced" />
-    <MetricTileRow Snapshot="@Snapshot" />
     <div class="bm-v2-facility-decision-grid">
-        <div class="bm-v2-emphasis-table"><PerformanceTable Title="Ward flow blockers and discharge opportunities" Rows="@WardRows" /></div>
+        <div class="bm-v2-emphasis-table"><PerformanceTable Title="Ward priorities: blockers, discharge and next-bed decisions" Rows="@WardRows" /></div>
         <div class="bm-v2-stack bm-v2-stack--decision">
             <AllocationSummary Snapshot="@Snapshot" />
             <CleaningStatusPanel Beds="@Beds" />
             <TransferQueuePanel Beds="@Beds" />
         </div>
     </div>
+    <MetricTileRow Snapshot="@Snapshot" />
     <FlowSwimlanePanel Snapshot="@Snapshot" />
     <div class="bm-v2-coordination-grid">
         <CoordinationPanel Events="@Facility.OperationalEvents" />
         <ActionTracker Signals="@Actions" />
         <InsightCardGrid Signals="@Facility.Signals" Version="@BedManagementVersion.V2Balanced" />
     </div>
-    <UtilityActionStrip />
 </section>
 
 @code {
@@ -29,5 +28,5 @@
     {
         var snapshot = BedManagementDemoData.GetWardSnapshot(ward.Id)!;
         return new PerformanceRow(ward.Name, $"{snapshot.OccupancyPercentage}%", ward.EscalationStatus, $"{snapshot.AvailableBeds} capacity · {snapshot.PlannedDischarges} discharge opportunities · {snapshot.TransferRequests} transfers · {snapshot.PendingCleaning} turnaround");
-    }).ToArray();
+    }).OrderBy(row => row.Status == "BAU").ToArray();
 }

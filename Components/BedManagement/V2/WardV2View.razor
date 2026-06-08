@@ -4,7 +4,7 @@
     <OperationalBanner Snapshot="@Snapshot" Message="@($"Ward SAFEST review: confirm senior review, discharge readiness and barriers preventing movement in {Ward.Name}.")" Tone="Balanced" />
     <FlowSwimlanePanel Snapshot="@Snapshot" />
     <div class="bm-v2-ward-review-grid">
-        <div class="bm-v2-emphasis-table"><PerformanceTable Title="All-patient journey review" Rows="@BedRows" /></div>
+        <div class="bm-v2-emphasis-table"><PerformanceTable Title="Patient movement blockers and required decisions" Rows="@BedRows" /></div>
         <div class="bm-v2-stack bm-v2-stack--review">
             <CleaningStatusPanel Beds="@Ward.Beds" />
             <TransferQueuePanel Beds="@Ward.Beds" />
@@ -15,7 +15,6 @@
         <CoordinationPanel Events="@Ward.OperationalEvents" />
         <ActionTracker Signals="@Ward.OperationalSignals" />
     </div>
-    <UtilityActionStrip />
 </section>
 
 @code {
@@ -23,9 +22,17 @@
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetWardSnapshot(Ward.Id)!;
     private IReadOnlyList<PerformanceRow> BedRows => Ward.Beds.Select(bed => new PerformanceRow(
         bed.Label,
-        bed.Status.ToString(),
+        GetActionPriority(bed),
         GetJourneyStatus(bed),
-        GetJourneyDetail(bed))).ToArray();
+        GetJourneyDetail(bed))).OrderBy(row => row.Value == "Monitor").ToArray();
+
+    private static string GetActionPriority(Bed bed)
+    {
+        if (bed.NextExpectedAction.Contains("Senior", StringComparison.OrdinalIgnoreCase)) return "Review now";
+        if (bed.Discharge?.Status == FlowStatus.Ready) return "Prepare move";
+        if (bed.Discharge is not null || bed.Transfer is not null || bed.Status is BedStatus.PendingCleaning or BedStatus.Maintenance) return "Resolve blocker";
+        return "Monitor";
+    }
 
     private static string GetJourneyStatus(Bed bed)
     {

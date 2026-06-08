@@ -2,14 +2,8 @@
 
 <section class="bm-v3-view bm-v3-view--ward" aria-label="Ward V3 operational view">
     <OperationalBanner Snapshot="@Snapshot" Message="Ward operational review: prepare the next expected action for journey barriers, discharge readiness and turnaround constraints." Tone="Operational" />
-    <div class="bm-v3-command-strip" aria-label="Ward preview actions">
-        <div><span>Ward action preparation</span><strong>@SelectedPreview</strong><small>Preview only · no patient record is changed</small></div>
-        <button type="button" @onclick='() => SelectPreview("Patient journey review preview opened")'>Review journey</button>
-        <button type="button" @onclick='() => SelectPreview("Senior review escalation preview prepared")'>Prepare senior review</button>
-        <button type="button" @onclick='() => SelectPreview("Ward action snapshot prepared for print")'>Print snapshot</button>
-    </div>
     <div class="bm-v3-ward-grid">
-        <div class="bm-v3-emphasis-table"><PerformanceTable Title="Patient journey action-preparation queue" Rows="@BedRows" /></div>
+        <div class="bm-v3-emphasis-table"><PerformanceTable Title="Patient movement blockers and required decisions" Rows="@BedRows" /></div>
         <div class="bm-v3-stack">
             <ActionTracker Signals="@Ward.OperationalSignals" />
             <CleaningStatusPanel Beds="@Ward.Beds" />
@@ -21,12 +15,10 @@
         <FlowSwimlanePanel Snapshot="@Snapshot" />
         <CoordinationPanel Events="@Ward.OperationalEvents" />
     </div>
-    <UtilityActionStrip />
 </section>
 
 @code {
     [Parameter, EditorRequired] public Ward Ward { get; set; } = default!;
-    private string SelectedPreview { get; set; } = "Select a demo action";
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetWardSnapshot(Ward.Id)!;
     private IReadOnlyList<PerformanceRow> BedRows => Ward.Beds.Select(bed => new PerformanceRow(bed.Label, GetActionPriority(bed), GetJourneyStatus(bed), GetJourneyDetail(bed))).OrderBy(row => row.Value == "Monitor").ToArray();
 
@@ -54,5 +46,4 @@
         return $"Next: {(string.IsNullOrWhiteSpace(bed.NextExpectedAction) ? bed.OperationalNote : bed.NextExpectedAction)}";
     }
 
-    private void SelectPreview(string preview) => SelectedPreview = preview;
 }

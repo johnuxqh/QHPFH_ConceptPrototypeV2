@@ -5,6 +5,7 @@
         {
             <div class="bm-shared-table-row" role="row"><strong role="cell">@row.Label</strong><span role="cell">@row.Detail</span><b role="cell">@row.Value</b><em role="cell">@row.Status</em></div>
         }
+        @if (!Rows.Any()) { <p class="bm-shared-empty">No operational priorities currently require attention.</p> }
     </div>
 </section>
 

@@ -2,30 +2,22 @@
 
 <section class="bm-v3-view bm-v3-view--statewide" aria-label="Statewide V3 operational view">
     <OperationalBanner Snapshot="@Snapshot" Message="Statewide operational command: prioritise escalated HHS pressure, cross-HHS support and system constraints." Tone="Operational" />
-    <div class="bm-v3-command-strip" aria-label="Statewide preview actions">
-        <div><span>Operational command</span><strong>@SelectedPreview</strong><small>Preview only · no action is saved</small></div>
-        <button type="button" @onclick='() => SelectPreview("Escalation review prepared")'>Review escalations</button>
-        <button type="button" @onclick='() => SelectPreview("Cross-HHS support preview opened")'>Open support queue</button>
-        <button type="button" @onclick='() => SelectPreview("Snapshot prepared for print")'>Print snapshot</button>
-    </div>
-    <MetricTileRow Snapshot="@Snapshot" />
     <div class="bm-v3-primary-grid">
-        <div class="bm-v3-emphasis-table"><PerformanceTable Title="HHS escalation and cross-system support queue" Rows="@HhsRows" /></div>
+        <div class="bm-v3-emphasis-table"><PerformanceTable Title="HHS escalation and cross-system support priorities" Rows="@HhsRows" /></div>
         <div class="bm-v3-stack">
             <ActionTracker Signals="@Actions" />
             <FlowSwimlanePanel Snapshot="@Snapshot" />
         </div>
     </div>
+    <MetricTileRow Snapshot="@Snapshot" />
     <div class="bm-v3-secondary-grid">
         <CoordinationPanel Events="@CoordinationEvents" />
         <InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V3Operational" ContextLabel="System action priorities" />
     </div>
-    <UtilityActionStrip />
 </section>
 
 @code {
     [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
-    private string SelectedPreview { get; set; } = "Select a demo action";
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
     private IReadOnlyList<PerformanceRow> HhsRows => State.HhsNetworks.Select(hhs =>
     {
@@ -35,5 +27,4 @@
     }).OrderBy(row => row.Status == "BAU").ToArray();
     private IReadOnlyList<OperationalEvent> CoordinationEvents => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).Take(5).ToArray();
     private IReadOnlyList<OperationalSignal> Actions => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Take(5).ToArray();
-    private void SelectPreview(string preview) => SelectedPreview = preview;
 }
