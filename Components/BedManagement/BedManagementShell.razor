@@ -1,4 +1,5 @@
 @using QHPFH_ConceptPrototype.Components.BedManagement.Shared
+@using QHPFH_ConceptPrototype.Components.BedManagement.V1
 @using QHPFH_ConceptPrototype.Components.BedManagement.V2
 
 <section class="page-shell-card bm-reset-page" aria-labelledby="bm-reset-title">
@@ -32,8 +33,26 @@
         SelectedFacilityChanged="OnFacilityChanged"
         SelectedWardChanged="OnWardChanged" />
 
-    <main class="bm-reset-workspace @(SelectedVersion == BedManagementVersion.V2Balanced ? "bm-reset-workspace--v2" : null)" aria-live="polite">
-        @if (SelectedVersion == BedManagementVersion.V2Balanced)
+    <main class="bm-reset-workspace @GetWorkspaceClass()" aria-live="polite">
+        @if (SelectedVersion == BedManagementVersion.V1DataInsights)
+        {
+            @switch (SelectedLevel)
+            {
+                case BedManagementLevel.Hhs when CurrentHhs is not null:
+                    <HhsV1View Hhs="@CurrentHhs" />
+                    break;
+                case BedManagementLevel.Facility when CurrentFacility is not null:
+                    <FacilityV1View Facility="@CurrentFacility" />
+                    break;
+                case BedManagementLevel.Ward when CurrentWard is not null:
+                    <WardV1View Ward="@CurrentWard" />
+                    break;
+                default:
+                    <StatewideV1View State="@BedManagementDemoData.State" />
+                    break;
+            }
+        }
+        else if (SelectedVersion == BedManagementVersion.V2Balanced)
         {
             @switch (SelectedLevel)
             {
@@ -84,7 +103,7 @@
             </article>
         }
 
-        @if (SelectedVersion == BedManagementVersion.V2Balanced)
+        @if (SelectedVersion is BedManagementVersion.V1DataInsights or BedManagementVersion.V2Balanced)
         {
             <details class="bm-reset-matrix-disclosure">
                 <summary>View all level and version variants</summary>
@@ -220,6 +239,13 @@
         new("Available beds", CurrentSnapshot.AvailableBeds.ToString(), CurrentSnapshot.AvailableBeds > 0 ? "Available" : "Watch", "Derived from selected child data"),
         new("Planned discharges", CurrentSnapshot.PlannedDischarges.ToString(), "Flow", $"{CurrentSnapshot.ExpectedAdmissions} expected admissions")
     ];
+
+    private string GetWorkspaceClass() => SelectedVersion switch
+    {
+        BedManagementVersion.V1DataInsights => "bm-reset-workspace--v1",
+        BedManagementVersion.V2Balanced => "bm-reset-workspace--v2",
+        _ => string.Empty
+    };
 
     private string CurrentIcon => SelectedVersion switch
     {
