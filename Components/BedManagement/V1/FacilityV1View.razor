@@ -2,7 +2,6 @@
 
 <section class="bm-v1-view bm-v1-view--facility" aria-label="Facility V1 awareness view">
     <OperationalBanner Snapshot="@Snapshot" Message="@($"Bed management awareness: scan ward pressure, discharge opportunity and flow blockers across {Facility.ShortName}.")" Tone="Awareness" />
-    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" />
     <div class="bm-v1-awareness-grid @(Facility.Signals.Count == 0 ? "bm-v1-awareness-grid--single" : null)">
         <div class="bm-v1-emphasis-table"><PerformanceTable Title="Ward pressure, opportunity and constraints" Rows="@WardRows" /></div>
         @if (Facility.Signals.Count > 0)
@@ -10,6 +9,7 @@
             <InsightCardGrid Signals="@Facility.Signals" Version="@BedManagementVersion.V2Balanced" ContextLabel="V1 awareness" />
         }
     </div>
+    <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" />
 </section>
 
 @code {
@@ -20,5 +20,5 @@
         var snapshot = BedManagementDemoData.GetWardSnapshot(ward.Id)!;
         var balance = snapshot.PlannedDischarges >= snapshot.ExpectedAdmissions ? "Discharge opportunity" : "Admission pressure";
         return new PerformanceRow(ward.Name, $"{snapshot.OccupancyPercentage}%", ward.EscalationStatus, $"{balance} · {snapshot.PlannedDischarges} planned discharges · {snapshot.TransferRequests} transfer concerns · {snapshot.ClosedBeds + snapshot.PendingMaintenance} constrained beds");
-    }).ToArray();
+    }).OrderBy(row => row.Status == "BAU").ToArray();
 }

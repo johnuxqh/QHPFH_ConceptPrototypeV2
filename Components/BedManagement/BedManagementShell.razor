@@ -6,16 +6,9 @@
 <section class="page-shell-card bm-reset-page" aria-labelledby="bm-reset-title">
     <header class="bm-reset-hero">
         <div>
-            <p class="bm-reset-eyebrow">Patient Flow Hub / Bed Management reset</p>
+            <p class="bm-reset-eyebrow">Patient Flow Hub / Bed Management</p>
             <h1 id="bm-reset-title">Bed Management</h1>
-            <p class="bm-reset-summary">Release 2 framework for moving between Statewide, HHS, Facility and Ward views without changing the stable PFH shell.</p>
-        </div>
-        <div class="bm-reset-hero-card" aria-label="Preferred release direction">
-            <img src="images/icons/dd-bed-default.png" alt="" />
-            <div>
-                <span>Preferred direction</span>
-                <strong>V2 Balanced</strong>
-            </div>
+            <p class="bm-reset-summary">Operational decision support across Statewide, HHS, Facility and Ward flow.</p>
         </div>
     </header>
 
@@ -148,31 +141,6 @@
             </section>
         }
     </main>
-
-    <details class="bm-p3-preview">
-        <summary>P3 component preview — selected context</summary>
-        <div class="bm-p3-preview-body">
-            <OperationalBanner Snapshot="@CurrentSnapshot" Message="Reusable component preview only — retained below the core screens for component review." Tone="Preview" />
-            <MetricTileRow Snapshot="@CurrentSnapshot" />
-            <FlowSwimlanePanel Snapshot="@CurrentSnapshot" />
-            <div class="bm-p3-preview-grid">
-                <InsightCardGrid Signals="@CurrentInsightSignals" Version="@SelectedVersion" />
-                <PerformanceTable Title="Selected context summary" Rows="@CurrentPerformanceRows" />
-                <CoordinationPanel Events="@CurrentEvents" />
-                <ActionTracker Signals="@CurrentOperationalSignals" />
-                <AllocationSummary Snapshot="@CurrentSnapshot" />
-                <CleaningStatusPanel Beds="@CurrentBeds" />
-                <TransferQueuePanel Beds="@CurrentBeds" />
-            </div>
-            <UtilityActionStrip />
-            <div class="bm-p3-preview-utilities">
-                <ChatPreviewPanel />
-                <ReportsPreviewPanel />
-                <DowntimePreviewPanel />
-                <OnCallPreviewPanel />
-            </div>
-        </div>
-    </details>
 </section>
 
 @code {
@@ -206,14 +174,6 @@
 
     private BedManagementReference CurrentReference => References.Single(reference => reference.Level == SelectedLevel && reference.Version == SelectedVersion);
 
-    private CapacitySnapshot CurrentSnapshot => SelectedLevel switch
-    {
-        BedManagementLevel.Hhs => BedManagementDemoData.GetHhsSnapshot(SelectedHhs) ?? BedManagementDemoData.GetStatewideSnapshot(),
-        BedManagementLevel.Facility => BedManagementDemoData.GetFacilitySnapshot(SelectedFacility) ?? BedManagementDemoData.GetStatewideSnapshot(),
-        BedManagementLevel.Ward => BedManagementDemoData.GetWardSnapshot(SelectedWard) ?? BedManagementDemoData.GetStatewideSnapshot(),
-        _ => BedManagementDemoData.GetStatewideSnapshot()
-    };
-
     private string DisplayLevel => GetLevelLabel(SelectedLevel);
 
     private string DisplayVersion => GetVersionLabel(SelectedVersion);
@@ -229,35 +189,6 @@
     private Facility? CurrentFacility => BedManagementDemoData.GetFacility(SelectedFacility);
 
     private HhsNetwork? CurrentHhs => BedManagementDemoData.GetHhs(SelectedHhs);
-
-    private IReadOnlyList<Bed> CurrentBeds => SelectedLevel switch
-    {
-        BedManagementLevel.Ward => CurrentWard?.Beds ?? [],
-        BedManagementLevel.Facility => CurrentFacility?.Wards.SelectMany(ward => ward.Beds).ToArray() ?? [],
-        BedManagementLevel.Hhs => CurrentHhs?.Facilities.SelectMany(facility => facility.Wards).SelectMany(ward => ward.Beds).ToArray() ?? [],
-        _ => BedManagementDemoData.State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.Beds).ToArray()
-    };
-
-    private IReadOnlyList<InsightSignal> CurrentInsightSignals => SelectedLevel switch
-    {
-        BedManagementLevel.Facility => CurrentFacility?.Signals ?? [],
-        BedManagementLevel.Hhs => CurrentHhs?.Signals ?? [],
-        BedManagementLevel.Ward => CurrentFacility?.Signals ?? [],
-        _ => BedManagementDemoData.State.Signals
-    };
-
-    private IReadOnlyList<OperationalEvent> CurrentEvents => SelectedLevel == BedManagementLevel.Ward
-        ? CurrentWard?.OperationalEvents ?? []
-        : CurrentFacility?.OperationalEvents ?? [];
-
-    private IReadOnlyList<OperationalSignal> CurrentOperationalSignals => CurrentWard?.OperationalSignals ?? [];
-
-    private IReadOnlyList<PerformanceRow> CurrentPerformanceRows =>
-    [
-        new("Occupancy", $"{CurrentSnapshot.OccupancyPercentage}%", CurrentSnapshot.EscalationStatus, CurrentSnapshot.Label),
-        new("Available beds", CurrentSnapshot.AvailableBeds.ToString(), CurrentSnapshot.AvailableBeds > 0 ? "Available" : "Watch", "Derived from selected child data"),
-        new("Planned discharges", CurrentSnapshot.PlannedDischarges.ToString(), "Flow", $"{CurrentSnapshot.ExpectedAdmissions} expected admissions")
-    ];
 
     private string GetWorkspaceClass() => SelectedVersion switch
     {

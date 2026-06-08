@@ -2,33 +2,24 @@
 
 <section class="bm-v3-view bm-v3-view--facility" aria-label="Facility V3 operational view">
     <OperationalBanner Snapshot="@Snapshot" Message="Bed manager operational workspace: resolve blockers, protect discharge opportunities and prepare the next-bed decision." Tone="Operational" />
-    <div class="bm-v3-command-strip" aria-label="Facility preview actions">
-        <div><span>Bed manager action desk</span><strong>@SelectedPreview</strong><small>Preview only · no assignment or action is saved</small></div>
-        <button type="button" @onclick='() => SelectPreview("Priority ward review prepared")'>Review priority</button>
-        <button type="button" @onclick='() => SelectPreview("Next-bed decision preview prepared")'>Prepare next bed</button>
-        <button type="button" @onclick='() => SelectPreview("Escalation preview prepared")'>Escalate blocker</button>
-        <button type="button" @onclick='() => SelectPreview("Operational snapshot prepared for print")'>Print snapshot</button>
-    </div>
-    <MetricTileRow Snapshot="@Snapshot" />
     <div class="bm-v3-facility-grid">
-        <div class="bm-v3-emphasis-table"><PerformanceTable Title="Ward blocker, discharge and next-bed decision queue" Rows="@WardRows" /></div>
+        <div class="bm-v3-emphasis-table"><PerformanceTable Title="Ward priorities: blockers, discharge and next-bed decisions" Rows="@WardRows" /></div>
         <div class="bm-v3-stack bm-v3-stack--facility">
             <ActionTracker Signals="@Actions" />
             <AllocationSummary Snapshot="@Snapshot" />
             <CleaningStatusPanel Beds="@Beds" />
         </div>
     </div>
+    <MetricTileRow Snapshot="@Snapshot" />
     <div class="bm-v3-triple-grid">
         <TransferQueuePanel Beds="@Beds" />
         <CoordinationPanel Events="@Facility.OperationalEvents" />
         <FlowSwimlanePanel Snapshot="@Snapshot" />
     </div>
-    <UtilityActionStrip />
 </section>
 
 @code {
     [Parameter, EditorRequired] public Facility Facility { get; set; } = default!;
-    private string SelectedPreview { get; set; } = "Select a demo action";
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetFacilitySnapshot(Facility.Id)!;
     private IReadOnlyList<Bed> Beds => Facility.Wards.SelectMany(ward => ward.Beds).ToArray();
     private IReadOnlyList<OperationalSignal> Actions => Facility.Wards.SelectMany(ward => ward.OperationalSignals).Take(5).ToArray();
@@ -39,5 +30,4 @@
         var priority = blockerCount > 0 || snapshot.ExpectedAdmissions > snapshot.AvailableBeds ? "Review now" : "Monitor";
         return new PerformanceRow(ward.Name, priority, ward.EscalationStatus, $"{snapshot.AvailableBeds} available · {snapshot.PlannedDischarges} discharge opportunities · {snapshot.TransferRequests} transfers · {blockerCount} blockers");
     }).OrderBy(row => row.Value == "Monitor").ToArray();
-    private void SelectPreview(string preview) => SelectedPreview = preview;
 }
