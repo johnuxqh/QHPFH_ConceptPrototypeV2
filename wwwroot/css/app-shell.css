@@ -797,6 +797,10 @@ button, input { font: inherit; }
   pointer-events: none;
 }
 
+.nav-context-strip .bm-shared-context {
+  pointer-events: auto;
+}
+
 .nav-context-strip strong {
   padding: 4px 10px;
   border-radius: 5px;

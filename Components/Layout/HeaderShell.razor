@@ -1,3 +1,5 @@
+@using Microsoft.AspNetCore.Components.Sections
+
 <header class="concept-header" role="banner">
     @if (_isProfileOpen)
     {
@@ -9,11 +11,12 @@
             <img class="qld-logo" src="@(IsDarkMode ? DarkLogoPath : LightLogoPath)" alt="Queensland Government" />
             <div class="qld-divider" aria-hidden="true"></div>
             <div class="qld-title-wrap">
-                <div class="qld-title"><strong>QH</strong> Patient Flow Hub</div>
+                <div class="qld-title"><strong>QH</strong> Patient Flow Hub<SectionOutlet SectionName="BedManagementHeaderTitle" /></div>
             </div>
         </div>
 
         <div class="qld-actions">
+            <SectionOutlet SectionName="BedManagementHeaderControls" />
             @HeaderContent
             <div class="qld-search" role="search" aria-label="Header search">
                 <span class="qld-search-icon" aria-hidden="true">
