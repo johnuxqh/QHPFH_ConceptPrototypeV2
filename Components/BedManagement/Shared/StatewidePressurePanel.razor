@@ -1,26 +1,39 @@
-<section class="bm-shared-panel bm-statewide-pressure" aria-label="Statewide pressure overview">
-    <header><h3>Queensland pressure overview</h3><span>@PressureCount HHS above BAU</span></header>
+<section class="bm-shared-panel bm-statewide-pressure" aria-label="Queensland Pressure Map">
+    <header>
+        <h3>Queensland Pressure Map</h3>
+        <span>@PressureCount HHS requiring attention</span>
+    </header>
     <div class="bm-statewide-pressure-layout">
-        <div class="bm-statewide-pressure-visual" aria-hidden="true">
-            <span>State capacity pressure</span>
-            <strong>@Snapshot.OccupancyPercentage%</strong>
-            <div class="bm-statewide-pressure-scale"><i style="width: @($"{Math.Min(Snapshot.OccupancyPercentage, 100)}%")"></i></div>
-            <div class="bm-statewide-pressure-summary">
-                <div><b>@Snapshot.AvailableBeds</b><small>available</small></div>
-                <div><b>@Snapshot.TransferRequests</b><small>transfers</small></div>
-                <div><b>@Constraints</b><small>constraints</small></div>
+        <div class="bm-statewide-pressure-map" aria-label="Visual pressure intelligence by Queensland HHS">
+            <img class="bm-statewide-pressure-map__image" src="images/maps/qld-hhs-pressure-map.png" alt="Prototype Queensland HHS pressure map" onerror="this.hidden=true" />
+            <div class="bm-statewide-pressure-map__regions" aria-label="Prototype pressure map placeholder regions">
+                @foreach (var item in MapRegions)
+                {
+                    <button type="button" class="bm-statewide-pressure-region @item.CssClass" style="@item.Position" aria-label="@item.Name, @item.Tier, @item.Reason, @item.Status" data-tooltip="@($"{item.Name} · {item.Tier} · {item.Reason} · {item.Status}")"></button>
+                }
             </div>
+            <ul class="bm-statewide-pressure-legend" aria-label="Pressure categories">
+                @foreach (var item in Legend)
+                {
+                    <li><i class="@item.CssClass"></i><span>@item.Label</span></li>
+                }
+            </ul>
         </div>
-        <ol class="bm-statewide-pressure-ranking">
-            @foreach (var item in RankedHhs)
-            {
-                <li class="@GetPressureClass(item.Snapshot)">
-                    <div><strong>@item.Hhs.Name</strong><span>@item.Snapshot.EscalationStatus</span></div>
-                    <div class="bm-statewide-pressure-bar"><i style="width: @($"{Math.Min(item.Snapshot.OccupancyPercentage, 100)}%")"></i></div>
-                    <b>@item.Snapshot.OccupancyPercentage%</b>
-                </li>
-            }
-        </ol>
+        <div class="bm-statewide-pressure-attention">
+            <h4>Top HHS Requiring Attention</h4>
+            <div class="bm-statewide-pressure-attention__head"><span>Rank</span><span>HHS Name</span><span>Tier</span></div>
+            <ol class="bm-statewide-pressure-ranking">
+                @for (var index = 0; index < Math.Min(RankedHhs.Count, 5); index++)
+                {
+                    var item = RankedHhs[index];
+                    <li>
+                        <span class="bm-statewide-pressure-rank">@(index + 1)</span>
+                        <strong>@ShortName(item.Hhs.Name)</strong>
+                        <b class="@GetPressureClass(item.Snapshot)">@GetTier(item.Snapshot)</b>
+                    </li>
+                }
+            </ol>
+        </div>
     </div>
 </section>
 
@@ -32,7 +45,28 @@
         .Select(hhs => (hhs, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!))
         .OrderByDescending(item => item.Item2.OccupancyPercentage)
         .ToArray();
-    private int PressureCount => RankedHhs.Count(item => item.Snapshot.EscalationStatus != "BAU");
-    private int Constraints => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.ClosedBeds;
-    private static string GetPressureClass(CapacitySnapshot snapshot) => snapshot.EscalationStatus == "BAU" ? "is-normal" : snapshot.OccupancyPercentage >= 90 ? "is-alert" : "is-watch";
+    private int PressureCount => RankedHhs.Count(item => item.Snapshot.EscalationStatus != "BAU" || item.Snapshot.OccupancyPercentage >= 80);
+
+    private IReadOnlyList<MapRegion> MapRegions =>
+    [
+        new("Far North Queensland", "Tier 1", "Regional capacity monitoring", "Monitoring", "is-monitor", "top: 3%; left: 46%; width: 20%; height: 21%;"),
+        new("North Queensland", "Tier 2", "QAS demand escalation", "Escalation active", "is-high", "top: 22%; left: 39%; width: 29%; height: 20%;"),
+        new("Central Queensland", "Tier 1", "Statewide transfer constraints", "Monitoring", "is-monitor", "top: 40%; left: 31%; width: 36%; height: 21%;"),
+        new("Metro North", "Tier 3", "Cleaning backlog", "State review active", "is-extreme", "top: 59%; left: 40%; width: 29%; height: 17%;"),
+        new("Metro South", "Tier 2", "Delayed discharge pressure", "Escalation active", "is-high", "top: 72%; left: 34%; width: 34%; height: 16%;"),
+        new("Gold Coast", "Tier 2", "Elective surge", "Under review", "is-high", "top: 84%; left: 48%; width: 26%; height: 12%;")
+    ];
+
+    private static readonly IReadOnlyList<LegendItem> Legend =
+    [
+        new("Normal", "is-normal"), new("Monitor", "is-monitor"), new("High", "is-high"),
+        new("Extreme", "is-extreme"), new("Critical", "is-critical"), new("No Data", "is-no-data")
+    ];
+
+    private static string ShortName(string name) => name.Replace(" HHS", string.Empty, StringComparison.OrdinalIgnoreCase);
+    private static string GetTier(CapacitySnapshot snapshot) => snapshot.OccupancyPercentage >= 90 ? "Tier 3 · Extreme" : snapshot.OccupancyPercentage >= 80 ? "Tier 2 · High" : "Tier 1 · Monitor";
+    private static string GetPressureClass(CapacitySnapshot snapshot) => snapshot.OccupancyPercentage >= 90 ? "is-extreme" : snapshot.OccupancyPercentage >= 80 ? "is-high" : "is-monitor";
+
+    private sealed record MapRegion(string Name, string Tier, string Reason, string Status, string CssClass, string Position);
+    private sealed record LegendItem(string Label, string CssClass);
 }

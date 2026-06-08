@@ -6,10 +6,10 @@
 
     <div class="bm-statewide-primary bm-statewide-primary--v1">
         <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
-        <FlowSwimlanePanel Snapshot="@Snapshot" />
+        <StatewideFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V1DataInsights" OnDetailRequested="OpenDetail" />
     </div>
 
-    <div class="bm-statewide-insights"><InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" ContextLabel="State insights" /></div>
+    <div class="bm-statewide-insights"><InsightCardGrid Signals="@V1Insights" Version="@BedManagementVersion.V2Balanced" ContextLabel="State insights" /></div>
     <div class="bm-v1-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V1DataInsights" Title="Statewide HHS performance summary" /></div>
 </section>
 
@@ -21,4 +21,5 @@
     private void OpenDetail(string detailKey) => _detailKey = detailKey;
     private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
+    private IReadOnlyList<InsightSignal> V1Insights => State.Signals.Where(signal => signal.Id != "state-senior-review").ToArray();
 }
