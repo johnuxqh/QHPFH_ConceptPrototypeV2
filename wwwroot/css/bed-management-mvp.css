@@ -791,3 +791,320 @@
 .theme-dark .bm-shared-empty {
   background: rgba(107, 174, 255, 0.08);
 }
+
+/* P8.1 statewide reference parity: operational dashboard composition without shell duplication. */
+.bm-statewide-dashboard {
+  gap: 10px;
+}
+
+.bm-statewide-status-strip {
+  display: grid;
+  grid-template-columns: minmax(230px, 1.35fr) repeat(4, minmax(145px, 1fr));
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 12px;
+  background: linear-gradient(90deg, rgba(255, 247, 237, 0.92), var(--pfh-surface, #ffffff));
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.bm-statewide-status-lead,
+.bm-statewide-status-item {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: 76px;
+  padding: 10px 14px;
+}
+
+.bm-statewide-status-item::before {
+  position: absolute;
+  inset: 14px auto 14px 0;
+  width: 1px;
+  background: rgba(245, 158, 11, 0.24);
+  content: "";
+}
+
+.bm-statewide-status-lead span,
+.bm-statewide-status-item span {
+  overflow: hidden;
+  color: var(--pfh-text-secondary, #475467);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.bm-statewide-status-lead span {
+  color: #c2410c;
+}
+
+.bm-statewide-status-lead strong {
+  color: var(--pfh-text-primary, #101828);
+  font-size: 1rem;
+}
+
+.bm-statewide-status-item strong {
+  color: var(--pfh-text-primary, #101828);
+  font-size: 0.88rem;
+}
+
+.bm-statewide-status-lead small,
+.bm-statewide-status-item small {
+  overflow: hidden;
+  color: var(--pfh-text-muted, #667085);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bm-statewide-status-item strong::before {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #12b76a;
+  content: "";
+}
+
+.bm-statewide-status-item.is-watch strong::before { background: #f79009; }
+.bm-statewide-status-item.is-alert strong::before { background: #f04438; }
+.bm-statewide-status-strip--v3operational { border-color: rgba(0, 94, 184, 0.3); }
+
+.bm-statewide-dashboard > .bm-shared-metrics--awareness {
+  grid-template-columns: repeat(5, minmax(105px, 1fr));
+  gap: 8px;
+  opacity: 1;
+}
+
+.bm-statewide-dashboard > .bm-shared-metrics--awareness .bm-shared-metric {
+  position: relative;
+  min-height: 72px;
+  padding: 12px 14px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.bm-statewide-dashboard > .bm-shared-metrics--awareness .bm-shared-metric::after {
+  position: absolute;
+  right: -16px;
+  bottom: -25px;
+  width: 62px;
+  height: 62px;
+  border: 9px solid rgba(0, 94, 184, 0.06);
+  border-radius: 50%;
+  content: "";
+}
+
+.bm-statewide-dashboard > .bm-shared-metrics--awareness .bm-shared-metric strong {
+  font-size: 1.42rem;
+}
+
+.bm-statewide-primary {
+  display: grid;
+  grid-template-columns: minmax(400px, 1.08fr) minmax(0, 1.42fr);
+  gap: 10px;
+  min-width: 0;
+}
+
+.bm-statewide-primary--v2,
+.bm-statewide-primary--v3 {
+  grid-template-columns: minmax(360px, 0.9fr) minmax(280px, 0.78fr) minmax(340px, 1fr);
+}
+
+.bm-statewide-dashboard .bm-statewide-primary > .bm-shared-panel,
+.bm-statewide-dashboard .bm-statewide-coordination > .bm-shared-panel,
+.bm-statewide-dashboard .bm-statewide-insights > .bm-shared-panel,
+.bm-statewide-dashboard .bm-statewide-performance > .bm-shared-panel {
+  max-height: none;
+  overflow: visible;
+}
+
+.bm-statewide-primary--v1 > .bm-shared-panel[aria-label="Patient flow and discharge"] {
+  align-self: stretch;
+}
+
+.bm-statewide-primary--v1 .bm-shared-swimlanes {
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  height: calc(100% - 34px);
+}
+
+.bm-statewide-primary--v1 .bm-shared-swimlanes div {
+  align-content: center;
+  min-height: 76px;
+}
+
+.bm-statewide-primary--v2 .bm-shared-swimlanes,
+.bm-statewide-primary--v3 .bm-shared-swimlanes {
+  grid-template-columns: repeat(2, minmax(90px, 1fr));
+}
+
+.bm-statewide-pressure-layout {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.65fr) minmax(210px, 1fr);
+  gap: 14px;
+}
+
+.bm-statewide-pressure-visual {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid rgba(0, 94, 184, 0.12);
+  border-radius: 10px;
+  background: radial-gradient(circle at 50% 20%, rgba(0, 94, 184, 0.12), transparent 56%), var(--pfh-surface-subtle, #f7f9fc);
+  text-align: center;
+}
+
+.bm-statewide-pressure-visual > span {
+  color: var(--pfh-text-muted, #667085);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.bm-statewide-pressure-visual > strong {
+  color: var(--pfh-primary-blue, #005eb8);
+  font-size: 2rem;
+}
+
+.bm-statewide-pressure-scale,
+.bm-statewide-pressure-bar {
+  overflow: hidden;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--pfh-border, #e4e7ec);
+}
+
+.bm-statewide-pressure-scale i,
+.bm-statewide-pressure-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #12b76a, #f79009 68%, #f04438);
+}
+
+.bm-statewide-pressure-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.bm-statewide-pressure-summary div { display: grid; gap: 2px; }
+.bm-statewide-pressure-summary b { font-size: 0.8rem; }
+.bm-statewide-pressure-summary small { color: var(--pfh-text-muted, #667085); font-size: 0.58rem; font-weight: 700; }
+
+.bm-statewide-pressure-ranking {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: pressure-rank;
+}
+
+.bm-statewide-pressure-ranking li {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(70px, 0.72fr) 44px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 2px;
+  border-bottom: 1px solid var(--pfh-border, #e4e7ec);
+  counter-increment: pressure-rank;
+}
+
+.bm-statewide-pressure-ranking li:last-child { border-bottom: 0; }
+.bm-statewide-pressure-ranking li div:first-child { display: grid; gap: 2px; }
+.bm-statewide-pressure-ranking strong { font-size: 0.76rem; }
+.bm-statewide-pressure-ranking span { color: var(--pfh-text-muted, #667085); font-size: 0.62rem; font-weight: 700; }
+.bm-statewide-pressure-ranking b { color: var(--pfh-text-secondary, #475467); font-size: 0.72rem; text-align: right; }
+.bm-statewide-pressure-ranking .is-alert b { color: #d92d20; }
+.bm-statewide-pressure-ranking .is-watch b { color: #dc6803; }
+.bm-statewide-pressure-ranking .is-normal b { color: #027a48; }
+
+.bm-statewide-insights .bm-shared-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.bm-statewide-coordination {
+  display: grid;
+  grid-template-columns: minmax(0, 1.28fr) minmax(280px, 0.72fr);
+  gap: 10px;
+  min-width: 0;
+}
+
+.bm-statewide-coordination--v3 {
+  grid-template-columns: minmax(0, 1.45fr) minmax(250px, 0.55fr);
+}
+
+.bm-statewide-coordination .bm-shared-card-grid {
+  grid-template-columns: 1fr;
+}
+
+.bm-statewide-dashboard .bm-statewide-performance > .bm-shared-panel {
+  border-color: var(--pfh-border, #d9e2ec);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.bm-statewide-dashboard .bm-statewide-performance .bm-shared-table-row {
+  grid-template-columns: minmax(130px, 0.8fr) minmax(300px, 2fr) minmax(90px, auto) minmax(110px, auto);
+  padding: 8px 0;
+}
+
+.bm-statewide-dashboard + .bm-reset-matrix-disclosure {
+  margin-top: 2px;
+  opacity: 0.72;
+}
+
+.theme-dark .bm-statewide-status-strip {
+  border-color: rgba(245, 158, 11, 0.26);
+  background: linear-gradient(90deg, rgba(67, 43, 20, 0.65), rgba(17, 30, 52, 0.94));
+}
+
+.theme-dark .bm-statewide-status-lead strong,
+.theme-dark .bm-statewide-status-item strong,
+.theme-dark .bm-statewide-pressure-summary b {
+  color: #edf4ff;
+}
+
+.theme-dark .bm-statewide-pressure-visual {
+  background: radial-gradient(circle at 50% 20%, rgba(107, 174, 255, 0.16), transparent 56%), rgba(12, 22, 38, 0.9);
+}
+
+@media (max-width: 1280px) {
+  .bm-statewide-status-strip { grid-template-columns: minmax(210px, 1.2fr) repeat(4, minmax(125px, 1fr)); }
+  .bm-statewide-primary--v2,
+  .bm-statewide-primary--v3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bm-statewide-primary--v2 > .bm-shared-panel:last-child,
+  .bm-statewide-primary--v3 > .bm-shared-panel:last-child { grid-column: 1 / -1; }
+}
+
+@media (max-width: 980px) {
+  .bm-statewide-status-strip,
+  .bm-statewide-primary,
+  .bm-statewide-primary--v2,
+  .bm-statewide-primary--v3,
+  .bm-statewide-coordination,
+  .bm-statewide-coordination--v3 { grid-template-columns: 1fr; }
+  .bm-statewide-status-item::before { inset: 0 14px auto; width: auto; height: 1px; }
+  .bm-statewide-primary--v2 > .bm-shared-panel:last-child,
+  .bm-statewide-primary--v3 > .bm-shared-panel:last-child { grid-column: auto; }
+  .bm-statewide-insights .bm-shared-card-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .bm-statewide-dashboard > .bm-shared-metrics--awareness,
+  .bm-statewide-pressure-layout,
+  .bm-statewide-primary--v1 .bm-shared-swimlanes,
+  .bm-statewide-primary--v2 .bm-shared-swimlanes,
+  .bm-statewide-primary--v3 .bm-shared-swimlanes { grid-template-columns: 1fr; }
+  .bm-statewide-dashboard .bm-statewide-performance .bm-shared-table-row,
+  .bm-statewide-pressure-ranking li { grid-template-columns: 1fr; }
+  .bm-statewide-pressure-ranking b { text-align: left; }
+}
