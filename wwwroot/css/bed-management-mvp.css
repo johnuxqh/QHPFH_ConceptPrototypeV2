@@ -431,3 +431,35 @@
 @media (max-width: 1180px) { .bm-v1-awareness-grid { grid-template-columns: 1fr; } }
 @media (max-width: 860px) { .bm-v1-view .bm-shared-metrics--awareness { grid-template-columns: repeat(2, minmax(100px, 1fr)); } .bm-v1-view .bm-shared-table-row { grid-template-columns: 1fr; } }
 .bm-v1-awareness-grid--single { grid-template-columns: minmax(0, 1fr); }
+
+/* P6 V3 operational mode: dense, queue-led command surfaces with prototype-only actions. */
+.bm-reset-workspace--v3 { grid-template-columns: minmax(0, 1fr); }
+.bm-v3-view { display: grid; gap: 8px; min-width: 0; }
+.bm-v3-view .bm-shared-banner { padding-block: 9px; border-left: 4px solid var(--pfh-primary-blue, #005eb8); }
+.bm-v3-view .bm-shared-metrics { gap: 5px; }
+.bm-v3-view .bm-shared-metric { padding: 6px 8px; }
+.bm-v3-view .bm-shared-metric strong { font-size: 1.05rem; }
+.bm-v3-view .bm-shared-panel { max-height: 190px; overflow: auto; padding: 9px; }
+.bm-v3-view .bm-shared-panel header { margin-bottom: 6px; }
+.bm-v3-view .bm-shared-table-row { grid-template-columns: minmax(85px, .75fr) minmax(240px, 2fr) minmax(90px, auto) minmax(90px, auto); padding: 7px 0; }
+.bm-v3-view .bm-shared-list > div { padding: 6px 0; }
+.bm-v3-view .bm-shared-utility { justify-content: flex-end; padding: 6px; }
+.bm-v3-command-strip { display: flex; align-items: center; justify-content: flex-end; gap: 6px; padding: 7px 9px; border: 1px solid rgba(0, 94, 184, .35); border-radius: 10px; background: linear-gradient(90deg, var(--pfh-surface, #fff), var(--pfh-surface-subtle, #f4f8fc)); }
+.bm-v3-command-strip div { display: grid; gap: 1px; margin-right: auto; min-width: 230px; }
+.bm-v3-command-strip span, .bm-v3-command-strip small { color: var(--pfh-text-muted, #667085); font-size: .68rem; font-weight: 700; }
+.bm-v3-command-strip strong { font-size: .8rem; }
+.bm-v3-command-strip button { padding: 6px 9px; border: 1px solid rgba(0, 94, 184, .45); border-radius: 7px; background: var(--pfh-surface, #fff); color: var(--pfh-primary-blue, #005eb8); font: inherit; font-size: .72rem; font-weight: 800; cursor: pointer; }
+.bm-v3-command-strip button:hover, .bm-v3-command-strip button:focus-visible { background: rgba(0, 94, 184, .08); outline: 2px solid rgba(0, 94, 184, .25); outline-offset: 1px; }
+.bm-v3-primary-grid, .bm-v3-facility-grid, .bm-v3-ward-grid { display: grid; grid-template-columns: minmax(0, 1.8fr) minmax(310px, .72fr); gap: 8px; align-items: start; }
+.bm-v3-secondary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.bm-v3-triple-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.bm-v3-stack { display: grid; gap: 8px; min-width: 0; }
+.bm-v3-emphasis-table > .bm-shared-panel { max-height: 300px; border-color: rgba(0, 94, 184, .48); box-shadow: 0 6px 16px rgba(15, 23, 42, .07); }
+.bm-v3-emphasis-table > .bm-shared-panel header { position: sticky; top: -9px; z-index: 1; padding: 7px 0; border-bottom: 2px solid rgba(0, 94, 184, .2); background: var(--pfh-surface, #fff); }
+.bm-v3-view--facility .bm-v3-emphasis-table > .bm-shared-panel, .bm-v3-view--ward .bm-v3-emphasis-table > .bm-shared-panel { max-height: 380px; }
+.bm-v3-stack--facility .bm-shared-panel { max-height: 120px; }
+.theme-dark .bm-v3-command-strip { background: linear-gradient(90deg, rgba(17, 30, 52, .96), rgba(12, 22, 38, .92)); border-color: rgba(107, 174, 255, .35); }
+.theme-dark .bm-v3-command-strip button { background: rgba(12, 22, 38, .9); border-color: rgba(107, 174, 255, .4); color: #9fc9ff; }
+.theme-dark .bm-v3-emphasis-table > .bm-shared-panel header { background: rgba(17, 30, 52, .98); }
+@media (max-width: 1180px) { .bm-v3-primary-grid, .bm-v3-facility-grid, .bm-v3-ward-grid, .bm-v3-secondary-grid, .bm-v3-triple-grid { grid-template-columns: 1fr; } .bm-v3-command-strip { flex-wrap: wrap; justify-content: flex-start; } .bm-v3-command-strip div { flex-basis: 100%; } }
+@media (max-width: 760px) { .bm-v3-view .bm-shared-table-row { grid-template-columns: 1fr; } .bm-v3-command-strip button { flex: 1 1 140px; } }
