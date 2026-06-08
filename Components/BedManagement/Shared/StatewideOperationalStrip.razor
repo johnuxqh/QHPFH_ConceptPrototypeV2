@@ -10,18 +10,26 @@
         @foreach (var item in HhsSnapshots.Take(4))
         {
             <div class="bm-statewide-status-item @GetPressureClass(item.Snapshot)">
-                <span>@item.Hhs.Name</span>
+                <span>@item.Hhs.Name signal</span>
                 <strong>@item.Snapshot.EscalationStatus</strong>
                 <small>@item.Snapshot.OccupancyPercentage% occupied · @item.Snapshot.AvailableBeds available</small>
+                <a href="#" class="bm-statewide-status-link" @onclick:preventDefault>View details</a>
             </div>
         }
     }
+    else if (Mode == BedManagementVersion.V2Balanced)
+    {
+        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>HHS above BAU</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault>View escalations</a></div>
+        <div class="bm-statewide-status-item is-watch"><span>State support actions</span><strong>@SupportActionCount</strong><small>Active priorities</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault>View actions</a></div>
+        <div class="bm-statewide-status-item"><span>HHS requiring review</span><strong>@ReviewCount</strong><small>Pressure watch</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault>View HHS summary</a></div>
+        <div class="bm-statewide-status-item"><span>Next coordination check</span><strong>@NextCoordination</strong><small>Statewide review</small><a href="#" class="bm-statewide-status-link" @onclick:preventDefault>View schedule</a></div>
+    }
     else
     {
-        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>HHS above BAU</small></div>
-        <div class="bm-statewide-status-item is-watch"><span>State support actions</span><strong>@SupportActionCount</strong><small>Active priorities</small></div>
-        <div class="bm-statewide-status-item"><span>HHS requiring review</span><strong>@ReviewCount</strong><small>Pressure watch</small></div>
-        <div class="bm-statewide-status-item"><span>Next coordination check</span><strong>@NextCoordination</strong><small>Statewide review</small></div>
+        <div class="bm-statewide-status-item is-alert"><span>Open escalations</span><strong>@EscalatedCount</strong><small>Require active coordination</small><button type="button" class="bm-statewide-status-command">Open escalation summary</button></div>
+        <div class="bm-statewide-status-item is-watch"><span>Active state support actions</span><strong>@SupportActionCount</strong><small>Across the state network</small><button type="button" class="bm-statewide-status-command">Review support</button></div>
+        <div class="bm-statewide-status-item"><span>HHS requiring support</span><strong>@ReviewCount</strong><small>Pressure or escalation signal</small><button type="button" class="bm-statewide-status-command">Review support</button></div>
+        <div class="bm-statewide-status-item"><span>Next coordination call</span><strong>@NextCoordination</strong><small>Statewide command check-in</small><button type="button" class="bm-statewide-status-command bm-statewide-status-command--primary">Join call</button></div>
     }
 </section>
 
