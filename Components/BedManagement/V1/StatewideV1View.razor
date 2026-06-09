@@ -21,4 +21,5 @@
     private void OpenDetail(string detailKey) => _detailKey = detailKey;
     private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
+    private IReadOnlyList<InsightSignal> V1Insights => State.Signals.Where(signal => signal.Id != "state-senior-review").ToArray();
 }
