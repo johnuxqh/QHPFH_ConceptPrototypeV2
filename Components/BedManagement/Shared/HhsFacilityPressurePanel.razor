@@ -1,0 +1,29 @@
+<section class="bm-shared-panel bm-hhs-pressure" aria-label="Facility pressure and status">
+    <header><div><h3>@Title</h3><p>@Description</p></div><span class="bm-hhs-panel-chip">@Hhs.Name</span></header>
+    <div class="bm-hhs-pressure__scroll" role="region" aria-label="Facility pressure rows" tabindex="0">
+        <div class="bm-hhs-pressure__head"><span>Facility</span><span>Pressure</span><span>Status / support action</span>@if (Version == BedManagementVersion.V3Operational){<span>Owner / next update</span>}</div>
+        @foreach (var row in Rows)
+        {
+            <article class="bm-hhs-pressure__row">
+                <div><strong>@row.Facility</strong><small>@row.Reason</small></div>
+                <div class="bm-hhs-pressure__meter"><span class="@row.Tone">@row.Tier</span><i><b class="@row.Tone" style="width:@row.Level%"></b></i></div>
+                <div><strong>@row.Status</strong><small>@row.Action</small></div>
+                @if (Version == BedManagementVersion.V3Operational){<div><strong>@row.Owner</strong><small>@row.NextUpdate</small></div>}
+            </article>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public HhsNetwork Hhs { get; set; } = default!;
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
+    private string Title => Version == BedManagementVersion.V3Operational ? "HHS Operations Board" : Version == BedManagementVersion.V2Balanced ? "Facility Pressure & Status" : "Facility Pressure";
+    private string Description => Version == BedManagementVersion.V3Operational ? "Current facility support, ownership and next operational update." : "Ranked facility pressure and operating state across the HHS.";
+    private IReadOnlyList<PressureRow> Rows => [
+        new("PAH", "Tier 3", 97, "Occupancy above 95%", "Escalation active", "Capacity response", "HHS Capacity Team", "10:30 AM", "is-critical"),
+        new("Logan", "Tier 2", 91, "ED demand 22% above forecast", "Under review", "ED surge response", "Regional Flow", "11:00 AM", "is-high"),
+        new("QEII", "Tier 1", 78, "Operating within capacity", "Supporting transfers", "Capacity available", "Flow Team", "11:30 AM", "is-normal"),
+        new("Redland", "Tier 1", 74, "Discharge flow improving", "Improving", "Inpatient capacity watch", "Flow Team", "12:00 PM", "is-improving"),
+        new("Beaudesert", "Tier 1", 68, "Operating within capacity", "Stable", "On watch", "Regional Flow", "12:30 PM", "is-normal")];
+    private sealed record PressureRow(string Facility, string Tier, int Level, string Reason, string Status, string Action, string Owner, string NextUpdate, string Tone);
+}

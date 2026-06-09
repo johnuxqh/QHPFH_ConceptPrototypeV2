@@ -1,7 +1,7 @@
-@if (IsStatewideAwareness)
+@if (IsRichAwareness)
 {
-    <section class="bm-shared-metrics bm-shared-metrics--awareness bm-shared-metrics--statewide-kpis" aria-label="Statewide capacity metrics">
-        @foreach (var metric in StatewideMetrics)
+    <section class="bm-shared-metrics bm-shared-metrics--awareness bm-shared-metrics--statewide-kpis" aria-label="@DashboardAriaLabel">
+        @foreach (var metric in DashboardMetrics)
         {
             <article class="bm-shared-metric bm-statewide-kpi bm-statewide-kpi--@metric.Accent">
                 <div class="bm-statewide-kpi__heading">
@@ -44,9 +44,24 @@ else
     [Parameter] public bool AwarenessMode { get; set; }
     [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V2Balanced;
     [Parameter] public EventCallback<string> OnDetailRequested { get; set; }
+    [Parameter] public bool HhsMode { get; set; }
 
     private bool IsStatewideAwareness => AwarenessMode && Snapshot.Id == BedManagementDemoData.StateId;
+    private bool IsRichAwareness => IsStatewideAwareness || HhsMode;
+    private string DashboardAriaLabel => HhsMode ? "HHS capacity metrics" : "Statewide capacity metrics";
     private int DelayedFlowCohort => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.TransferRequests;
+
+    private IReadOnlyList<StatewideMetric> DashboardMetrics => HhsMode ? HhsMetrics : StatewideMetrics;
+
+    private IReadOnlyList<StatewideMetric> HhsMetrics =>
+    [
+        new("kpi-inpatients", "Inpatients", Snapshot.OccupiedBeds.ToString(), "Patients occupying open beds across the HHS", "Current HHS inpatient load across facilities.", "patient", "default", "blue"),
+        new("kpi-available", "Available Beds", Snapshot.AvailableBeds.ToString(), "Ready capacity across HHS facilities", "Open, unoccupied beds visible across HHS facilities.", "open-bed", "green", "green"),
+        new("kpi-occupancy", "Occupancy", $"{Snapshot.OccupancyPercentage}%", "Current use of open HHS beds", "Occupied beds compared with open HHS capacity.", "occupied-bed", "orange", "orange"),
+        new("kpi-admissions", "Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "Expected admissions in current snapshot", "Expected admissions indicate incoming HHS demand.", "admission", "orange", "orange"),
+        new("kpi-delayed", "Delayed Flow Patients", DelayedFlowCohort.ToString(), "Current cross-facility flow constraints", "Delayed flow combines visible turnaround and transfer constraints.", "ddp-flow", "red", "red"),
+        new("kpi-discharges", "Predicted Discharges", Snapshot.PlannedDischarges.ToString(), "Planned discharge opportunities today", "Predicted discharges identify capacity expected to become available.", "activity", "green", "green")
+    ];
 
     private IReadOnlyList<StatewideMetric> StatewideMetrics =>
     [
@@ -58,12 +73,12 @@ else
         new("kpi-discharges", "Discharges Today", Snapshot.PlannedDischarges.ToString(), "Planned discharge opportunities today", "Planned discharges identify capacity that can be protected or accelerated to offset admissions and reduce pressure.", "activity", "green", "green")
     ];
 
-    private bool CanOpenDetail(StatewideMetric metric) => Version switch
+    private bool CanOpenDetail(StatewideMetric metric) => OnDetailRequested.HasDelegate && (Version switch
     {
         BedManagementVersion.V3Operational => true,
         BedManagementVersion.V2Balanced => metric.Key is "kpi-demand" or "kpi-delayed" or "kpi-discharges",
         _ => false
-    };
+    });
 
     private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
     private static string GetInfoIconPath(StatewideMetric metric) =>
