@@ -1,0 +1,41 @@
+<section class="bm-hhs-status-strip bm-hhs-status-strip--@Version.ToString().ToLowerInvariant()" aria-label="HHS operational status">
+    <div class="bm-hhs-status-lead">
+        <span>@Title</span>
+        <strong>Tier 2 Capacity Response Active</strong>
+        <small>@Hhs.Name · @Snapshot.LastUpdatedLabel</small>
+        @if (Version == BedManagementVersion.V3Operational)
+        {
+            <div class="bm-hhs-status-commands"><button type="button">View HHS summary</button><button type="button">Join meeting</button><button type="button" class="is-primary">Create HHS action</button></div>
+        }
+    </div>
+    @foreach (var item in Items)
+    {
+        <article class="bm-hhs-status-item @item.Tone">
+            <span>@item.Label</span><strong>@item.Value</strong><small>@item.Detail</small>
+            @if (Version != BedManagementVersion.V3Operational)
+            {
+                <a href="#hhs-performance">@item.Link</a>
+            }
+        </article>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public HhsNetwork Hhs { get; set; } = default!;
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
+    private string Title => Version == BedManagementVersion.V2Balanced ? "HHS Coordination Status" : "HHS Operational Status";
+    private IReadOnlyList<StatusItem> Items => Version switch
+    {
+        BedManagementVersion.V1DataInsights => [
+            new("PAH", "High Occupancy", "Occupancy above 95%", "View details", "is-high"), new("Logan", "ED Demand Surge", "22% above expected baseline", "View details", "is-high"),
+            new("QEII", "Normal Operations", "Capacity available", "View details", "is-normal"), new("Redland", "Improving Capacity", "Discharge flow improving", "View details", "is-improving"), new("Beaudesert", "Stable", "Operating within capacity", "View details", "is-normal")],
+        BedManagementVersion.V2Balanced => [
+            new("Open facility reviews", "2", "PAH and Logan", "View reviews", "is-high"), new("Cross-facility support actions", "3", "Capacity options identified", "View actions", "is-improving"),
+            new("Facilities requiring support", "2", "Regional coordination active", "View facilities", "is-high"), new("Next coordination meeting", "10:30 AM", "HHS capacity response", "View schedule", "is-normal")],
+        _ => [
+            new("Open escalations", "2", "PAH and Logan", "", "is-high"), new("Support actions", "4 active", "Owners assigned", "", "is-improving"),
+            new("Facilities requiring review", "2", "Next updates due", "", "is-high"), new("Next coordination meeting", "10:30 AM", "Regional coordination", "", "is-normal")]
+    };
+    private sealed record StatusItem(string Label, string Value, string Detail, string Link, string Tone);
+}
