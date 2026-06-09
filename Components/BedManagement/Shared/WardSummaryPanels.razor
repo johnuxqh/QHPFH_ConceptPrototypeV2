@@ -1,0 +1,6 @@
+<div class="bm-ward-summary-panels">
+    <section class="bm-shared-panel"><header><h3>Admissions &amp; Allocation</h3><span>Expected @Ward.ExpectedAdmissions</span></header><div class="bm-ward-summary-list"><p><span>ED</span><strong>3</strong></p><p><span>IHT</span><strong>1</strong></p><p><span>Add-On</span><strong>1</strong></p><p><span>Ward Transfer</span><strong>1</strong></p></div></section>
+    <section class="bm-shared-panel"><header><h3>Waiting For Summary</h3><span>Clinician approved</span></header><div class="bm-ward-summary-list"><p><span>Diagnostics</span><strong>4</strong></p><p><span>Medical Review</span><strong>3</strong></p><p><span>Pharmacy</span><strong>2</strong></p><p><span>Transport</span><strong>2</strong></p><p><span>Community Support</span><strong>1</strong></p></div></section>
+    <section class="bm-shared-panel"><header><h3>Discharge Readiness</h3><span>Today</span></header><div class="bm-ward-summary-list"><p><span>Predicted Today</span><strong>@Ward.PlannedDischarges</strong></p><p><span>Actual Today</span><strong>2</strong></p><p class="is-red"><span>Delayed</span><strong>3</strong></p><p><span>Ready Before Noon</span><strong>2</strong></p><p><span>Ready After Noon</span><strong>3</strong></p></div></section>
+</div>
+@code { [Parameter, EditorRequired] public Ward Ward { get; set; } = default!; }

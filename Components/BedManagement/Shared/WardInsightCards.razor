@@ -1,0 +1,21 @@
+<section class="bm-shared-panel bm-ward-insights" aria-label="Ward operational priorities">
+    <header><h3>@(Coordinated ? "Active Priority Coordination" : "Operational Insights")</h3><span>4 priorities</span></header>
+    <div>
+        @foreach (var item in Items)
+        {
+            <article class="@item.Tone"><span>@item.Bed</span><strong>@item.Issue</strong><p>@item.Next</p>
+                @if (Coordinated) { <dl><div><dt>Owner</dt><dd>@item.Owner</dd></div><div><dt>Status</dt><dd>@item.Status</dd></div><div><dt>Due</dt><dd>@item.Due</dd></div></dl> }
+            </article>
+        }
+    </div>
+</section>
+@code {
+    [Parameter] public bool Coordinated { get; set; }
+    private static readonly Item[] Items = [
+        new("Bed 03", "Isolation review required", "Confirm placement before next admission", "NUM", "Review", "08:00", "is-red"),
+        new("Bed 14", "Discharge medication pending", "Escalate pharmacy dispensing", "Ward pharmacist", "In progress", "08:15", "is-orange"),
+        new("Bed 09", "Cleaning in progress", "Release bed after terminal clean", "Facilities", "In progress", "08:30", "is-blue"),
+        new("Bed 22", "Awaiting transport", "Confirm booked pickup", "Flow coordinator", "Delayed", "09:00", "is-purple")
+    ];
+    private sealed record Item(string Bed, string Issue, string Next, string Owner, string Status, string Due, string Tone);
+}

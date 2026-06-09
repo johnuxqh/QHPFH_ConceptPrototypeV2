@@ -256,7 +256,19 @@ public static class BedManagementDemoData
             CreateBed("qch-8a-09", "8A-09", Ward8AId, BedStatus.Occupied, isolation: true, patient: Patient("pt-bruce", "Bruce Banner", "Respiratory", "High"), next: "Senior respiratory review", note: "Isolation precautions in place."),
             CreateBed("qch-8a-10", "8A-10", Ward8AId, BedStatus.Occupied, patient: Patient("pt-carol", "Carol Danvers", "General medicine", "Moderate"), admission: Admission(FlowStatus.Complete, "Theatre", "09:20", ""), next: "Post-admission observations", note: "New admission this morning."),
             CreateBed("qch-8a-11", "8A-11", Ward8AId, BedStatus.Closed, isOpen: false, isClosed: true, next: "Nurse unit manager review", note: "Closed due to staffing constraint."),
-            CreateBed("qch-8a-12", "8A-12", Ward8AId, BedStatus.PendingTransfer, patient: Patient("pt-diana", "Diana Prince", "General medicine", "Low"), transfer: Transfer(FlowStatus.Ready, "Outbound", "Transit lounge", "12:30"), next: "Move to transit lounge", note: "Ready transfer could free bed soon.")
+            CreateBed("qch-8a-12", "8A-12", Ward8AId, BedStatus.PendingTransfer, patient: Patient("pt-diana", "Diana Prince", "General medicine", "Low"), transfer: Transfer(FlowStatus.Ready, "Outbound", "Transit lounge", "12:30"), next: "Move to transit lounge", note: "Ready transfer could free bed soon."),
+            CreateBed("qch-8a-13", "8A-13", Ward8AId, BedStatus.Occupied, isolation: true, patient: Patient("pt-shuri", "Shuri", "Respiratory", "Moderate"), next: "Isolation review", note: "Non-isolation placement review required."),
+            CreateBed("qch-8a-14", "8A-14", Ward8AId, BedStatus.Occupied, patient: Patient("pt-tchalla", "T'Challa", "Surgical", "Low"), discharge: Discharge(FlowStatus.Delayed, "14:00", "Discharge medication pending", "Home"), next: "Escalate pharmacy", note: "Pharmacy delay affecting discharge."),
+            CreateBed("qch-8a-15", "8A-15", Ward8AId, BedStatus.PendingCleaning, cleaning: Cleaning(FlowStatus.Planned, "Routine clean", "13:10"), next: "Commence cleaning", note: "Cleaning backlog."),
+            CreateBed("qch-8a-16", "8A-16", Ward8AId, BedStatus.Occupied, patient: Patient("pt-gamora", "Gamora", "Orthopaedics", "Moderate"), next: "Medical review", note: "Awaiting medical review."),
+            CreateBed("qch-8a-17", "8A-17", Ward8AId, BedStatus.Available, next: "Available for admission", note: "Open ward bed."),
+            CreateBed("qch-8a-18", "8A-18", Ward8AId, BedStatus.Available, admission: Admission(FlowStatus.Planned, "ED", "14:20", "Allocation confirmed"), next: "Prepare for ED admission", note: "Expected admission."),
+            CreateBed("qch-8a-19", "8A-19", Ward8AId, BedStatus.Available, next: "Available for allocation", note: "Open ward bed."),
+            CreateBed("qch-8a-20", "8A-20", Ward8AId, BedStatus.Closed, isOpen: false, isClosed: true, next: "Review staffing", note: "Closed due to staffing."),
+            CreateBed("qch-8a-21", "8A-21", Ward8AId, BedStatus.Occupied, patient: Patient("pt-furiosa", "Imperator Furiosa", "Surgical", "Moderate"), discharge: Discharge(FlowStatus.Planned, "17:00", "Community support", "Home"), next: "Confirm community support", note: "Potential afternoon discharge."),
+            CreateBed("qch-8a-22", "8A-22", Ward8AId, BedStatus.Occupied, patient: Patient("pt-ripley", "Ellen Ripley", "General medicine", "Low"), discharge: Discharge(FlowStatus.Delayed, "15:30", "Transport delayed", "Home"), next: "Confirm transport", note: "Transport delay affecting flow."),
+            CreateBed("qch-8a-23", "8A-23", Ward8AId, BedStatus.Available, admission: Admission(FlowStatus.Planned, "IHT", "15:00", "Awaiting transport"), next: "Prepare for IHT admission", note: "Expected transfer admission."),
+            CreateBed("qch-8a-24", "8A-24", Ward8AId, BedStatus.PendingCleaning, cleaning: Cleaning(FlowStatus.Planned, "Terminal clean", "14:15"), next: "Schedule terminal clean", note: "Cleaning backlog affecting allocation.")
         ],
         OperationalEvents =
         [

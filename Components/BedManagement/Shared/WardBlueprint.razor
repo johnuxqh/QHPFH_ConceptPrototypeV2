@@ -1,0 +1,24 @@
+@using Microsoft.AspNetCore.Components.Web
+<section class="bm-ward-blueprint" aria-label="Ward bed display">
+    <header class="bm-ward-blueprint__toolbar"><div><strong>@Ward.Name.ToUpperInvariant() — BED DISPLAY</strong><span>Prototype state only · changes are not saved</span></div><div class="bm-ward-view-selector" role="group" aria-label="Ward display"><button class="@(View=="list"?"active":null)" @onclick='()=>View="list"'>List View</button><button class="@(View=="grid"?"active":null)" @onclick='()=>View="grid"'>Grid View</button><button class="@(View=="blueprint"?"active":null)" @onclick='()=>View="blueprint"'>Blueprint View</button></div></header>
+    <div class="bm-ward-legend"><span class="is-green">Available</span><span class="is-occupied">Occupied</span><span class="is-orange">Cleaning</span><span class="is-red">Blocked</span><span class="is-purple">Isolation</span><span class="is-blue">Expected Admission</span><span class="is-grey">Closed</span></div>
+    @if(View=="list") { <WardBedTable Ward="@Ward" Expanded="true" /> }
+    else {
+      <div class="bm-ward-bed-display @(View=="blueprint"?"is-blueprint":"is-grid")">
+       @if(View=="blueprint"){<div class="bm-ward-room nurses">Nurses<br/>Station</div><div class="bm-ward-room isolation">Isolation<br/>Room</div><div class="bm-ward-room utility">Utility<br/>Store</div>}
+       @foreach(var bed in Ward.Beds){var state=GetState(bed);<article class="bm-ward-bed-tile @Tone(bed,state) @(Selected.Contains(bed.Id)?"selected":null)" @ondragover:preventDefault @ondrop="()=>DropOnBed(bed)"><label><input type="checkbox" checked="@Selected.Contains(bed.Id)" @onchange="()=>Toggle(bed.Id)"/><strong>@ShortBed(bed)</strong></label><b>@state</b><span>@(bed.AssignedPatient?.DisplayName ?? ExpectedPatient(bed))</span><small>@Flag(bed)</small><em>@Action(bed)</em></article>}
+      </div>
+    }
+    <div class="bm-ward-action-dock"><div><strong>Quick Actions</strong><span>@Selected.Count bed(s) selected</span></div>@foreach(var action in Actions){<button type="button" draggable="@(action=="Prepare Discharge")" @ondragstart="()=>DraggedAction=action" @onclick="()=>Apply(action)">@action</button>}</div>
+    @if(!string.IsNullOrWhiteSpace(Toast)){<div class="bm-ward-toast" role="status">✓ @Toast</div>}
+</section>
+@code {
+ [Parameter,EditorRequired] public Ward Ward{get;set;}=default!; private string View="blueprint"; private HashSet<string> Selected=[]; private Dictionary<string,string> Overrides=[]; private string DraggedAction=""; private string Toast="";
+ private static readonly string[] Actions=["Block Bed","Mark Cleaning","Open Bed","Prepare Discharge","Transfer Ready","Isolation Required","Maintenance","Create Action"];
+ private void Toggle(string id){if(!Selected.Add(id))Selected.Remove(id);Toast="";} private void Apply(string action){if(Selected.Count==0){Toast="Select one or more beds first";return;} foreach(var id in Selected)Overrides[id]=ActionState(action);Toast=action=="Prepare Discharge"?"Discharge preparation started":$"{Selected.Count} bed(s) {ActionState(action).ToLowerInvariant()}";}
+ private void DropOnBed(Bed bed){if(DraggedAction!="Prepare Discharge")return;Overrides[bed.Id]="Discharge Prep";Toast=$"{ShortBed(bed)} discharge preparation started";DraggedAction="";}
+ private static string ActionState(string a)=>a switch{"Block Bed"=>"Blocked","Mark Cleaning"=>"Cleaning","Open Bed"=>"Available","Prepare Discharge"=>"Discharge Prep","Transfer Ready"=>"Transfer Ready","Isolation Required"=>"Isolation","Maintenance"=>"Maintenance",_=>"Action Created"};
+ private string GetState(Bed b)=>Overrides.GetValueOrDefault(b.Id,b.Admission is { Status: FlowStatus.Planned or FlowStatus.InProgress } ? "Expected Admission" : b.Status switch{BedStatus.PendingCleaning=>"Cleaning",BedStatus.Maintenance=>"Blocked",BedStatus.PendingTransfer=>"Transfer Ready",_=>b.Status.ToString()});
+ private string Tone(Bed b,string s)=>s switch{"Available"=>"is-green","Cleaning"=>"is-orange","Blocked" or "Maintenance"=>"is-red","Isolation"=>"is-purple","Expected Admission"=>"is-blue","Closed"=>"is-grey","Discharge Prep" or "Transfer Ready"=>"is-blue",_=>b.HasIsolationCapability?"is-purple":"is-occupied"};
+ private static string ShortBed(Bed b)=>b.Label.Replace("8A-","Bed "); private static string ExpectedPatient(Bed b)=>b.Admission is not null?"Expected admission":"—"; private static string Flag(Bed b)=>b.HasIsolationCapability?"Isolation":b.Discharge is not null?"EDD Today":b.Transfer is not null?"Transfer":""; private static string Action(Bed b)=>string.IsNullOrWhiteSpace(b.NextExpectedAction)?"Monitor":b.NextExpectedAction;
+}

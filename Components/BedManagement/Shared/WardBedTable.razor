@@ -1,0 +1,14 @@
+<section class="bm-shared-panel bm-ward-bed-table" aria-label="Ward bed overview">
+    <header><h3>Ward Bed Overview (@Ward.PhysicalBeds beds)</h3><span>Fictional demo patients only</span></header>
+    <div class="bm-ward-bed-table__scroll"><table><thead><tr><th>Bed</th><th>Status</th>@if(Expanded){<th>Occupancy</th>}<th>Patient</th><th>Team</th><th>EDD</th><th>Waiting For</th><th>Discharge</th><th>Alerts</th>@if(Expanded){<th>Next Action</th><th>Owner</th>}<th>Action</th></tr></thead><tbody>
+    @foreach(var bed in Ward.Beds){<tr><td><strong>@ShortBed(bed)</strong></td><td><span class="bm-ward-state @Tone(bed)">@Status(bed)</span></td>@if(Expanded){<td>@(bed.IsOccupied ? "Occupied" : "Vacant")</td>}<td>@(bed.AssignedPatient?.DisplayName ?? "—")</td><td>@(bed.AssignedPatient?.CareTeam ?? "—")</td><td>@(bed.Discharge?.PlannedTime ?? "—")</td><td>@Waiting(bed)</td><td>@(bed.Discharge?.Status.ToString() ?? "—")</td><td>@Alert(bed)</td>@if(Expanded){<td>@bed.NextExpectedAction</td><td>@Owner(bed)</td>}<td><button type="button">View</button></td></tr>}
+    </tbody></table></div><footer><span>Showing all @Ward.PhysicalBeds beds</span><span>Occupied · Ready · Cleaning · Blocked · Closed</span></footer>
+</section>
+@code {
+ [Parameter, EditorRequired] public Ward Ward {get;set;}=default!; [Parameter] public bool Expanded {get;set;}
+ private static string ShortBed(Bed b)=>b.Label.Replace("8A-",""); private static string Status(Bed b)=>b.Status switch{BedStatus.PendingCleaning=>"Cleaning",BedStatus.Maintenance=>"Blocked",BedStatus.PendingTransfer=>"Transfer Ready",_=>b.Status.ToString()};
+ private static string Tone(Bed b)=>b.Status switch{BedStatus.Available=>"is-green",BedStatus.Occupied=>b.HasIsolationCapability?"is-purple":"is-green",BedStatus.PendingCleaning=>"is-orange",BedStatus.PendingTransfer=>"is-blue",BedStatus.Maintenance=>"is-red",_=>"is-grey"};
+ private static string Waiting(Bed b)=>b.Discharge?.Barrier ?? b.Transfer?.TargetWard ?? (b.NextExpectedAction.Contains("review",StringComparison.OrdinalIgnoreCase)?"Medical Review":"—");
+ private static string Alert(Bed b)=>b.HasIsolationCapability?"Isolation":b.MaintenanceStatus!="Clear"?b.MaintenanceStatus:b.AssignedPatient?.AcuityLabel??"Nil";
+ private static string Owner(Bed b)=>b.Status==BedStatus.PendingCleaning?"Facilities":b.Discharge is not null?"Flow coordinator":b.Transfer is not null?"Bed manager":"Clinical team";
+}
