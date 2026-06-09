@@ -1,0 +1,18 @@
+<section class="bm-ward-kpis" aria-label="Ward capacity metrics">
+    @foreach (var metric in Metrics)
+    {
+        <article class="@metric.Tone"><span>@metric.Label</span><strong>@metric.Value</strong><small>@metric.Detail</small></article>
+    }
+</section>
+@code {
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    private IReadOnlyList<Metric> Metrics => [
+        new("Physical Capacity", Snapshot.PhysicalBeds.ToString(), "Total ward beds", "is-blue"),
+        new("Open Beds", Snapshot.OpenBeds.ToString(), $"{Snapshot.AvailableBeds} available now", "is-green"),
+        new("Occupied Beds", Snapshot.OccupiedBeds.ToString(), $"{Snapshot.OccupancyPercentage}% occupancy", "is-purple"),
+        new("Beds Pending", (Snapshot.PendingCleaning + Snapshot.PendingMaintenance).ToString(), $"Cleaning: {Snapshot.PendingCleaning} · Maintenance: {Snapshot.PendingMaintenance}", "is-orange"),
+        new("Isolation Beds Available", "0", "Fully utilised", "is-red"),
+        new("Expected Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "ED 3 · IHT 1 · Add-On 1", "is-teal")
+    ];
+    private sealed record Metric(string Label, string Value, string Detail, string Tone);
+}

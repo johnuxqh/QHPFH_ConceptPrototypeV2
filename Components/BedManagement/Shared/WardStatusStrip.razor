@@ -1,0 +1,19 @@
+<section class="bm-ward-status" aria-label="Ward information">
+    <div class="bm-ward-status__lead"><span>Ward information</span><strong>Tier 2 Capacity Response Active</strong><small>@Ward.Name · @Snapshot.LastUpdatedLabel</small></div>
+    @foreach (var item in Items)
+    {
+        <article class="@item.Tone"><span>@item.Label</span><strong>@item.Value</strong><small>@item.Detail</small><button type="button">View details →</button></article>
+    }
+    <article class="is-normal"><span>Last updated</span><strong>07:05 AM</strong><small>18 May 2025</small><button type="button" aria-label="Refresh ward information">Refresh</button></article>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public Ward Ward { get; set; } = default!;
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    private static readonly Item[] Items = [
+        new("Ward notice", "Fire Alarm Testing", "Today 15:00", "is-high"),
+        new("Isolation Bed Status", "Fully utilised", "Isolation review active", "is-purple"),
+        new("Capacity governance", "Executive Capacity Review", "Today 14:00", "is-blue")
+    ];
+    private sealed record Item(string Label, string Value, string Detail, string Tone);
+}
