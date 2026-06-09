@@ -1,0 +1,77 @@
+<section class="bm-shared-panel bm-statewide-activity bm-statewide-activity--@Version.ToString().ToLowerInvariant()" aria-label="@Title">
+    <header>
+        <div><h3>@Title</h3><p>@Purpose</p></div>
+        <span>@ModeLabel</span>
+    </header>
+
+    @if (Version == BedManagementVersion.V3Operational)
+    {
+        <ol class="bm-statewide-activity__timeline">
+            @foreach (var item in Timeline)
+            {
+                <li class="@item.StateClass">
+                    <time>@item.Time</time>
+                    <div><strong>@item.Title</strong><span>@item.Detail</span></div>
+                </li>
+            }
+        </ol>
+    }
+    else
+    {
+        <div class="bm-statewide-activity__cards">
+            @foreach (var item in Cards)
+            {
+                <article class="@item.StateClass">
+                    <strong>@item.Title</strong>
+                    <p>@item.Detail</p>
+                    @if (Version == BedManagementVersion.V2Balanced)
+                    {
+                        <dl>
+                            <div><dt>Owner</dt><dd>@item.Owner</dd></div>
+                            <div><dt>Status</dt><dd>@item.Status</dd></div>
+                            <div><dt>Next step</dt><dd>@item.NextStep</dd></div>
+                        </dl>
+                        <a href="#" @onclick:preventDefault @onclick="() => RequestDetail(item.Key)">View coordination detail <span aria-hidden="true">→</span></a>
+                    }
+                </article>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
+    [Parameter] public EventCallback<string> OnDetailRequested { get; set; }
+
+    private string Title => Version switch { BedManagementVersion.V1DataInsights => "State Insights", BedManagementVersion.V2Balanced => "State Coordination Activity", _ => "State Coordination Timeline" };
+    private string Purpose => Version switch { BedManagementVersion.V1DataInsights => "Highest-value statewide signals for focus.", BedManagementVersion.V2Balanced => "Key coordination actions currently underway.", _ => "What happened, what is active and what is next." };
+    private string ModeLabel => Version switch { BedManagementVersion.V1DataInsights => "Awareness", BedManagementVersion.V2Balanced => "Coordination", _ => "Operational sequence" };
+
+    private IReadOnlyList<ActivityCard> Cards => Version == BedManagementVersion.V1DataInsights ? Insights : Coordination;
+    private static readonly IReadOnlyList<ActivityCard> Insights =
+    [
+        new("insight-metro-north", "Metro North occupancy above expected range", "Current occupancy indicates sustained network pressure.", "", "", "", "is-extreme"),
+        new("insight-metro-south", "Metro South cleaning backlog", "Cleaning backlog is contributing to visible capacity pressure.", "", "", "", "is-high"),
+        new("insight-gold-coast", "Gold Coast ED demand above baseline", "Demand is tracking above the expected presentation range.", "", "", "", "is-high"),
+        new("insight-cairns", "Cairns discharge performance improved", "Discharge performance has improved compared with yesterday.", "", "", "", "is-positive")
+    ];
+    private static readonly IReadOnlyList<ActivityCard> Coordination =
+    [
+        new("action-metro-north", "Metro North cleaning backlog review underway", "Network cleaning capacity is under State review.", "QPACH", "In progress", "Validate HHS support requirements", "is-extreme"),
+        new("action-gold-coast", "Gold Coast elective surge review requested", "Elective demand is forecast above baseline.", "QPACH", "Requested", "Review demand modelling", "is-high"),
+        new("action-metro-south", "Metro South discharge barrier escalation pending", "Provider pathway constraints require coordination.", "State Ops", "Escalation pending", "Confirm provider response", "is-high"),
+        new("action-cairns", "Cairns capacity status returned to monitoring", "Regional capacity pressure has reduced.", "State Ops", "Monitoring", "Continue regional monitoring", "is-positive")
+    ];
+    private static readonly IReadOnlyList<TimelineItem> Timeline =
+    [
+        new("08:05", "Tier 2 response activated", "Statewide capacity response commenced.", "is-complete"),
+        new("08:20", "Metro North cleaning backlog review opened", "QPACH review is underway.", "is-complete"),
+        new("09:00", "Gold Coast elective pressure review requested", "Demand modelling review requested.", "is-complete"),
+        new("09:45", "Metro South discharge escalation updated", "Provider response remains pending.", "is-current"),
+        new("10:30", "Next statewide coordination check", "State Ops and QPACH review due.", "is-next")
+    ];
+
+    private Task RequestDetail(string key) => OnDetailRequested.InvokeAsync(key);
+    private sealed record ActivityCard(string Key, string Title, string Detail, string Owner, string Status, string NextStep, string StateClass);
+    private sealed record TimelineItem(string Time, string Title, string Detail, string StateClass);
+}

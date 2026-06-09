@@ -6,10 +6,10 @@
 
     <div class="bm-statewide-primary bm-statewide-primary--v1">
         <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
-        <FlowSwimlanePanel Snapshot="@Snapshot" />
+        <StatewideFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V1DataInsights" OnDetailRequested="OpenDetail" />
     </div>
 
-    <div class="bm-statewide-insights"><InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" ContextLabel="State insights" /></div>
+    <StatewideActivityPanel Version="@BedManagementVersion.V1DataInsights" OnDetailRequested="OpenDetail" />
     <div class="bm-v1-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V1DataInsights" Title="Statewide HHS performance summary" /></div>
 </section>
 

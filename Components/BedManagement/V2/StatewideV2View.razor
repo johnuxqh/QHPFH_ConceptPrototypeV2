@@ -6,14 +6,11 @@
 
     <div class="bm-statewide-primary bm-statewide-primary--v2">
         <StatewidePressurePanel State="@State" Snapshot="@Snapshot" />
-        <ActionTracker Signals="@Actions" />
-        <FlowSwimlanePanel Snapshot="@Snapshot" />
+        <StatewideEscalationQueue Version="@BedManagementVersion.V2Balanced" OnDetailRequested="OpenDetail" />
+        <StatewideFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V2Balanced" OnDetailRequested="OpenDetail" />
     </div>
 
-    <div class="bm-statewide-coordination">
-        <CoordinationPanel Events="@CoordinationEvents" />
-        <InsightCardGrid Signals="@State.Signals" Version="@BedManagementVersion.V2Balanced" ContextLabel="Decision support" />
-    </div>
+    <StatewideActivityPanel Version="@BedManagementVersion.V2Balanced" OnDetailRequested="OpenDetail" />
     <div class="bm-v2-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V2Balanced" Title="Statewide HHS performance and support summary" /></div>
 </section>
 
@@ -25,6 +22,4 @@
     private void OpenDetail(string detailKey) => _detailKey = detailKey;
     private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
-    private IReadOnlyList<OperationalEvent> CoordinationEvents => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).Take(4).ToArray();
-    private IReadOnlyList<OperationalSignal> Actions => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Take(4).ToArray();
 }
