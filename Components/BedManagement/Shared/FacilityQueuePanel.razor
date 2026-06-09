@@ -1,0 +1,9 @@
+<section class="bm-shared-panel bm-facility-queue" aria-label="@Title"><header><div><h3>@Title</h3><p>@Subtitle</p></div></header><div class="bm-facility-queue__head"><span>@Headers[0]</span><span>@Headers[1]</span><span>@Headers[2]</span><span>@Headers[3]</span></div>@foreach(var row in Rows){<article><strong>@row.First</strong><span>@row.Second</span><span>@row.Third</span><b class="@row.Tone">@row.Fourth</b></article>}</section>
+@code {
+[Parameter] public string Type {get;set;}="Allocation";
+private string Title => Type switch {"Cleaning"=>"Cleaning & Readiness Queue","Transfer"=>"Transfer Queue",_=>"Live Allocation Board"};
+private string Subtitle => Type switch {"Cleaning"=>"Priority beds moving toward operational readiness.","Transfer"=>"Ward transfers requiring facility coordination.",_=>"Incoming requests and planned placement visibility."};
+private string[] Headers => Type switch {"Cleaning"=>["Bed / Ward","Status","Expected Ready","Owner"],"Transfer"=>["From / To","Reason","Requested","Status"],_=>["Incoming Request","Planned Placement","Review","Status"]};
+private IReadOnlyList<Row> Rows => Type switch {"Cleaning"=>[new("8A-12","Cleaning in progress","10:15 AM","Support Services","is-orange"),new("10B-04","Final check","10:20 AM","Ward Team","is-green"),new("12A-08","Cleaning assigned","10:35 AM","Support Services","is-blue")],"Transfer"=>[new("PICU → 12A","Step-down capacity","9:42 AM","Pending review","is-orange"),new("ED SSTA → 10A","Ward placement","9:48 AM","Allocated","is-green"),new("11B → 8BC","Specialty transfer","10:02 AM","Coordinator review","is-blue")],_=>[new("ED admission · 4","10A / 10B","Bed Manager","Pending allocation","is-orange"),new("Elective · 3","8BA / 8BC","Confirmed","Planned","is-green"),new("IHT transfer · 2","PICU / 12A","Clinical handover","Pending review","is-blue")];
+private sealed record Row(string First,string Second,string Third,string Fourth,string Tone);
+}

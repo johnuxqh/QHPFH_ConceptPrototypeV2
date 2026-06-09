@@ -1,0 +1,21 @@
+<section class="bm-facility-kpis" aria-label="Facility capacity metrics">
+    @foreach (var metric in Metrics)
+    {
+        <article class="@metric.Tone"><span>@metric.Label</span><strong>@metric.Value</strong><small>@metric.Detail</small><i aria-hidden="true"></i></article>
+    }
+</section>
+@code {
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    private int BedsPending => Snapshot.PendingCleaning + Snapshot.PendingMaintenance;
+    private int DelayedFlow => BedsPending + Snapshot.TransferRequests;
+    private IReadOnlyList<Metric> Metrics => [
+        new("Physical Capacity", Snapshot.PhysicalBeds.ToString(), "Total facility beds", "is-blue"),
+        new("Open Operational Beds", Snapshot.OpenBeds.ToString(), $"{Snapshot.AvailableBeds} available now", "is-green"),
+        new("Occupied Beds", Snapshot.OccupiedBeds.ToString(), $"{Snapshot.OccupancyPercentage}% occupancy", "is-orange"),
+        new("Beds Pending", BedsPending.ToString(), "Cleaning or maintenance", "is-purple"),
+        new("Operational Pressure", Snapshot.EscalationStatus, "Capacity Response active", "is-red"),
+        new("Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "Expected facility demand", "is-orange"),
+        new("Delayed Flow Patients", DelayedFlow.ToString(), "Current flow constraints", "is-red")
+    ];
+    private sealed record Metric(string Label, string Value, string Detail, string Tone);
+}
