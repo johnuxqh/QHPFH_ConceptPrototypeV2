@@ -10,15 +10,7 @@
         <StatewideFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V2Balanced" OnDetailRequested="OpenDetail" />
     </div>
 
-    <section class="bm-shared-panel bm-statewide-actions" aria-label="Statewide Actions">
-        <header><h3>State Coordination Activity</h3><span>Coordination visibility</span></header>
-        <div class="bm-statewide-actions__grid">
-            @foreach (var action in Actions)
-            {
-                <article><a href="#" @onclick:preventDefault @onclick="() => OpenDetail(action.Key)">@action.Title</a><p>@action.Detail</p><dl><div><dt>Owner</dt><dd>@action.Owner</dd></div><div><dt>Status</dt><dd>@action.Status</dd></div><div><dt>Next step</dt><dd>@action.NextStep</dd></div><div><dt>Next update</dt><dd>@action.NextUpdate</dd></div></dl></article>
-            }
-        </div>
-    </section>
+    <StatewideActivityPanel Version="@BedManagementVersion.V2Balanced" OnDetailRequested="OpenDetail" />
     <div class="bm-v2-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V2Balanced" Title="Statewide HHS performance and support summary" /></div>
 </section>
 
@@ -30,12 +22,4 @@
     private void OpenDetail(string detailKey) => _detailKey = detailKey;
     private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
-    private static readonly IReadOnlyList<StateAction> Actions =
-    [
-        new("action-metro-north", "Metro North cleaning backlog review", "State review of network cleaning capacity.", "QPACH", "In progress", "Validate HHS support requirements", "10:30 AM"),
-        new("action-metro-south", "Metro South delayed discharge escalation", "Provider pathway constraints under review.", "State Ops", "Escalation open", "Confirm provider coordination", "11:00 AM"),
-        new("action-gold-coast", "Gold Coast elective surge review", "Elective demand forecast above baseline.", "QPACH", "Requested", "Review demand modelling", "11:30 AM"),
-        new("action-regional", "Regional capacity monitoring", "Regional HHS capacity remains under observation.", "State Ops", "Monitoring", "Continue network monitoring", "12:00 PM")
-    ];
-    private sealed record StateAction(string Key, string Title, string Detail, string Owner, string Status, string NextStep, string NextUpdate);
 }

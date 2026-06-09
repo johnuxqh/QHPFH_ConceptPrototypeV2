@@ -1,5 +1,6 @@
 <section class="bm-shared-panel bm-statewide-escalation" aria-label="State Escalation Queue">
     <header><h3>State Escalation Queue</h3><span>@(Version == BedManagementVersion.V3Operational ? "Owner visibility" : "Coordination visibility")</span></header>
+    <a class="bm-statewide-panel-link" href="#" @onclick:preventDefault @onclick='() => RequestDetail("status-escalations")'>View all escalations <span aria-hidden="true">→</span></a>
     <div class="bm-statewide-escalation__scroll">
         <table>
             <thead><tr><th>HHS</th><th>Trigger / Reason</th><th>@(Version == BedManagementVersion.V2Balanced ? "Current Tier" : "Tier")</th><th>Status</th>@if (Version == BedManagementVersion.V3Operational) { <th>Owner</th> }<th>Next Update</th></tr></thead>
