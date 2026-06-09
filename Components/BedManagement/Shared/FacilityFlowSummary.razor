@@ -1,0 +1,26 @@
+<section class="bm-shared-panel bm-facility-flow" aria-label="Facility flow summary">
+<header><div><h3>@Title</h3><p>@Subtitle</p></div></header>
+<div class="bm-facility-flow__grid">
+    @foreach (var lane in Lanes)
+    {
+        <article class="@lane.Tone"><span>@lane.Label</span><strong>@lane.Total</strong><small>@lane.Detail</small><dl>@foreach (var item in lane.Items){<div><dt>@item.Label</dt><dd>@item.Value</dd></div>}</dl></article>
+    }
+</div>
+</section>
+@code {
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
+    private string Title => Version == BedManagementVersion.V3Operational ? "Incoming 24h Summary" : Version == BedManagementVersion.V2Balanced ? "48h Admissions / Incoming & Allocation Summary" : "Facility Flow Summary";
+    private string Subtitle => Version == BedManagementVersion.V1DataInsights ? "Admissions, discharges and constraints across all wards." : "Forecast demand and planned allocation by facility source.";
+    private IReadOnlyList<Lane> Lanes => Version == BedManagementVersion.V1DataInsights ? [
+        new("Admissions", "42", "Expected today", "is-blue", [new("ED Admissions","24"),new("Elective Admissions","12"),new("IHT Admissions","6")]),
+        new("Discharges", "31", "Predicted today", "is-green", [new("Predicted Discharges","31"),new("Actual Discharges","18"),new("Delayed Discharges","9")]),
+        new("Constraints", "14", "Beds requiring review", "is-red", [new("Cleaning Pending","7"),new("Maintenance","3"),new("Blocked Beds","4")])
+    ] : [
+        new("ED", "24", "Forecast admissions", "is-blue", [new("Allocated","15"),new("Pending Allocation","7"),new("Review","2")]),
+        new("Elective", "12", "Planned admissions", "is-purple", [new("Allocated","10"),new("Not Yet Allocated","2"),new("Add On","3")]),
+        new("Transfers", "11", "Incoming movement", "is-orange", [new("Ward Transfer","5"),new("IHT","6"),new("Pending Review","4")]),
+        new("Expected Capacity", "31", "Predicted discharges", "is-green", [new("Before 10 AM","8"),new("Before 2 PM","16"),new("After 2 PM","7")])
+    ];
+    private sealed record Item(string Label, string Value);
+    private sealed record Lane(string Label, string Total, string Detail, string Tone, IReadOnlyList<Item> Items);
+}

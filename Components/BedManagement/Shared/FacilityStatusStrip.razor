@@ -1,0 +1,32 @@
+<section class="bm-facility-status bm-facility-status--@Version.ToString().ToLowerInvariant()" aria-label="Facility status">
+    <div class="bm-facility-status__lead">
+        <span>@Title</span>
+        <strong>Tier 2 Capacity Response Active</strong>
+        <small>@Facility.ShortName · @Snapshot.LastUpdatedLabel</small>
+        @if (Version == BedManagementVersion.V3Operational)
+        {
+            <div class="bm-facility-status__commands"><button type="button">Join meeting</button><button type="button" class="is-primary">Create action</button></div>
+        }
+    </div>
+    @foreach (var item in Items)
+    {
+        <article class="@item.Tone"><span>@item.Label</span><strong>@item.Value</strong><small>@item.Detail</small>@if (Version != BedManagementVersion.V3Operational){<a href="#facility-board">View details</a>}</article>
+    }
+    @if (Version != BedManagementVersion.V1DataInsights)
+    {
+        <article class="is-normal"><span>Last Updated</span><strong>2 min ago</strong><small>Facility operational snapshot</small><button type="button">Refresh</button></article>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public Facility Facility { get; set; } = default!;
+    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
+    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
+    private string Title => Version switch { BedManagementVersion.V1DataInsights => $"{Facility.ShortName} Status", BedManagementVersion.V2Balanced => "Facility Coordination Status", _ => "Facility Operational Status" };
+    private IReadOnlyList<Item> Items => [
+        new("Facility notice", "Fire Alarm Testing", "East building · 11:00–12:00", "is-normal"),
+        new("Critical care", "PICU Occupancy Alert", "100% occupied · review active", "is-high"),
+        new("Capacity governance", "Executive Capacity Review", "Next review 10:30 AM", "is-improving")
+    ];
+    private sealed record Item(string Label, string Value, string Detail, string Tone);
+}
