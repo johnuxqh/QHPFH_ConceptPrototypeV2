@@ -2029,3 +2029,198 @@
 .bm-ward-experience{display:grid;gap:9px;min-width:0}.bm-ward-status{display:grid;grid-template-columns:1.2fr repeat(4,1fr);border:1px solid #f0c98e;border-radius:8px;background:#fffdfa;overflow:hidden}.bm-ward-status>div,.bm-ward-status article{display:grid;gap:3px;padding:9px 12px;border-right:1px solid #eee}.bm-ward-status span{color:#b54708;font-size:.48rem;font-weight:850;text-transform:uppercase}.bm-ward-status strong{font-size:.62rem}.bm-ward-status small{color:#667085;font-size:.5rem}.bm-ward-status button{justify-self:start;padding:0;border:0;color:#005eb8;background:none;font-size:.49rem;font-weight:800}.bm-ward-status .is-high strong{color:#d92d20}.bm-ward-status .is-purple strong{color:#6938ef}.bm-ward-status .is-blue strong{color:#005eb8}.bm-ward-kpis{display:grid;grid-template-columns:repeat(6,minmax(110px,1fr));gap:8px}.bm-ward-kpis article{display:grid;gap:4px;min-height:72px;padding:10px;border:1px solid #e4e7ec;border-top:3px solid var(--tone,#005eb8);border-radius:7px;background:#fff}.bm-ward-kpis .is-green{--tone:#039855}.bm-ward-kpis .is-purple{--tone:#6938ef}.bm-ward-kpis .is-orange{--tone:#f79009}.bm-ward-kpis .is-red{--tone:#d92d20}.bm-ward-kpis .is-teal{--tone:#0e9384}.bm-ward-kpis span{color:#344054;font-size:.5rem;font-weight:800}.bm-ward-kpis strong{font-size:1rem}.bm-ward-kpis small{color:#667085;font-size:.48rem}.bm-ward-insights>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;padding:8px}.bm-ward-insights article{display:grid;gap:3px;padding:7px;border-left:3px solid var(--tone,#005eb8);border-radius:5px;background:#f8fafc}.bm-ward-insights .is-red{--tone:#d92d20}.bm-ward-insights .is-orange{--tone:#f79009}.bm-ward-insights .is-purple{--tone:#6938ef}.bm-ward-insights article>span{color:var(--tone);font-size:.48rem;font-weight:850}.bm-ward-insights strong{font-size:.57rem}.bm-ward-insights p{margin:0;color:#667085;font-size:.49rem}.bm-ward-insights dl{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin:4px 0 0}.bm-ward-insights dt{color:#667085;font-size:.4rem;text-transform:uppercase}.bm-ward-insights dd{margin:0;font-size:.45rem;font-weight:750}.bm-ward-summary-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.bm-ward-summary-list{padding:5px 9px}.bm-ward-summary-list p{display:flex;justify-content:space-between;margin:0;padding:5px 0;border-bottom:1px solid #eef2f6;font-size:.51rem}.bm-ward-summary-list .is-red{color:#d92d20}.bm-ward-bed-table__scroll{width:100%;overflow-x:auto;scrollbar-gutter:stable}.bm-ward-bed-table table{width:100%;min-width:1180px;border-collapse:collapse;font-size:.51rem}.bm-ward-bed-table th,.bm-ward-bed-table td{padding:5px 6px;border-bottom:1px solid #e4e7ec;text-align:left;white-space:nowrap}.bm-ward-bed-table th{color:#667085;font-size:.45rem;text-transform:uppercase}.bm-ward-bed-table button{padding:3px 7px;border:1px solid #b2ccdf;border-radius:4px;color:#005eb8;background:#fff;font-size:.48rem}.bm-ward-bed-table footer{display:flex;justify-content:space-between;padding:6px 8px;color:#667085;font-size:.48rem}.bm-ward-state{display:inline-flex;align-items:center;gap:4px;color:var(--state);font-weight:800}.bm-ward-state:before{width:6px;height:6px;border-radius:50%;background:var(--state);content:""}.bm-ward-state.is-green{--state:#039855}.bm-ward-state.is-orange{--state:#f79009}.bm-ward-state.is-purple{--state:#6938ef}.bm-ward-state.is-blue{--state:#1570ef}.bm-ward-state.is-red{--state:#d92d20}.bm-ward-state.is-grey{--state:#667085}.bm-ward-reports>div{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;padding:8px}.bm-ward-reports button{display:flex;justify-content:space-between;padding:7px;border:1px solid #d0d5dd;border-radius:5px;color:#344054;background:#fff;font-size:.5rem;font-weight:750}.bm-ward-reports button span{color:#005eb8}
 .bm-ward-command{border:1px solid #d0d5dd;border-radius:7px;background:#fff}.bm-ward-command header{padding:5px 9px;border-bottom:1px solid #e4e7ec;color:#344054;font-size:.5rem;font-weight:850;text-transform:uppercase}.bm-ward-command>div{display:grid;grid-template-columns:repeat(7,1fr) auto}.bm-ward-command article{display:grid;gap:2px;padding:7px 9px;border-right:1px solid #e4e7ec;text-align:center}.bm-ward-command span,.bm-ward-command small{color:#667085;font-size:.44rem}.bm-ward-command strong{font-size:.8rem}.bm-ward-command button{align-self:center;margin:7px;padding:7px;border:1px solid #b2ccdf;border-radius:5px;color:#6938ef;background:#fff;font-size:.5rem;font-weight:800}.bm-ward-v3-layout{display:grid;grid-template-columns:220px minmax(600px,1fr) 250px;gap:8px;align-items:start}.bm-ward-op-queues,.bm-ward-v3-right{display:grid;gap:8px}.bm-ward-v3-right .bm-ward-summary-panels{grid-template-columns:1fr}.bm-ward-v3-right .bm-ward-summary-panels section:not(:first-child){display:none}.bm-ward-v3-right .bm-ward-reports>div{grid-template-columns:1fr}.bm-ward-mini-table p{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin:0;padding:5px 7px;border-bottom:1px solid #eef2f6;font-size:.43rem}.bm-ward-blueprint{position:relative;min-width:0;border:1px solid #d0d5dd;border-radius:7px;background:#fff}.bm-ward-blueprint__toolbar{display:flex;justify-content:space-between;gap:8px;padding:7px 9px;border-bottom:1px solid #e4e7ec}.bm-ward-blueprint__toolbar>div:first-child{display:grid;gap:2px}.bm-ward-blueprint__toolbar strong{font-size:.56rem}.bm-ward-blueprint__toolbar span{color:#667085;font-size:.45rem}.bm-ward-view-selector{display:flex}.bm-ward-view-selector button{padding:5px 8px;border:1px solid #d0d5dd;color:#344054;background:#fff;font-size:.47rem}.bm-ward-view-selector button.active{border-color:#bdb4fe;color:#5925dc;background:#f4f3ff}.bm-ward-legend{display:flex;justify-content:center;gap:12px;padding:5px;font-size:.43rem}.bm-ward-legend span:before{display:inline-block;width:6px;height:6px;margin-right:3px;border-radius:50%;background:var(--c);content:""}.bm-ward-legend .is-green{--c:#039855}.bm-ward-legend .is-occupied{--c:#027a48}.bm-ward-legend .is-orange{--c:#f79009}.bm-ward-legend .is-red{--c:#d92d20}.bm-ward-legend .is-purple{--c:#6938ef}.bm-ward-legend .is-blue{--c:#1570ef}.bm-ward-legend .is-grey{--c:#667085}.bm-ward-bed-display{display:grid;grid-template-columns:repeat(6,minmax(85px,1fr));gap:7px;min-height:440px;padding:12px;overflow-x:auto;background:#f8fafc}.bm-ward-bed-display.is-blueprint{grid-template-areas:"b b b n n b" "b b b n n b" "b b b i i b" "b b b u u b"}.bm-ward-room{display:flex;align-items:center;justify-content:center;min-height:60px;border:1px solid #98a2b3;background:#fff;text-align:center;font-size:.5rem;font-weight:800}.bm-ward-room.nurses{grid-area:n}.bm-ward-room.isolation{grid-area:i}.bm-ward-room.utility{grid-area:u}.bm-ward-bed-tile{--tile:#039855;display:grid;gap:3px;min-height:76px;padding:6px;border:1px solid var(--tile);border-radius:4px;background:color-mix(in srgb,var(--tile) 7%,white);font-size:.43rem}.bm-ward-bed-tile.selected{outline:2px solid #5925dc;outline-offset:1px}.bm-ward-bed-tile label{display:flex;justify-content:space-between;align-items:center}.bm-ward-bed-tile input{width:11px;height:11px}.bm-ward-bed-tile b{color:var(--tile);font-size:.46rem;text-transform:uppercase}.bm-ward-bed-tile span{font-size:.48rem;font-weight:800}.bm-ward-bed-tile small{color:#667085}.bm-ward-bed-tile em{overflow:hidden;color:#475467;font-size:.4rem;font-style:normal;white-space:nowrap;text-overflow:ellipsis}.bm-ward-bed-tile.is-orange{--tile:#f79009}.bm-ward-bed-tile.is-red{--tile:#d92d20}.bm-ward-bed-tile.is-purple{--tile:#6938ef}.bm-ward-bed-tile.is-blue{--tile:#1570ef}.bm-ward-bed-tile.is-grey{--tile:#667085}.bm-ward-bed-tile.is-occupied{--tile:#027a48}.bm-ward-action-dock{display:flex;align-items:center;gap:5px;padding:7px;border-top:1px solid #e4e7ec;overflow-x:auto}.bm-ward-action-dock div{display:grid;min-width:70px}.bm-ward-action-dock strong{font-size:.48rem}.bm-ward-action-dock span{color:#667085;font-size:.4rem}.bm-ward-action-dock button{padding:6px;border:1px solid #d0d5dd;border-radius:5px;color:#344054;background:#fff;font-size:.43rem;font-weight:750;white-space:nowrap}.bm-ward-toast{position:absolute;right:10px;bottom:48px;padding:7px 10px;border-radius:5px;color:#fff;background:#027a48;font-size:.5rem;font-weight:750;box-shadow:0 4px 12px #0003}
 @media(max-width:1250px){.bm-ward-status{grid-template-columns:repeat(3,1fr)}.bm-ward-kpis{grid-template-columns:repeat(3,1fr)}.bm-ward-v3-layout{grid-template-columns:1fr}.bm-ward-op-queues{grid-template-columns:repeat(3,1fr)}.bm-ward-v3-right{grid-template-columns:1fr 1fr}.bm-ward-v3-right .bm-ward-reports>div{grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){.bm-ward-status,.bm-ward-kpis,.bm-ward-insights>div,.bm-ward-summary-panels,.bm-ward-op-queues,.bm-ward-v3-right{grid-template-columns:1fr}.bm-ward-command>div{grid-template-columns:repeat(2,1fr)}.bm-ward-bed-display{grid-template-columns:repeat(4,minmax(85px,1fr))}}
+
+/* P8.12: Ward operational typography and readability pass. */
+.bm-ward-experience {
+  --bm-panel-header-height: 48px;
+  font-size: 11px;
+}
+
+/* Operational content must never fall below the 11px readability floor. */
+.bm-ward-experience,
+.bm-ward-experience * {
+  font-size: 11px;
+}
+
+.bm-ward-experience .bm-ward-status span,
+.bm-ward-experience .bm-ward-kpis span {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.bm-ward-experience .bm-ward-status strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bm-ward-experience .bm-ward-status small,
+.bm-ward-experience .bm-ward-status button,
+.bm-ward-experience .bm-ward-kpis small {
+  font-size: 11px;
+}
+
+.bm-ward-experience .bm-ward-kpis strong {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Make command-strip metrics scan value-first, followed by label and context. */
+.bm-ward-experience .bm-ward-command header {
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bm-ward-experience .bm-ward-command article {
+  align-content: start;
+  gap: 3px;
+  padding: 8px 9px;
+  text-align: left;
+}
+
+.bm-ward-experience .bm-ward-command strong {
+  color: #1d2939;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.bm-ward-experience .bm-ward-command span {
+  color: #344054;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.bm-ward-experience .bm-ward-command small,
+.bm-ward-experience .bm-ward-command button {
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+/* Shared operational side-panel header pattern. */
+.bm-ward-experience .bm-ward-op-queues .bm-shared-panel,
+.bm-ward-experience .bm-ward-v3-right .bm-shared-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.bm-ward-experience .bm-ward-op-queues .bm-shared-panel header,
+.bm-ward-experience .bm-ward-v3-right .bm-shared-panel header {
+  box-sizing: border-box;
+  height: var(--bm-panel-header-height);
+  margin-bottom: 0;
+  padding: 7px 9px;
+  border-bottom: 1px solid #e4e7ec;
+}
+
+.bm-ward-experience .bm-ward-op-queues .bm-shared-panel header h3,
+.bm-ward-experience .bm-ward-v3-right .bm-shared-panel header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.bm-ward-experience .bm-ward-op-queues .bm-shared-panel header span,
+.bm-ward-experience .bm-ward-v3-right .bm-shared-panel header span {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.bm-ward-experience .bm-ward-mini-table p,
+.bm-ward-experience .bm-ward-summary-list p,
+.bm-ward-experience .bm-ward-reports button {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.bm-ward-experience .bm-ward-mini-table p:first-child,
+.bm-ward-experience .bm-ward-summary-list strong {
+  font-weight: 700;
+}
+
+/* Blueprint cards retain their footprint while improving scan priority. */
+.bm-ward-experience .bm-ward-blueprint__toolbar strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bm-ward-experience .bm-ward-blueprint__toolbar span,
+.bm-ward-experience .bm-ward-view-selector button,
+.bm-ward-experience .bm-ward-legend,
+.bm-ward-experience .bm-ward-room,
+.bm-ward-experience .bm-ward-action-dock strong,
+.bm-ward-experience .bm-ward-action-dock span,
+.bm-ward-experience .bm-ward-action-dock button,
+.bm-ward-experience .bm-ward-toast {
+  font-size: 11px;
+}
+
+.bm-ward-experience .bm-ward-bed-tile {
+  gap: 2px;
+  font-size: 11px;
+}
+
+.bm-ward-experience .bm-ward-bed-tile label {
+  min-height: 20px;
+}
+
+.bm-ward-experience .bm-ward-bed-tile input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.bm-ward-experience .bm-ward-bed-tile label strong {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bm-ward-experience .bm-ward-bed-tile b {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.bm-ward-experience .bm-ward-bed-tile span {
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bm-ward-experience .bm-ward-bed-tile small,
+.bm-ward-experience .bm-ward-bed-tile em {
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.bm-ward-experience .bm-ward-bed-table table,
+.bm-ward-experience .bm-ward-bed-table button {
+  font-size: 12px;
+}
+
+.bm-ward-experience .bm-ward-bed-table th {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bm-ward-experience .bm-ward-bed-table footer {
+  font-size: 11px;
+}
+
+.bm-ward-experience .bm-ward-command article,
+.bm-ward-experience .bm-ward-mini-table span,
+.bm-ward-experience .bm-ward-mini-table b,
+.bm-ward-experience .bm-ward-op-queues .bm-shared-panel header > *,
+.bm-ward-experience .bm-ward-v3-right .bm-shared-panel header > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
