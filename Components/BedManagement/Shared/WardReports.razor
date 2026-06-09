@@ -1,1 +1,28 @@
-<section class="bm-shared-panel bm-ward-reports"><header><h3>Quick Reports</h3><span>Lightweight exports</span></header><div>@foreach(var report in Reports){<button type="button">▣ @report <span>→</span></button>}</div></section>@code{private static readonly string[] Reports=["Daily Bed Census","Ward Capacity Report","Delayed Flow Report","Discharge Performance","Admissions Overview"];}
+<section class="bm-shared-panel bm-ward-reports">
+    <header>
+        <h3>Quick Reports</h3>
+        <span>Lightweight exports</span>
+    </header>
+
+    <div>
+        @foreach (var report in Reports)
+        {
+            <button type="button">
+                ▣ @report
+                <span>→</span>
+            </button>
+        }
+    </div>
+</section>
+
+@code
+{
+    private static readonly string[] Reports =
+    [
+        "Daily Bed Census",
+        "Ward Capacity Report",
+        "Delayed Flow Report",
+        "Discharge Performance",
+        "Admissions Overview"
+    ];
+}
