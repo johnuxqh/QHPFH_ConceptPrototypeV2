@@ -2,9 +2,11 @@
 <section class="bm-v3-view bm-v3-view--hhs bm-hhs-dashboard" aria-label="HHS V3 operational command view">
 <HhsStatusStrip Hhs="@Hhs" Snapshot="@Snapshot" Version="@BedManagementVersion.V3Operational" />
 <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" HhsMode="true" Version="@BedManagementVersion.V3Operational" />
-<HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V3Operational" />
+<div class="bm-hhs-primary bm-hhs-primary--v3">
+    <HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V3Operational" />
+    <HhsActivityPanel Version="@BedManagementVersion.V3Operational" />
+</div>
 <HhsFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V3Operational" />
-<HhsActivityPanel Version="@BedManagementVersion.V3Operational" />
 <HhsPerformanceTable Version="@BedManagementVersion.V3Operational" />
 </section>
 @code { [Parameter, EditorRequired] public HhsNetwork Hhs { get; set; } = default!; private CapacitySnapshot Snapshot => BedManagementDemoData.GetHhsSnapshot(Hhs.Id)!; }

@@ -1,9 +1,11 @@
 @using QHPFH_ConceptPrototype.Components.BedManagement.Shared
 <section class="bm-v1-view bm-v1-view--hhs bm-hhs-dashboard" aria-label="HHS V1 data and insights view">
 <HhsStatusStrip Hhs="@Hhs" Snapshot="@Snapshot" Version="@BedManagementVersion.V1DataInsights" />
-<HhsFacilityStatusSummary Hhs="@Hhs" />
 <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" HhsMode="true" Version="@BedManagementVersion.V1DataInsights" />
-<HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V1DataInsights" />
+<div class="bm-hhs-primary bm-hhs-primary--v1">
+    <HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V1DataInsights" />
+    <HhsFacilityStatusSummary Hhs="@Hhs" />
+</div>
 <HhsFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V1DataInsights" />
 <HhsActivityPanel Version="@BedManagementVersion.V1DataInsights" />
 <HhsPerformanceTable Version="@BedManagementVersion.V1DataInsights" />

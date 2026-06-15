@@ -1,6 +1,6 @@
 <section class="bm-shared-panel bm-hhs-flow" aria-label="HHS flow overview">
     <header><div><h3>@Title</h3><p>Demand, emergency, inpatient and discharge signals across facilities.</p></div></header>
-    <div class="bm-hhs-flow__scroll" role="region" aria-label="HHS flow domains" tabindex="0"><div class="bm-hhs-flow__grid">
+    <div class="bm-hhs-flow__scroll" role="region" aria-label="HHS flow domains"><div class="bm-hhs-flow__grid">
         @foreach (var lane in Lanes)
         {
             <article class="bm-hhs-flow__lane @lane.Tone"><h4>@lane.Name</h4><strong>@lane.Value</strong><span>@lane.Detail</span>
