@@ -2,7 +2,8 @@
 <section class="bm-v2-view bm-v2-view--hhs bm-hhs-dashboard" aria-label="HHS V2 balanced coordination view">
 <HhsStatusStrip Hhs="@Hhs" Snapshot="@Snapshot" Version="@BedManagementVersion.V2Balanced" />
 <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" HhsMode="true" Version="@BedManagementVersion.V2Balanced" />
-<div class="bm-hhs-primary bm-hhs-primary--v2"><HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V2Balanced" /><HhsFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V2Balanced" /></div>
+<HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V2Balanced" />
+<HhsFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V2Balanced" />
 <HhsActivityPanel Version="@BedManagementVersion.V2Balanced" />
 <HhsPerformanceTable Version="@BedManagementVersion.V2Balanced" />
 </section>

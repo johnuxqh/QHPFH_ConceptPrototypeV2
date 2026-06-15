@@ -4,7 +4,7 @@
         @foreach (var lane in Lanes)
         {
             <article class="bm-hhs-flow__lane @lane.Tone"><h4>@lane.Name</h4><strong>@lane.Value</strong><span>@lane.Detail</span>
-                <dl><div><dt>Facility signal</dt><dd>@lane.Signal</dd></div>@if (Version != BedManagementVersion.V1DataInsights){<div><dt>@(Version == BedManagementVersion.V3Operational ? "Response / owner" : "Coordination status")</dt><dd>@lane.Response</dd></div>}@if (Version == BedManagementVersion.V3Operational){<div><dt>Next review</dt><dd>@lane.NextReview</dd></div>}</dl>
+                <dl><div><dt>Facility signal</dt><dd>@lane.Signal</dd></div><div><dt>@(Version == BedManagementVersion.V1DataInsights ? "Regional context" : Version == BedManagementVersion.V3Operational ? "Response / owner" : "Coordination status")</dt><dd>@lane.Response</dd></div><div><dt>Next review</dt><dd>@lane.NextReview</dd></div></dl>
                 @if (Version == BedManagementVersion.V2Balanced){<a href="#hhs-performance">View coordination summary</a>}
             </article>
         }

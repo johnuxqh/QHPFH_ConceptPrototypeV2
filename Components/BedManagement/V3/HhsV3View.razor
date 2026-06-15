@@ -2,7 +2,8 @@
 <section class="bm-v3-view bm-v3-view--hhs bm-hhs-dashboard" aria-label="HHS V3 operational command view">
 <HhsStatusStrip Hhs="@Hhs" Snapshot="@Snapshot" Version="@BedManagementVersion.V3Operational" />
 <MetricTileRow Snapshot="@Snapshot" AwarenessMode="true" HhsMode="true" Version="@BedManagementVersion.V3Operational" />
-<div class="bm-hhs-primary bm-hhs-primary--v3"><HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V3Operational" /><HhsFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V3Operational" /></div>
+<HhsFacilityPressurePanel Hhs="@Hhs" Version="@BedManagementVersion.V3Operational" />
+<HhsFlowOverview Snapshot="@Snapshot" Version="@BedManagementVersion.V3Operational" />
 <HhsActivityPanel Version="@BedManagementVersion.V3Operational" />
 <HhsPerformanceTable Version="@BedManagementVersion.V3Operational" />
 </section>
