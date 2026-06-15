@@ -1,161 +1,42 @@
 <section class="bm-shared-panel bm-statewide-performance-table" aria-label="Statewide HHS performance table">
     <header>
-        <div>
-            <h3>@Title</h3>
-            <p>@Description</p>
+        <div><h3>@Title</h3><p>@Description</p></div>
+        <div class="bm-statewide-performance-table__utility">
+            <button type="button" class="bm-statewide-performance-table__columns" aria-label="Choose table columns" aria-expanded="@_columnsOpen" @onclick="() => _columnsOpen = !_columnsOpen">⚙ <span>Columns</span></button>
+            @if (_columnsOpen)
+            {
+                <div class="bm-statewide-performance-table__chooser"><strong>Columns</strong>
+                    @foreach (var column in OptionalColumns)
+                    { <label><input type="checkbox" checked="@IsVisible(column.Key)" @onchange="_ => ToggleColumn(column.Key)" /> @column.Label</label> }
+                </div>
+            }
         </div>
-        @if (Version == BedManagementVersion.V1DataInsights)
-        {
-            <button type="button" class="bm-statewide-performance-table__columns" @onclick="ToggleOptionalColumns">@(_showOptionalColumns ? "Hide extra data" : "Add data")</button>
-        }
     </header>
-
     <div class="bm-statewide-performance-table__scroll" role="region" aria-label="Statewide HHS performance rows" tabindex="0">
-        <table>
-            <thead>
-                <tr>
-                    <th scope="col">HHS</th>
-                    <th scope="col">Occupancy</th>
-                    <th scope="col">Available Beds</th>
-                    <th scope="col">Admissions</th>
-                    <th scope="col">Discharges</th>
-                    <th scope="col">Delayed Flow Patients</th>
-                    <th scope="col">Pressure Tier</th>
-                    <th scope="col">Escalation Status</th>
-                    <th scope="col">State Support Action</th>
-                    <th scope="col">Trend</th>
-                    <th scope="col">vs Yesterday</th>
-                    @if (_showOptionalColumns && Version == BedManagementVersion.V1DataInsights)
-                    {
-                        <th scope="col">Last update</th><th scope="col">Owner</th><th scope="col">Support status</th><th scope="col">Coordination note</th>
-                    }
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var hhs in OrderedHhs)
-                {
-                    var snapshot = hhs.Snapshot;
-                    <tr>
-                        <th scope="row">@hhs.Name</th>
-                        <td><strong>@snapshot.OccupancyPercentage%</strong></td>
-                        <td>@snapshot.AvailableBeds</td>
-                        <td>@snapshot.ExpectedAdmissions</td>
-                        <td>@snapshot.PlannedDischarges</td>
-                        <td>@GetDelayedFlow(snapshot)</td>
-                        <td><span class="bm-statewide-performance-table__tier @GetTierClass(snapshot)">@GetPressureTier(snapshot)</span></td>
-                        <td>@snapshot.EscalationStatus</td>
-                        <td>@GetSupportAction(snapshot)</td>
-                        <td>@GetTrend(snapshot)</td>
-                        <td>@GetYesterdayVariance(snapshot)</td>
-                        @if (_showOptionalColumns && Version == BedManagementVersion.V1DataInsights)
-                        {
-                            <td>@snapshot.LastUpdatedLabel</td><td>State Ops</td><td>@GetSupportAction(snapshot)</td><td>Review at next statewide check</td>
-                        }
-                        <td class="bm-statewide-performance-table__actions">
-                            @if (Version == BedManagementVersion.V1DataInsights)
-                            {
-                                <button type="button" @onclick="() => OnViewRequested.InvokeAsync(hhs.Name)">View</button><button type="button" @onclick="() => OnEditRequested.InvokeAsync(hhs.Name)">Edit</button>
-                            } else { <button type="button">@GetActionLabel()</button> }
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+        <table><thead><tr>
+            @Header("hhs", "HHS") @Header("occupancy", "Occupancy") @Header("beds", "Available Beds") @Header("admissions", "Admissions") @Header("discharges", "Discharges") @Header("delayed", "Delayed Flow Patients") @Header("tier", "Pressure Tier") @Header("status", "Escalation Status") @Header("support", "State Support Action") @Header("trend", "Trend") @Header("yesterday", "vs Yesterday")
+            @foreach (var column in OptionalColumns.Where(c => IsVisible(c.Key))) { @Header(column.Key, column.Label) }
+            <th scope="col">Action</th>
+        </tr></thead><tbody>
+        @foreach (var hhs in SortedRows) { var s = hhs.Snapshot; <tr>
+            <th scope="row">@hhs.Name</th><td><strong>@s.OccupancyPercentage%</strong></td><td>@s.AvailableBeds</td><td>@s.ExpectedAdmissions</td><td>@s.PlannedDischarges</td><td>@GetDelayedFlow(s)</td><td><span class="bm-statewide-performance-table__tier @GetTierClass(s)">@GetPressureTier(s)</span></td><td>@s.EscalationStatus</td><td>@GetSupportAction(s)</td><td>@GetTrend(s)</td><td>@GetYesterdayVariance(s)</td>
+            @foreach (var column in OptionalColumns.Where(c => IsVisible(c.Key))) { <td>@OptionalValue(column.Key, s)</td> }
+            <td class="bm-statewide-performance-table__actions"><button type="button" @onclick="() => OnViewRequested.InvokeAsync(hhs.Name)">View</button><button type="button" @onclick="() => OnEditRequested.InvokeAsync(hhs.Name)">Edit</button></td>
+        </tr> }
+        </tbody></table>
     </div>
-
-    <footer class="bm-statewide-performance-table__footer" aria-label="Statewide HHS performance pagination">
-        <span>Rows per page: 10</span>
-        <span>1–@HhsCount of @HhsCount</span>
-    </footer>
+    <footer class="bm-statewide-performance-table__footer"><span>All HHS rows</span><span>1–@Rows.Count of @Rows.Count</span></footer>
 </section>
-
 @code {
-    [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
-    [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
-    [Parameter] public string Title { get; set; } = "Statewide HHS performance";
-    [Parameter] public EventCallback<string> OnViewRequested { get; set; }
-    [Parameter] public EventCallback<string> OnEditRequested { get; set; }
-    private bool _showOptionalColumns;
-    private void ToggleOptionalColumns() => _showOptionalColumns = !_showOptionalColumns;
-
-    private string Description => Version switch
-    {
-        BedManagementVersion.V1DataInsights => "HHS-level capacity, flow and trend indicators derived from the current demo snapshot.",
-        BedManagementVersion.V2Balanced => "Escalation and support summary for statewide coordination review.",
-        BedManagementVersion.V3Operational => "Operational command summary of HHS pressure, support actions and next review entry points.",
-        _ => "HHS performance summary."
-    };
-
-    private int HhsCount => OrderedHhs.Count;
-
-    private IReadOnlyList<(string Name, CapacitySnapshot Snapshot)> OrderedHhs => Version == BedManagementVersion.V1DataInsights
-        ? StatewideHhsNames.Select((name, index) => (name, BedManagementDemoData.GetHhsSnapshot(State.HhsNetworks[index % State.HhsNetworks.Count].Id)!)).ToArray()
-        : State.HhsNetworks
-            .OrderBy(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.EscalationStatus == "BAU")
-            .ThenByDescending(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.OccupancyPercentage)
-            .Select(hhs => (hhs.Name, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!)).ToArray();
-
-    private static readonly IReadOnlyList<string> StatewideHhsNames =
-    [
-        "Metro North", "Metro South", "Gold Coast", "Sunshine Coast", "Wide Bay", "Cairns & Hinterland", "Townsville",
-        "West Moreton", "Darling Downs", "Mackay", "Central Queensland", "North West", "Torres and Cape", "South West"
-    ];
-
-    private static int GetDelayedFlow(CapacitySnapshot snapshot) => snapshot.PendingCleaning + snapshot.PendingMaintenance + snapshot.TransferRequests;
-
-    private static string GetPressureTier(CapacitySnapshot snapshot)
-    {
-        if (!string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) || snapshot.OccupancyPercentage >= 90)
-        {
-            return "High pressure";
-        }
-
-        return snapshot.OccupancyPercentage >= 80 || GetDelayedFlow(snapshot) > 0 ? "Watch" : "Stable";
-    }
-
-    private static string GetTierClass(CapacitySnapshot snapshot) => GetPressureTier(snapshot) switch
-    {
-        "High pressure" => "is-high",
-        "Watch" => "is-watch",
-        _ => "is-stable"
-    };
-
-    private string GetSupportAction(CapacitySnapshot snapshot) => Version switch
-    {
-        BedManagementVersion.V1DataInsights => string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) ? "Monitor trend" : "Flag for review",
-        BedManagementVersion.V2Balanced => string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) ? "Maintain visibility" : "Coordinate state support",
-        BedManagementVersion.V3Operational => string.Equals(snapshot.EscalationStatus, "BAU", StringComparison.OrdinalIgnoreCase) ? "Stand by" : "Review and open support",
-        _ => "Monitor"
-    };
-
-    private static string GetTrend(CapacitySnapshot snapshot)
-    {
-        var netDemand = snapshot.ExpectedAdmissions - snapshot.PlannedDischarges;
-        if (snapshot.OccupancyPercentage >= 90 || netDemand > 1)
-        {
-            return "↑ pressure";
-        }
-
-        return netDemand < 0 ? "↓ easing" : "→ steady";
-    }
-
-    private static string GetYesterdayVariance(CapacitySnapshot snapshot)
-    {
-        var netDemand = snapshot.ExpectedAdmissions - snapshot.PlannedDischarges;
-        return netDemand switch
-        {
-            > 0 => $"+{netDemand} demand",
-            < 0 => $"{netDemand} demand",
-            _ => "No net change"
-        };
-    }
-
-    private string GetActionLabel() => Version switch
-    {
-        BedManagementVersion.V1DataInsights => "View",
-        BedManagementVersion.V2Balanced => "View / Summary",
-        BedManagementVersion.V3Operational => "Review / Open",
-        _ => "View"
-    };
+ [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!; [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights; [Parameter] public string Title { get; set; } = "Statewide HHS performance"; [Parameter] public EventCallback<string> OnViewRequested { get; set; } [Parameter] public EventCallback<string> OnEditRequested { get; set; }
+ private bool _columnsOpen; private string _sort = "hhs"; private bool _descending; private readonly HashSet<string> _visible = [];
+ private static readonly (string Key,string Label)[] OptionalColumns = [("updated","Last Update"),("owner","Owner"),("supportstatus","Support Status"),("note","Coordination Note"),("threshold","Facilities Over Threshold"),("cleaning","Cleaning Constraints")];
+ private string Description => Version == BedManagementVersion.V1DataInsights ? "HHS-level capacity, flow and trend indicators derived from the current demo snapshot." : Version == BedManagementVersion.V2Balanced ? "Escalation and support summary for statewide coordination review." : "Operational command summary of HHS pressure, support actions and next review entry points.";
+ private static readonly string[] Names = ["Metro North","Metro South","Gold Coast","Sunshine Coast","Wide Bay","Cairns & Hinterland","Townsville","West Moreton","Darling Downs","Mackay","Central Queensland","North West","Torres and Cape","South West"];
+ private IReadOnlyList<(string Name, CapacitySnapshot Snapshot)> Rows => Names.Select((n,i)=>(n, BedManagementDemoData.GetHhsSnapshot(State.HhsNetworks[i % State.HhsNetworks.Count].Id)!)).ToArray();
+ private IEnumerable<(string Name, CapacitySnapshot Snapshot)> SortedRows { get { Func<(string Name,CapacitySnapshot Snapshot),object> key = _sort switch { "occupancy"=>x=>x.Snapshot.OccupancyPercentage,"beds"=>x=>x.Snapshot.AvailableBeds,"admissions"=>x=>x.Snapshot.ExpectedAdmissions,"discharges"=>x=>x.Snapshot.PlannedDischarges,"delayed"=>x=>GetDelayedFlow(x.Snapshot),"tier"=>x=>GetPressureTier(x.Snapshot),"status"=>x=>x.Snapshot.EscalationStatus,"support"=>x=>GetSupportAction(x.Snapshot),"trend"=>x=>GetTrend(x.Snapshot),"yesterday"=>x=>x.Snapshot.ExpectedAdmissions-x.Snapshot.PlannedDischarges,"updated"=>x=>x.Snapshot.LastUpdatedLabel,"owner"=>x=>"State Ops","supportstatus"=>x=>GetSupportAction(x.Snapshot),"threshold"=>x=>x.Snapshot.OccupancyPercentage >= 90 ? 1 : 0,"cleaning"=>x=>x.Snapshot.PendingCleaning,_=>x=>x.Name }; return _descending ? Rows.OrderByDescending(key) : Rows.OrderBy(key); } }
+ private RenderFragment Header(string key,string label)=>b=>{ b.OpenElement(0,"th"); b.AddAttribute(1,"scope","col"); b.OpenElement(2,"button"); b.AddAttribute(3,"type","button"); b.AddAttribute(4,"onclick",EventCallback.Factory.Create(this,()=>Sort(key))); b.AddContent(5,label + (_sort==key ? (_descending ? " ↓":" ↑") : "")); b.CloseElement(); b.CloseElement(); };
+ private void Sort(string key){ if(_sort==key)_descending=!_descending; else {_sort=key;_descending=false;} } private bool IsVisible(string k)=>_visible.Contains(k); private void ToggleColumn(string k){if(!_visible.Add(k))_visible.Remove(k);}
+ private string OptionalValue(string k,CapacitySnapshot s)=>k switch{"updated"=>s.LastUpdatedLabel,"owner"=>"State Ops","supportstatus"=>GetSupportAction(s),"note"=>"Review at next statewide check","threshold"=>(s.OccupancyPercentage>=90?"1":"0"),"cleaning"=>s.PendingCleaning.ToString(),_=>""};
+ private static int GetDelayedFlow(CapacitySnapshot s)=>s.PendingCleaning+s.PendingMaintenance+s.TransferRequests; private static string GetPressureTier(CapacitySnapshot s)=>s.EscalationStatus!="BAU"||s.OccupancyPercentage>=90?"High pressure":s.OccupancyPercentage>=80||GetDelayedFlow(s)>0?"Watch":"Stable"; private static string GetTierClass(CapacitySnapshot s)=>GetPressureTier(s) switch{"High pressure"=>"is-high","Watch"=>"is-watch",_=>"is-stable"}; private string GetSupportAction(CapacitySnapshot s)=>s.EscalationStatus=="BAU"?"Maintain visibility":"Coordinate state support"; private static string GetTrend(CapacitySnapshot s)=>s.OccupancyPercentage>=90||s.ExpectedAdmissions-s.PlannedDischarges>1?"↑ pressure":s.ExpectedAdmissions-s.PlannedDischarges<0?"↓ easing":"→ steady"; private static string GetYesterdayVariance(CapacitySnapshot s)=>$"{s.ExpectedAdmissions-s.PlannedDischarges:+#;-#;0} demand";
 }

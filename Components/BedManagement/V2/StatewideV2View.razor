@@ -11,15 +11,20 @@
     </div>
 
     <StatewideActivityPanel Version="@BedManagementVersion.V2Balanced" OnDetailRequested="OpenDetail" />
-    <div class="bm-v2-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V2Balanced" Title="Statewide HHS performance and support summary" /></div>
+    <div class="bm-v2-emphasis-table bm-statewide-performance"><StatewidePerformanceTable State="@State" Version="@BedManagementVersion.V2Balanced" Title="Statewide HHS performance and support summary" OnViewRequested="OpenHhsDetail" OnEditRequested="OpenEdit" /></div>
 </section>
 
 <StatewideDetailSlideout State="@State" Snapshot="@Snapshot" DetailKey="@_detailKey" OnClose="CloseDetail" />
+<StatewideEditDrawer Hhs="@_editHhs" OnClose="CloseEdit" />
 
 @code {
     [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
     private string? _detailKey;
+    private string? _editHhs;
     private void OpenDetail(string detailKey) => _detailKey = detailKey;
+    private void OpenHhsDetail(string hhs) => _detailKey = $"hhs:{hhs}";
+    private void OpenEdit(string hhs) => _editHhs = hhs;
+    private void CloseEdit() => _editHhs = null;
     private void CloseDetail() => _detailKey = null;
     private CapacitySnapshot Snapshot => BedManagementDemoData.GetStatewideSnapshot();
 }

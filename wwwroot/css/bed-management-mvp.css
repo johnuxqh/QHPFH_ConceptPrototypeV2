@@ -2256,3 +2256,17 @@
 .bm-statewide-slideout__badge { width: fit-content; padding: 2px 7px; border-radius: 999px; background: rgba(0,94,184,.1); color: var(--pfh-primary-blue, #005eb8); font-size: .68rem; font-weight: 800; }
 .bm-statewide-slideout__chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .bm-statewide-slideout__chips span { padding: 6px 8px; border: 1px solid rgba(0,94,184,.22); border-radius: 6px; color: var(--pfh-primary-blue, #005eb8); font-size: .7rem; font-weight: 750; }
+/* P9.6 statewide data-table utilities */
+.bm-statewide-performance-table__utility { position: relative; margin-left: auto; }
+.bm-statewide-performance-table__columns { display: inline-flex; gap: 5px; align-items: center; }
+.bm-statewide-performance-table__chooser { position: absolute; z-index: 20; top: calc(100% + 5px); right: 0; display: grid; gap: 7px; width: 220px; padding: 12px; border: 1px solid var(--pfh-border,#d0d5dd); border-radius: 8px; background: var(--pfh-surface,#fff); box-shadow: 0 8px 22px rgba(16,24,40,.14); font-size: .68rem; }
+.bm-statewide-performance-table__chooser label { display: flex; gap: 7px; align-items: center; }
+.bm-statewide-performance-table__scroll { max-height: 455px; overflow: auto; }
+.bm-statewide-performance-table thead { position: sticky; z-index: 2; top: 0; }
+.bm-statewide-performance-table table { min-width: 1420px; table-layout: auto; }
+.bm-statewide-performance-table th button { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: inherit; letter-spacing: inherit; text-transform: inherit; white-space: nowrap; cursor: pointer; }
+.bm-statewide-performance-table th:nth-child(n+2):nth-child(-n+6), .bm-statewide-performance-table td:nth-child(n+2):nth-child(-n+6) { width: 74px; padding-inline: 6px; }
+.bm-statewide-flow__lane { grid-template-rows: auto 1fr auto auto; }
+.bm-statewide-flow__lane > a { align-self: end; }
+.bm-statewide-primary--v2 .bm-statewide-escalation table { min-width: 0; table-layout: fixed; }
+.bm-statewide-primary--v2 .bm-statewide-escalation th:nth-child(1){width:100px}.bm-statewide-primary--v2 .bm-statewide-escalation th:nth-child(2){width:100px}.bm-statewide-primary--v2 .bm-statewide-escalation th:nth-child(3){width:60px}.bm-statewide-primary--v2 .bm-statewide-escalation th:nth-child(4){width:110px}.bm-statewide-primary--v2 .bm-statewide-escalation th:nth-child(5){width:100px}
