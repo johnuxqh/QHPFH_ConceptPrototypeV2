@@ -1,6 +1,6 @@
 <section class="bm-shared-panel bm-hhs-pressure" aria-label="Facility pressure and status">
     <header><div><h3>@Title</h3><p>@Description</p></div><span class="bm-hhs-panel-chip">@Hhs.Name</span></header>
-    <div class="bm-hhs-pressure__scroll" role="region" aria-label="Facility pressure rows" tabindex="0">
+    <div class="bm-hhs-pressure__scroll" role="region" aria-label="Facility pressure rows">
         <div class="bm-hhs-pressure__head"><span>Facility</span><span>Pressure</span><span>Status / support action</span>@if (Version == BedManagementVersion.V3Operational){<span>Owner / next update</span>}</div>
         @foreach (var row in Rows)
         {

@@ -2280,3 +2280,38 @@
 .bm-hhs-flow__scroll{padding:9px 10px}.bm-hhs-flow__grid{min-width:760px;gap:8px}.bm-hhs-flow__lane{padding:10px}.bm-hhs-flow__lane dl{gap:8px}.bm-hhs-flow__lane dl div{display:flex;justify-content:space-between;gap:8px}.bm-hhs-flow__lane dd{text-align:right}
 .bm-hhs-performance-table .bm-statewide-performance-table__utility{position:relative}.bm-hhs-performance-table thead button{padding:0;border:0;background:transparent;color:inherit;text-transform:uppercase}.bm-hhs-performance-table .bm-statewide-performance-table__footer{align-items:center}.bm-hhs-performance-table footer label,.bm-hhs-performance-table footer div{display:flex;align-items:center;gap:6px}.bm-hhs-performance-table footer select{padding:3px;border:1px solid #d0d5dd;border-radius:4px;background:#fff;font-size:.52rem}
 @media(max-width:720px){.bm-hhs-facility-summary__list article{grid-template-columns:1fr auto}.bm-hhs-facility-summary__list article>div:nth-of-type(2){grid-column:1/-1}}
+
+/* P9.7 HHS reference recovery: compact, content-led dashboard composition. */
+.bm-hhs-dashboard{gap:8px;align-content:start}
+.bm-hhs-dashboard>.bm-shared-metrics--statewide-kpis .bm-statewide-kpi{min-height:96px;padding:10px}
+.bm-hhs-dashboard .bm-shared-panel{min-height:0}
+.bm-hhs-dashboard .bm-shared-panel>header{padding:8px 10px}
+.bm-hhs-dashboard .bm-shared-panel>header p{display:none}
+.bm-hhs-primary{align-items:start;gap:8px}
+.bm-hhs-primary--v1{grid-template-columns:minmax(420px,.9fr) minmax(600px,1.6fr)}
+.bm-hhs-primary--v2{grid-template-columns:minmax(430px,.8fr) minmax(650px,1.55fr)}
+.bm-hhs-primary--v3{grid-template-columns:minmax(560px,1.1fr) minmax(620px,1.35fr)}
+.bm-hhs-primary>.bm-shared-panel{height:100%}
+.bm-hhs-pressure__scroll{min-width:0;margin-top:0;overflow:visible}
+.bm-hhs-pressure__head,.bm-hhs-pressure__row{grid-template-columns:minmax(90px,.8fr) minmax(130px,1fr) minmax(150px,1.15fr);gap:7px}
+.bm-hhs-pressure__row{padding:6px 7px}
+.bm-hhs-pressure__row small{line-height:1.25}
+.bm-hhs-primary--v3 .bm-hhs-pressure__head,.bm-hhs-primary--v3 .bm-hhs-pressure__row{grid-template-columns:minmax(90px,.75fr) minmax(115px,.9fr) minmax(130px,1fr) minmax(110px,.8fr)}
+.bm-hhs-facility-summary__list article{grid-template-columns:minmax(100px,.8fr) auto minmax(150px,1.15fr) auto;gap:7px;padding:6px 8px}
+.bm-hhs-flow__scroll{margin-top:0;padding:7px 8px;overflow-x:auto}
+.bm-hhs-flow__lane{gap:4px;padding:7px 8px}
+.bm-hhs-flow__lane dl{gap:4px;padding-top:4px}
+.bm-hhs-flow__lane dl div{align-items:center}
+.bm-hhs-activity__cards{gap:6px}
+.bm-hhs-activity__cards article{gap:3px;padding:7px;border-top-width:2px}
+.bm-hhs-activity__cards p{line-height:1.25}
+.bm-hhs-activity__cards dl{gap:2px;padding-top:3px}
+.bm-hhs-primary--v2 .bm-hhs-activity__cards,.bm-hhs-primary--v3 .bm-hhs-activity__cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bm-hhs-primary--v2 .bm-hhs-activity,.bm-hhs-primary--v3 .bm-hhs-activity{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(220px,.75fr);align-content:start}
+.bm-hhs-primary--v2 .bm-hhs-activity>header,.bm-hhs-primary--v3 .bm-hhs-activity>header{grid-column:1/-1}
+.bm-hhs-primary--v2 .bm-hhs-activity__secondary,.bm-hhs-primary--v3 .bm-hhs-activity__secondary{margin:0 7px 0 0;padding-left:7px;border-left:1px solid #e4e7ec}
+.bm-hhs-primary--v2 .bm-hhs-activity__secondary>div,.bm-hhs-primary--v3 .bm-hhs-activity__secondary>div{grid-template-columns:1fr}
+.bm-hhs-primary--v3 .bm-hhs-timeline{grid-column:1/-1;margin:7px 8px 8px}
+.bm-hhs-performance-table th,.bm-hhs-performance-table td{padding:5px 6px}
+.bm-hhs-performance-table footer{padding:5px 8px}
+@media(max-width:1200px){.bm-hhs-primary--v1,.bm-hhs-primary--v2,.bm-hhs-primary--v3{grid-template-columns:1fr}.bm-hhs-primary--v2 .bm-hhs-activity,.bm-hhs-primary--v3 .bm-hhs-activity{grid-template-columns:1fr}.bm-hhs-primary--v2 .bm-hhs-activity__secondary,.bm-hhs-primary--v3 .bm-hhs-activity__secondary{margin:7px 0 0;padding:0;border-left:0}.bm-hhs-primary--v2 .bm-hhs-activity__secondary>div,.bm-hhs-primary--v3 .bm-hhs-activity__secondary>div{grid-template-columns:repeat(3,minmax(0,1fr))}}
