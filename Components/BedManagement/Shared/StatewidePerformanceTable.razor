@@ -4,6 +4,10 @@
             <h3>@Title</h3>
             <p>@Description</p>
         </div>
+        @if (Version == BedManagementVersion.V1DataInsights)
+        {
+            <button type="button" class="bm-statewide-performance-table__columns" @onclick="ToggleOptionalColumns">@(_showOptionalColumns ? "Hide extra data" : "Add data")</button>
+        }
     </header>
 
     <div class="bm-statewide-performance-table__scroll" role="region" aria-label="Statewide HHS performance rows" tabindex="0">
@@ -21,14 +25,17 @@
                     <th scope="col">State Support Action</th>
                     <th scope="col">Trend</th>
                     <th scope="col">vs Yesterday</th>
-                    <th scope="col">Last Update</th>
+                    @if (_showOptionalColumns && Version == BedManagementVersion.V1DataInsights)
+                    {
+                        <th scope="col">Last update</th><th scope="col">Owner</th><th scope="col">Support status</th><th scope="col">Coordination note</th>
+                    }
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var hhs in OrderedHhs)
                 {
-                    var snapshot = BedManagementDemoData.GetHhsSnapshot(hhs.Id)!;
+                    var snapshot = hhs.Snapshot;
                     <tr>
                         <th scope="row">@hhs.Name</th>
                         <td><strong>@snapshot.OccupancyPercentage%</strong></td>
@@ -41,8 +48,16 @@
                         <td>@GetSupportAction(snapshot)</td>
                         <td>@GetTrend(snapshot)</td>
                         <td>@GetYesterdayVariance(snapshot)</td>
-                        <td>@snapshot.LastUpdatedLabel</td>
-                        <td><button type="button">@GetActionLabel()</button></td>
+                        @if (_showOptionalColumns && Version == BedManagementVersion.V1DataInsights)
+                        {
+                            <td>@snapshot.LastUpdatedLabel</td><td>State Ops</td><td>@GetSupportAction(snapshot)</td><td>Review at next statewide check</td>
+                        }
+                        <td class="bm-statewide-performance-table__actions">
+                            @if (Version == BedManagementVersion.V1DataInsights)
+                            {
+                                <button type="button" @onclick="() => OnViewRequested.InvokeAsync(hhs.Name)">View</button><button type="button" @onclick="() => OnEditRequested.InvokeAsync(hhs.Name)">Edit</button>
+                            } else { <button type="button">@GetActionLabel()</button> }
+                        </td>
                     </tr>
                 }
             </tbody>
@@ -59,6 +74,10 @@
     [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
     [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
     [Parameter] public string Title { get; set; } = "Statewide HHS performance";
+    [Parameter] public EventCallback<string> OnViewRequested { get; set; }
+    [Parameter] public EventCallback<string> OnEditRequested { get; set; }
+    private bool _showOptionalColumns;
+    private void ToggleOptionalColumns() => _showOptionalColumns = !_showOptionalColumns;
 
     private string Description => Version switch
     {
@@ -68,11 +87,20 @@
         _ => "HHS performance summary."
     };
 
-    private int HhsCount => State.HhsNetworks.Count;
+    private int HhsCount => OrderedHhs.Count;
 
-    private IEnumerable<HhsNetwork> OrderedHhs => State.HhsNetworks
-        .OrderBy(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.EscalationStatus == "BAU")
-        .ThenByDescending(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.OccupancyPercentage);
+    private IReadOnlyList<(string Name, CapacitySnapshot Snapshot)> OrderedHhs => Version == BedManagementVersion.V1DataInsights
+        ? StatewideHhsNames.Select((name, index) => (name, BedManagementDemoData.GetHhsSnapshot(State.HhsNetworks[index % State.HhsNetworks.Count].Id)!)).ToArray()
+        : State.HhsNetworks
+            .OrderBy(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.EscalationStatus == "BAU")
+            .ThenByDescending(hhs => BedManagementDemoData.GetHhsSnapshot(hhs.Id)!.OccupancyPercentage)
+            .Select(hhs => (hhs.Name, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!)).ToArray();
+
+    private static readonly IReadOnlyList<string> StatewideHhsNames =
+    [
+        "Metro North", "Metro South", "Gold Coast", "Sunshine Coast", "Wide Bay", "Cairns & Hinterland", "Townsville",
+        "West Moreton", "Darling Downs", "Mackay", "Central Queensland", "North West", "Torres and Cape", "South West"
+    ];
 
     private static int GetDelayedFlow(CapacitySnapshot snapshot) => snapshot.PendingCleaning + snapshot.PendingMaintenance + snapshot.TransferRequests;
 

@@ -1303,6 +1303,7 @@
 .bm-statewide-kpi__trend i:nth-child(4) { height: 72%; }
 .bm-statewide-kpi__trend i:nth-child(5) { height: 58%; }
 .bm-statewide-kpi__trend i:nth-child(6) { height: 84%; }
+.bm-statewide-kpi__trend i:nth-child(7) { height: 66%; }
 
 .bm-statewide-slideout__backdrop {
   position: fixed;
@@ -1506,6 +1507,28 @@
 
 .bm-statewide-performance-table td button:hover,
 .bm-statewide-performance-table td button:focus-visible { background: rgba(0, 94, 184, 0.14); }
+
+.bm-statewide-dashboard > .bm-shared-metrics--statewide-kpis { margin-block: 0; }
+.bm-statewide-dashboard > .bm-shared-metrics--statewide-kpis .bm-statewide-kpi { min-height: 108px; padding-block: 8px 7px; gap: 4px; }
+.bm-statewide-primary--v1 .bm-statewide-flow__grid { margin-top: 0; }
+.bm-statewide-activity--v1datainsights .bm-statewide-activity__cards { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+.bm-statewide-activity--v1datainsights .bm-statewide-activity__cards article { padding: 8px; gap: 4px; }
+.bm-statewide-performance-table header { align-items: start; gap: 12px; }
+.bm-statewide-performance-table__columns { padding: 6px 10px; border: 1px solid rgba(0,94,184,.28); border-radius: 6px; background: rgba(0,94,184,.07); color: var(--pfh-primary-blue,#005eb8); font: inherit; font-size: .68rem; font-weight: 800; cursor: pointer; }
+.bm-v1-emphasis-table .bm-statewide-performance-table table { min-width: 1380px; table-layout: auto; }
+.bm-v1-emphasis-table .bm-statewide-performance-table th,
+.bm-v1-emphasis-table .bm-statewide-performance-table td { padding-inline: 7px; }
+.bm-v1-emphasis-table .bm-statewide-performance-table th:first-child { min-width: 150px; }
+.bm-statewide-performance-table__actions { display: flex; gap: 4px; }
+.bm-statewide-slideout--edit { width: min(75vw, 1080px); }
+.bm-statewide-edit-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+.bm-statewide-edit-grid label { display: grid; gap: 5px; color: var(--pfh-text-muted,#667085); font-size: .68rem; font-weight: 800; }
+.bm-statewide-edit-grid input,.bm-statewide-edit-grid textarea { width: 100%; padding: 9px; border: 1px solid var(--pfh-border,#d0d5dd); border-radius: 6px; background: var(--pfh-surface,#fff); color: var(--pfh-text-primary,#101828); font: inherit; }
+.bm-statewide-edit-grid textarea { min-height: 76px; resize: none; }
+.bm-statewide-edit-grid__wide { grid-column: 1 / -1; }
+.bm-statewide-pressure-ranking li { grid-template-columns: 38px minmax(0,1fr); grid-template-rows: auto auto; }
+.bm-statewide-pressure-ranking .bm-statewide-pressure-rank { grid-row: 1 / 3; align-self: stretch; display: grid; place-items: center; font-size: 1.35rem; }
+.bm-statewide-pressure-ranking b { grid-column: 2; justify-self: start; }
 
 .bm-statewide-performance-table__footer {
   display: flex;
