@@ -14,24 +14,7 @@
 </section>
 
 <StatewideDetailSlideout State="@State" Snapshot="@Snapshot" DetailKey="@_detailKey" OnClose="CloseDetail" />
-@if (!string.IsNullOrWhiteSpace(_editHhs))
-{
-    <button type="button" class="bm-statewide-slideout__backdrop" aria-label="Close edit preview" @onclick="CloseEdit"></button>
-    <aside class="bm-statewide-slideout bm-statewide-slideout--edit" aria-label="@_editHhs editable coordination dataset">
-        <header class="bm-statewide-slideout__header"><div><span>Preview only</span><h2>@_editHhs HHS editable coordination dataset</h2></div><button type="button" class="bm-statewide-slideout__close" aria-label="Close edit preview" @onclick="CloseEdit">×</button></header>
-        <div class="bm-statewide-slideout__content">
-            <p class="bm-statewide-slideout__note">No data is saved in this prototype.</p>
-            <section class="bm-statewide-edit-grid">
-                @foreach (var field in EditFields)
-                {
-                    <label><span>@field.Label</span><input value="@field.Value" readonly /></label>
-                }
-                <label class="bm-statewide-edit-grid__wide"><span>Coordination note</span><textarea readonly>Review pressure and support requirements at the next statewide coordination check.</textarea></label>
-                <label class="bm-statewide-edit-grid__wide"><span>Optional data fields</span><textarea readonly>Facilities over threshold · Cleaning constraints · Last update</textarea></label>
-            </section>
-        </div>
-    </aside>
-}
+<StatewideEditDrawer Hhs="@_editHhs" OnClose="CloseEdit" />
 
 @code {
     [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
