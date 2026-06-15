@@ -2224,3 +2224,12 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+/* P9.4 dense, context-specific statewide drill-in content. */
+.bm-statewide-slideout__cards { display: grid; gap: 8px; }
+.bm-statewide-slideout__cards article { display: grid; gap: 4px; padding: 10px; border: 1px solid var(--pfh-border, #e4e7ec); border-radius: 8px; background: var(--pfh-surface-subtle, #f7f9fc); }
+.bm-statewide-slideout__cards strong { color: var(--pfh-text-primary, #101828); font-size: .76rem; }
+.bm-statewide-slideout__cards p { margin: 0; color: var(--pfh-text-muted, #667085); font-size: .7rem; line-height: 1.4; }
+.bm-statewide-slideout__badge { width: fit-content; padding: 2px 7px; border-radius: 999px; background: rgba(0,94,184,.1); color: var(--pfh-primary-blue, #005eb8); font-size: .68rem; font-weight: 800; }
+.bm-statewide-slideout__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.bm-statewide-slideout__chips span { padding: 6px 8px; border: 1px solid rgba(0,94,184,.22); border-radius: 6px; color: var(--pfh-primary-blue, #005eb8); font-size: .7rem; font-weight: 750; }

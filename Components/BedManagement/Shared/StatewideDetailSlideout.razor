@@ -2,96 +2,51 @@
 {
     <button type="button" class="bm-statewide-slideout__backdrop" aria-label="Close detail preview" @onclick="Close"></button>
     <aside class="bm-statewide-slideout" aria-label="@Panel.Title detail preview">
-        <header class="bm-statewide-slideout__header">
-            <div><span>Preview only</span><h2>@Panel.Title</h2></div>
-            <button type="button" class="bm-statewide-slideout__close" aria-label="Close detail preview" @onclick="Close">×</button>
-        </header>
-
+        <header class="bm-statewide-slideout__header"><div><span>Preview only</span><h2>@Panel.Title</h2></div><button type="button" class="bm-statewide-slideout__close" aria-label="Close detail preview" @onclick="Close">×</button></header>
         <div class="bm-statewide-slideout__content">
-            <section class="bm-statewide-slideout__hero">
-                <span>@Panel.Eyebrow</span>
-                <strong>@Panel.Value</strong>
-                <p>@Panel.Interpretation</p>
-                <div class="bm-statewide-slideout__trend" aria-label="Illustrative trend placeholder"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            </section>
-
-            <section class="bm-statewide-slideout__section" aria-label="Supporting detail">
-                <h3>Supporting detail</h3>
-                <dl class="bm-statewide-slideout__rows">
-                    @foreach (var row in Panel.Rows)
-                    {
-                        <div><dt>@row.Label</dt><dd>@row.Value</dd></div>
-                    }
-                </dl>
-            </section>
-
-            @if (IsStatusDetail)
-            {
-                <section class="bm-statewide-slideout__section" aria-label="Related HHS">
-                    <h3>Related HHS</h3>
-                    <div class="bm-statewide-slideout__links">
-                        @foreach (var item in RelatedHhs.Take(5))
-                        {
-                            <button type="button"><span>@item.Hhs.Name</span><strong>@item.Snapshot.EscalationStatus · @item.Snapshot.OccupancyPercentage%</strong></button>
-                        }
-                    </div>
-                </section>
-            }
-            else
-            {
-                <section class="bm-statewide-slideout__section" aria-label="System signals">
-                    <h3>System signals</h3>
-                    <div class="bm-statewide-slideout__links">
-                        @foreach (var signal in State.Signals.Take(4))
-                        {
-                            <button type="button"><span>@signal.Label</span><strong>@signal.Detail</strong></button>
-                        }
-                    </div>
-                </section>
-            }
-
-            <p class="bm-statewide-slideout__note">This panel demonstrates a future drill-in pattern only. No action is saved and no workflow is started.</p>
+            <section class="bm-statewide-slideout__hero"><span>@Panel.Eyebrow</span><strong>@Panel.Value</strong><p>@Panel.Interpretation</p><div class="bm-statewide-slideout__trend" aria-label="Illustrative signal trend"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></section>
+            <section class="bm-statewide-slideout__section"><h3>Supporting detail</h3><dl class="bm-statewide-slideout__rows">@foreach(var row in Panel.Rows){<div><dt>@row.Label</dt><dd>@row.Value</dd></div>}</dl></section>
+            @foreach(var section in Panel.Sections){<section class="bm-statewide-slideout__section"><h3>@section.Title</h3><div class="bm-statewide-slideout__cards">@foreach(var item in section.Items){<article><span class="bm-statewide-slideout__badge">@item.Label</span><strong>@item.Title</strong><p>@item.Detail</p></article>}</div></section>}
+            <section class="bm-statewide-slideout__section"><h3>Preview next steps</h3><div class="bm-statewide-slideout__chips">@foreach(var action in Panel.Actions){<span>@action</span>}</div></section>
+            <p class="bm-statewide-slideout__note">@Panel.Note</p>
         </div>
     </aside>
 }
-
 @code {
-    [Parameter, EditorRequired] public BedManagementState State { get; set; } = default!;
-    [Parameter, EditorRequired] public CapacitySnapshot Snapshot { get; set; } = default!;
-    [Parameter] public string? DetailKey { get; set; }
-    [Parameter] public EventCallback OnClose { get; set; }
-
-    private bool IsStatusDetail => DetailKey?.StartsWith("status-", StringComparison.Ordinal) == true;
-    private int DelayedFlowCohort => Snapshot.PendingCleaning + Snapshot.PendingMaintenance + Snapshot.TransferRequests;
-    private int EscalatedCount => RelatedHhs.Count(item => item.Snapshot.EscalationStatus != "BAU");
-    private int ReviewCount => RelatedHhs.Count(item => item.Snapshot.OccupancyPercentage >= 80);
-    private int SupportActionCount => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.Wards).SelectMany(ward => ward.OperationalSignals).Count();
-    private string NextCoordination => State.HhsNetworks.SelectMany(hhs => hhs.Facilities).SelectMany(facility => facility.OperationalEvents).FirstOrDefault()?.TimeLabel ?? "Review due";
-
-    private IReadOnlyList<(HhsNetwork Hhs, CapacitySnapshot Snapshot)> RelatedHhs => State.HhsNetworks
-        .Select(hhs => (hhs, BedManagementDemoData.GetHhsSnapshot(hhs.Id)!))
-        .OrderByDescending(item => item.Item2.OccupancyPercentage)
-        .ToArray();
-
-    private SlideoutPanel Panel => DetailKey switch
-    {
-        "kpi-inpatients" => MetricPanel("Inpatients", Snapshot.OccupiedBeds.ToString(), "STATEWIDE CURRENT CENSUS", "Current occupied beds provide a statewide view of inpatient load.", [("Open beds", Snapshot.OpenBeds.ToString()), ("Available beds", Snapshot.AvailableBeds.ToString()), ("Occupancy", $"{Snapshot.OccupancyPercentage}%")]),
-        "kpi-available" => MetricPanel("Available Beds", Snapshot.AvailableBeds.ToString(), "READY CAPACITY", "Available beds indicate immediately visible capacity in the current snapshot.", [("Physical beds", Snapshot.PhysicalBeds.ToString()), ("Open beds", Snapshot.OpenBeds.ToString()), ("Pending cleaning", Snapshot.PendingCleaning.ToString())]),
-        "kpi-occupancy" => MetricPanel("Occupancy", $"{Snapshot.OccupancyPercentage}%", "STATEWIDE OPEN BED USE", "Occupancy summarises the proportion of open beds currently occupied.", [("Occupied beds", Snapshot.OccupiedBeds.ToString()), ("Open beds", Snapshot.OpenBeds.ToString()), ("HHS requiring review", ReviewCount.ToString())]),
-        "kpi-demand" => MetricPanel("Predicted ED Demand", Snapshot.ExpectedAdmissions.ToString(), "EXPECTED ADMISSIONS", "Expected admissions are used here as the existing demo-data signal for near-term demand.", [("Expected admissions", Snapshot.ExpectedAdmissions.ToString()), ("Available beds", Snapshot.AvailableBeds.ToString()), ("Planned discharges", Snapshot.PlannedDischarges.ToString())]),
-        "kpi-delayed" => MetricPanel("Delayed Flow Cohort", DelayedFlowCohort.ToString(), "FLOW CONSTRAINTS", "This demo cohort combines existing cleaning, maintenance and transfer concern signals.", [("Transfer concerns", Snapshot.TransferRequests.ToString()), ("Pending cleaning", Snapshot.PendingCleaning.ToString()), ("Pending maintenance", Snapshot.PendingMaintenance.ToString())]),
-        "kpi-discharges" => MetricPanel("Discharges Today", Snapshot.PlannedDischarges.ToString(), "PLANNED OPPORTUNITY", "Planned discharges show the current statewide opportunity recorded in the snapshot.", [("Planned discharges", Snapshot.PlannedDischarges.ToString()), ("Expected admissions", Snapshot.ExpectedAdmissions.ToString()), ("Available beds", Snapshot.AvailableBeds.ToString())]),
-        "status-escalations" => StatusPanel("Open Escalations", EscalatedCount.ToString(), "STATE COORDINATION", "HHS above BAU are shown for coordination awareness only.", [("Owner", "State coordination"), ("Status", $"{EscalatedCount} open"), ("Next update", NextCoordination)]),
-        "status-actions" => StatusPanel("Active State Support Actions", SupportActionCount.ToString(), "SUPPORT VISIBILITY", "Existing operational signals are summarised as active support priorities.", [("Owner", "State support team"), ("Status", "Active priorities"), ("Next update", NextCoordination)]),
-        "status-support" => StatusPanel("HHS Requiring Support", ReviewCount.ToString(), "PRESSURE REVIEW", "HHS at or above the review threshold are visible for support planning.", [("Owner", "State coordination"), ("Status", "Review required"), ("Next update", NextCoordination)]),
-        "status-call" => StatusPanel("Next Coordination Call", NextCoordination, "SCHEDULE PREVIEW", "This is a preview of how coordination call context could be surfaced.", [("Owner", "State coordination"), ("Status", "Scheduled"), ("Open escalations", EscalatedCount.ToString())]),
-        "status-overview" => StatusPanel("State Operational Summary", Snapshot.EscalationStatus, "OPERATIONAL COMMAND", "A compact summary of statewide pressure and support visibility.", [("Open escalations", EscalatedCount.ToString()), ("Active support actions", SupportActionCount.ToString()), ("Next coordination", NextCoordination)]),
-        _ => StatusPanel("Statewide Signal Detail", Snapshot.EscalationStatus, "SYSTEM INSIGHTS", "Current pressure and support signals are displayed as preview-only context.", [("Occupancy", $"{Snapshot.OccupancyPercentage}%"), ("HHS requiring review", ReviewCount.ToString()), ("Last updated", Snapshot.LastUpdatedLabel)])
-    };
-
-    private static SlideoutPanel MetricPanel(string title, string value, string eyebrow, string interpretation, IReadOnlyList<(string Label, string Value)> rows) => new(title, value, eyebrow, interpretation, rows);
-    private static SlideoutPanel StatusPanel(string title, string value, string eyebrow, string interpretation, IReadOnlyList<(string Label, string Value)> rows) => new(title, value, eyebrow, interpretation, rows);
-    private Task Close() => OnClose.InvokeAsync();
-
-    private sealed record SlideoutPanel(string Title, string Value, string Eyebrow, string Interpretation, IReadOnlyList<(string Label, string Value)> Rows);
+ [Parameter, EditorRequired] public BedManagementState State {get;set;}=default!; [Parameter,EditorRequired] public CapacitySnapshot Snapshot {get;set;}=default!; [Parameter] public string? DetailKey {get;set;} [Parameter] public EventCallback OnClose {get;set;}
+ private int Delayed=>Snapshot.PendingCleaning+Snapshot.PendingMaintenance+Snapshot.TransferRequests; private int Escalated=>Hhs.Count(x=>x.Snapshot.EscalationStatus!="BAU"); private int Review=>Hhs.Count(x=>x.Snapshot.OccupancyPercentage>=80); private string Next=>State.HhsNetworks.SelectMany(x=>x.Facilities).SelectMany(x=>x.OperationalEvents).FirstOrDefault()?.TimeLabel??"11:45";
+ private IReadOnlyList<(HhsNetwork Hhs,CapacitySnapshot Snapshot)> Hhs=>State.HhsNetworks.Select(x=>(x,BedManagementDemoData.GetHhsSnapshot(x.Id)!)).OrderByDescending(x=>x.Item2.OccupancyPercentage).ToArray();
+ private SlideoutPanel Panel=>DetailKey switch {
+ "status-escalations"=>P("Open Escalations","1 open escalation","STATE COORDINATION","Metro South currently shows the strongest combined admission, transfer and bed-turnaround pressure.",R(("Owner","State coordination"),("Highest pressure HHS","Metro South"),("Next update","11:45"),("Review cadence","30 min")),S("Related escalations",("Tier 2 Active","Metro South HHS","Delayed discharge pressure and transfer constraints"),("Monitor","Metro North HHS","Cleaning backlog watch"),("Monitor","Gold Coast HHS","Elective demand review")),["Review Metro South support summary","Confirm delayed discharge pathway owner","Check transfer constraints before coordination call"]),
+ "status-actions"=>P("Active State Support Actions","5 active support actions","SUPPORT VISIBILITY","Existing operational signals are summarised as active support priorities.",R(("Owner","State support team"),("HHS affected","3"),("Next update","11:45")),Actions,["Review priority ownership","Open future support-action workspace"]),
+ "status-support"=>P("HHS Requiring Review",$"{Review} HHS","PRESSURE REVIEW","Pressure, transfer constraints and escalation signals may require support planning.",R(("Highest occupancy",$"{Hhs.First().Hhs.Name} · {Hhs.First().Snapshot.OccupancyPercentage}%"),("Available network capacity",Snapshot.AvailableBeds.ToString()),("Escalation status",Snapshot.EscalationStatus)),HhsSection,["Review highest-pressure HHS","Validate clinically suitable capacity"]),
+ "status-call"=>P("Next Coordination Check",Next,"SCHEDULE PREVIEW","This preview shows how the Statewide view could support coordination meetings.",R(("Meeting type","Statewide flow coordination"),("Chair","State Operations"),("Participants","HHS flow leads, bed managers, QPACH"),("Open escalations",Escalated.ToString())),S("Agenda preview",("1","Pressure review","HHS pressure update and discharge opportunity"),("2","Constraints","Transfer and bed turnaround review"),("3","Ownership","Confirm support actions and next cycle")),["Prepare HHS updates","Confirm next update cycle"]),
+ "status-overview"=>P("State Operational Summary",Snapshot.EscalationStatus,"OPERATIONAL COMMAND","A compact summary of statewide pressure, escalation and support visibility.",R(("Open escalations",Escalated.ToString()),("Active support actions","5"),("HHS requiring review",Review.ToString()),("Available capacity",Snapshot.AvailableBeds.ToString()),("Expected admissions",Snapshot.ExpectedAdmissions.ToString()),("Planned discharges",Snapshot.PlannedDischarges.ToString())),S("System interpretation",("Stable","Regional capacity","Cairns discharge performance is improving"),("Constrained","Metro South flow","Transfer and discharge pathways need review"),("Watch","Demand","Gold Coast and QAS demand signals")),["Review constraints","Protect discharge opportunity"]),
+ "kpi-inpatients"=>Metric("Inpatients",Snapshot.OccupiedBeds.ToString(),"CURRENT INPATIENT LOAD","Occupied beds explain the statewide load that capacity planning must support",("Open beds",Snapshot.OpenBeds.ToString()),("Occupancy",$"{Snapshot.OccupancyPercentage}%")),
+ "kpi-available"=>Metric("Available Beds",Snapshot.AvailableBeds.ToString(),"IMMEDIATE VISIBLE CAPACITY","Available does not mean clinically suitable; location, specialty and staffing still matter",("Open beds",Snapshot.OpenBeds.ToString()),("Pending cleaning",Snapshot.PendingCleaning.ToString())),
+ "kpi-occupancy"=>Metric("Occupancy",$"{Snapshot.OccupancyPercentage}%","OPEN-BED UTILISATION","Higher tiers indicate where sustained utilisation may constrain flow",("Occupied beds",Snapshot.OccupiedBeds.ToString()),("HHS requiring review",Review.ToString())),
+ "kpi-demand"=>Metric("Predicted ED Demand",Snapshot.ExpectedAdmissions.ToString(),"EXPECTED ADMISSIONS","Demand and ambulance handover signals indicate where admission pressure may emerge",("QAS activity","Above baseline"),("Coordination focus","Gold Coast demand")),
+ "kpi-delayed"=>Metric("Delayed Flow Cohort",Delayed.ToString(),"FLOW CONSTRAINTS","Cleaning, maintenance and transfer concerns expose delayed-flow pressure",("Pending cleaning",Snapshot.PendingCleaning.ToString()),("Transfer concerns",Snapshot.TransferRequests.ToString())),
+ "kpi-discharges"=>Metric("Discharges Today",Snapshot.PlannedDischarges.ToString(),"DISCHARGE OPPORTUNITY","Protecting planned discharges can preserve capacity ahead of expected admissions",("Expected admissions",Snapshot.ExpectedAdmissions.ToString()),("Available beds",Snapshot.AvailableBeds.ToString())),
+ "action-metro-north"=>Activity("Metro North Cleaning Backlog Review","In progress","QPACH","Cleaning backlog is contributing to capacity pressure","Bed turnaround constraints","Validate HHS support requirements"),
+ "action-gold-coast"=>Activity("Gold Coast Elective Surge Review","Requested","QPACH","Elective demand forecast is above baseline","Expected admissions and discharge protection","Review demand modelling"),
+ "action-metro-south"=>Activity("Metro South Discharge Barrier Escalation","Escalation pending","State Ops","Provider pathway constraints require coordination","Delayed flow cohort and transfer constraints","Confirm provider response"),
+ "action-cairns"=>Activity("Cairns Capacity Monitoring","Monitoring","State Ops","Capacity status has returned to monitoring","Improving discharge performance","Continue regional monitoring"),
+ "insight-metro-north"=>Insight("Metro North Occupancy Signal","Watch","Sustained occupancy is above the expected range","Protect turnaround capacity and validate support needs"),
+ "insight-metro-south"=>Insight("Metro South Cleaning Backlog Signal","High","Cleaning backlog is increasing bed-turnaround risk","Connect the signal to the cleaning backlog action"),
+ "insight-gold-coast"=>Insight("Gold Coast ED Demand Signal","Above baseline","Demand may increase admissions while elective activity is elevated","Review demand modelling and protect discharges"),
+ "insight-cairns"=>Insight("Cairns Discharge Performance Signal","Improving","Earlier discharge completion has reduced visible pressure","Continue regional monitoring"),
+ "flow-demand"=>Flow("Demand","QAS activity · predicted presentations · ambulance handover","Rising demand signals where near-term support may be required"), "flow-emergency"=>Flow("Emergency","Patients in ED · waiting room · AWA","Emergency metrics show access pressure before admission"), "flow-inpatient"=>Flow("Inpatient Flow","Occupancy · open capacity · admissions","Inpatient flow connects demand to usable capacity"), "flow-discharge"=>Flow("Discharge & Exit","Delayed flow · HITH · discharge opportunity","Exit performance protects capacity for incoming demand"),
+ _ when DetailKey?.StartsWith("escalation-")==true=>Escalation(DetailKey),
+ _=>P("Statewide Signal Detail",Snapshot.EscalationStatus,"SYSTEM INSIGHTS","This key is not yet configured; current statewide context is shown safely.",R(("Occupancy",$"{Snapshot.OccupancyPercentage}%"),("Last updated",Snapshot.LastUpdatedLabel)),S("System signal",("Preview","Unknown detail key",DetailKey??"No key supplied")),["Return to statewide summary"])};
+ private SlideoutPanel Metric(string t,string v,string e,string i,params (string,string)[] rows)=>P(t,v,e,i,R(rows),HhsSection,["Review contributing HHSs",$"Open future {t.ToLowerInvariant()} drill-in"]);
+ private SlideoutPanel Activity(string t,string status,string owner,string issue,string signal,string next)=>P(t,status,"STATE SUPPORT ACTION",issue,R(("Owner",owner),("Status",status),("Next step",next),("Related signal",signal)),S("Timeline",("Detected","Signal identified","Operational signal added to state view"),("Current","Review active",issue),("Next","Coordination step",next)),[next,"Review related signal"]);
+ private SlideoutPanel Insight(string t,string v,string i,string focus)=>P(t,v,"SYSTEM INSIGHT",i,R(("Why it matters",i),("Likely coordination focus",focus)),HhsSection,[focus,"Review related HHS summary"]);
+ private SlideoutPanel Flow(string t,string metrics,string why)=>P(t,"Domain view","FLOW OVERVIEW",why,R(("Metrics included",metrics),("Future drill-in intent","Connect domain signals to affected HHSs and actions")),S("Related pressure signals",("Watch",t,"Current domain trend requires coordination visibility")),[$"Review {t.ToLowerInvariant()} signals","Open future domain workspace"]);
+ private SlideoutPanel Escalation(string key){var x=key switch{"escalation-metro-north"=>("Metro North","Cleaning backlog","Tier 3","QPACH","10:30 AM"),"escalation-metro-south"=>("Metro South","Delayed discharges","Tier 2 Active","State Ops","11:00 AM"),"escalation-gold-coast"=>("Gold Coast","Elective surge","Tier 2","QPACH","11:30 AM"),"escalation-cairns"=>("Cairns & Hinterland","ED demand","Monitor","State Ops","12:00 PM"),_=>("West Moreton","Staffing impact","Monitor","State Ops","12:30 PM")};return P($"{x.Item1} Escalation Detail",x.Item3,"ESCALATION QUEUE",$"{x.Item2} is driving this statewide visibility signal.",R(("HHS",x.Item1),("Trigger",x.Item2),("Tier / status",x.Item3),("Owner",x.Item4),("Next update",x.Item5)),S("Signal driver",("Current",x.Item2,$"State coordination is monitoring the impact across {x.Item1}")),[$"Confirm {x.Item1} update","Review support requirement"]);}
+ private IReadOnlyList<Section> HhsSection=>[new("Related HHS",Hhs.Take(4).Select(x=>new Item(x.Snapshot.EscalationStatus,x.Hhs.Name,$"{x.Snapshot.OccupancyPercentage}% occupancy · {x.Snapshot.AvailableBeds} available beds")).ToArray())];
+ private IReadOnlyList<Section> Actions=>S("Related actions",("In progress","Metro North cleaning backlog review","QPACH · Validate support requirements"),("Requested","Gold Coast elective surge review","QPACH · Review demand modelling"),("Escalation pending","Metro South discharge barrier escalation","State Ops · Confirm provider response"),("Monitoring","Cairns capacity monitoring","State Ops · Continue regional monitoring"),("Active","QAS demand support","State Ops · Review demand and handover signals"));
+ private static IReadOnlyList<(string Label,string Value)> R(params (string,string)[] x)=>x; private static IReadOnlyList<Section> S(string title,params (string Label,string Title,string Detail)[] x)=>[new(title,x.Select(y=>new Item(y.Label,y.Title,y.Detail)).ToArray())];
+ private static SlideoutPanel P(string t,string v,string e,string i,IReadOnlyList<(string Label,string Value)> r,IReadOnlyList<Section>s,IReadOnlyList<string>a)=>new(t,v,e,i,r,s,a,"Preview only. No action is saved and no workflow is started."); private Task Close()=>OnClose.InvokeAsync();
+ private sealed record SlideoutPanel(string Title,string Value,string Eyebrow,string Interpretation,IReadOnlyList<(string Label,string Value)> Rows,IReadOnlyList<Section> Sections,IReadOnlyList<string> Actions,string Note); private sealed record Section(string Title,IReadOnlyList<Item> Items); private sealed record Item(string Label,string Title,string Detail);
 }
