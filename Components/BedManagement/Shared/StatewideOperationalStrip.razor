@@ -1,8 +1,12 @@
 <section class="bm-statewide-status-strip bm-statewide-status-strip--@Mode.ToString().ToLowerInvariant()" aria-label="State operational status">
     <div class="bm-statewide-status-lead">
         <span>State operational status</span>
-        <strong>@Snapshot.EscalationStatus</strong>
+        <strong>@(Mode == BedManagementVersion.V1DataInsights ? "Tier 2 Capacity Response Active" : Snapshot.EscalationStatus)</strong>
         <small>@Snapshot.LastUpdatedLabel</small>
+        @if (Mode == BedManagementVersion.V1DataInsights)
+        {
+            <a href="#" class="bm-statewide-status-link" @onclick:preventDefault @onclick='() => RequestDetail("status-overview")'>View incident details</a>
+        }
         @if (Mode == BedManagementVersion.V3Operational)
         {
             <button type="button" class="bm-statewide-status-command bm-statewide-status-command--lead" @onclick='() => RequestDetail("status-overview")'>Open state summary</button>
