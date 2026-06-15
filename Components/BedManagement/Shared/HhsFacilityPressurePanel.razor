@@ -6,7 +6,7 @@
         {
             <article class="bm-hhs-pressure__row">
                 <div><strong>@row.Facility</strong><small>@row.Reason</small></div>
-                <div class="bm-hhs-pressure__meter"><span class="@row.Tone">@row.Tier</span><i><b class="@row.Tone" style="width:@row.Level%"></b></i></div>
+                <div class="bm-hhs-pressure__meter"><span class="bm-hhs-tier @row.Tone">@row.Tier</span><i><b class="@row.Tone" style="width:@row.Level%"></b></i></div>
                 <div><strong>@row.Status</strong><small>@row.Action</small></div>
                 @if (Version == BedManagementVersion.V3Operational){<div><strong>@row.Owner</strong><small>@row.NextUpdate</small></div>}
             </article>

@@ -1,0 +1,27 @@
+<section class="bm-shared-panel bm-hhs-facility-summary" aria-label="Facility Status Summary">
+    <header><div><h3>Facility Status Summary</h3><p>Current operating state and support focus across @Hhs.Name.</p></div><a href="#hhs-performance">View all facilities →</a></header>
+    <div class="bm-hhs-facility-summary__list">
+        @foreach (var row in Rows)
+        {
+            <article>
+                <div><strong>@row.Facility</strong><small>@row.Summary</small></div>
+                <span class="bm-hhs-tier @row.Tone">@row.Status</span>
+                <div><strong>@row.Action</strong><small>@row.Support</small></div>
+                <b class="@row.TrendTone">@row.Trend</b>
+            </article>
+        }
+    </div>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public HhsNetwork Hhs { get; set; } = default!;
+    private static readonly IReadOnlyList<SummaryRow> Rows =
+    [
+        new("PAH", "Occupancy above 95%", "Tier 3", "Capacity response active", "HHS support team engaged", "↑ pressure", "is-critical", "is-up"),
+        new("Logan", "ED demand above forecast", "Tier 2", "Surge review underway", "Regional flow support active", "↑ demand", "is-high", "is-up"),
+        new("QEII", "Capacity available", "Tier 1", "Supporting transfers", "Review placement opportunities", "→ stable", "is-normal", "is-steady"),
+        new("Redland", "Discharge flow improving", "Tier 1", "Protect discharge pathway", "Monitor at next review", "↓ improving", "is-improving", "is-down"),
+        new("Beaudesert", "Operating within capacity", "Tier 1", "Maintain visibility", "No additional support required", "→ stable", "is-normal", "is-steady")
+    ];
+    private sealed record SummaryRow(string Facility, string Summary, string Status, string Action, string Support, string Trend, string Tone, string TrendTone);
+}
