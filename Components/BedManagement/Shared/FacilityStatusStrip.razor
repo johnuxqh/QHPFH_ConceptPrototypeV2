@@ -12,7 +12,11 @@
     {
         <article class="@item.Tone"><span>@item.Label</span><strong>@item.Value</strong><small>@item.Detail</small>@if (Version != BedManagementVersion.V3Operational){<a href="#facility-board">View details</a>}</article>
     }
-    @if (Version != BedManagementVersion.V1DataInsights)
+    @if (Version == BedManagementVersion.V1DataInsights)
+    {
+        <article class="is-normal"><span>Last Updated</span><strong>08:15 AM</strong><small>18 May 2025</small><a href="#facility-board">View details</a></article>
+    }
+    else
     {
         <article class="is-normal"><span>Last Updated</span><strong>2 min ago</strong><small>Facility operational snapshot</small><button type="button">Refresh</button></article>
     }

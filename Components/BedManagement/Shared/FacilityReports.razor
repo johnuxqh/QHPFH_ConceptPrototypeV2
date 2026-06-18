@@ -1,0 +1,35 @@
+<section class="bm-shared-panel bm-facility-reports" aria-label="Facility quick reports and insights">
+    <div class="bm-facility-reports__group">
+        <header><h3>Quick Reports</h3></header>
+        @foreach (var report in Reports)
+        {
+            <a href="#facility-board"><span aria-hidden="true">@report.Icon</span><strong>@report.Label</strong><b>›</b></a>
+        }
+    </div>
+    <div class="bm-facility-reports__group bm-facility-reports__insights">
+        <header><h3>Insights</h3><a href="#facility-board">View all</a></header>
+        @foreach (var insight in Insights)
+        {
+            <p class="@insight.Tone"><span aria-hidden="true"></span>@insight.Label</p>
+        }
+    </div>
+</section>
+
+@code {
+    private static readonly IReadOnlyList<ReportItem> Reports = [
+        new("▤", "Daily Bed Census"),
+        new("▦", "Ward Capacity Report"),
+        new("□", "Delayed Flow Report"),
+        new("↗", "Discharge Performance"),
+        new("⇄", "Admissions Overview")
+    ];
+
+    private static readonly IReadOnlyList<InsightItem> Insights = [
+        new("2 wards > 95% occupancy", "is-red"),
+        new("3 wards with delayed discharge", "is-orange"),
+        new("Cleaning backlog in 2 wards", "is-orange")
+    ];
+
+    private sealed record ReportItem(string Icon, string Label);
+    private sealed record InsightItem(string Label, string Tone);
+}
