@@ -2,8 +2,13 @@
 <section class="bm-v1-view bm-v1-view--facility bm-facility-dashboard" aria-label="Facility V1 data and insights view">
 <FacilityStatusStrip Facility="@Facility" Snapshot="@Snapshot" Version="@BedManagementVersion.V1DataInsights" />
 <FacilityKpiRow Snapshot="@Snapshot" />
-<FacilityCoordinationPanel Version="@BedManagementVersion.V1DataInsights" />
-<FacilityFlowSummary Version="@BedManagementVersion.V1DataInsights" />
-<FacilityWardPerformanceTable Version="@BedManagementVersion.V1DataInsights" />
+<div class="bm-facility-main-grid">
+    <div class="bm-facility-main-grid__primary">
+        <FacilityCoordinationPanel Version="@BedManagementVersion.V1DataInsights" />
+        <FacilityFlowSummary Version="@BedManagementVersion.V1DataInsights" />
+        <FacilityWardPerformanceTable Version="@BedManagementVersion.V1DataInsights" />
+    </div>
+    <FacilityReports />
+</div>
 </section>
 @code { [Parameter, EditorRequired] public Facility Facility { get; set; } = default!; private CapacitySnapshot Snapshot => BedManagementDemoData.GetFacilitySnapshot(Facility.Id)!; }
