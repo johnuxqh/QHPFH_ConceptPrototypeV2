@@ -370,9 +370,20 @@
 
 /* Ward Operations updates */
 .ward-ops{--bm-action-icon-size:16px}
-.ward-ops .ward-summary-strip{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:10px}
+.ward-ops .ward-summary-strip{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:10px}
+
+.ward-ops .ward-summary-strip .situational-kpi-card{min-width:0;min-height:132px;padding:9px 10px;gap:6px}
+.ward-ops .ward-summary-strip .situational-kpi-title{font-size:10.5px;line-height:1.15;padding-right:14px}
+.ward-ops .ward-summary-strip .situational-kpi-main{gap:7px;min-height:38px}
+.ward-ops .ward-summary-strip .situational-kpi-icon{width:32px;height:32px}
+.ward-ops .ward-summary-strip .situational-kpi-value{font-size:2.1rem}
+.ward-ops .ward-summary-strip .situational-kpi-subtitle{font-size:.72rem;line-height:1.18}
+.ward-ops .ward-summary-strip .situational-kpi-breakdown-row{font-size:.72rem;line-height:1.08;gap:5px}
+.ward-ops .ward-summary-strip .situational-kpi-breakdown-row strong{font-size:.78rem}
+.ward-ops .ward-summary-strip .situational-kpi-breakdown-total{font-size:.74rem;line-height:1.12}
+.ward-ops .ward-summary-strip .situational-kpi-breakdown-total strong{font-size:1.05rem;margin-left:5px}
 .ward-ops .bm-info-icon{font-size:.95rem;color:#315f95;vertical-align:middle}
-.ward-allocation-highlight{display:grid;grid-template-columns:200px minmax(0,1fr);gap:10px;border:1px solid #bed0e7;background:#eef5ff;border-radius:10px;padding:10px;margin-bottom:10px}
+.ward-allocation-highlight{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;border:1px solid #bed0e7;background:#eef5ff;border-radius:10px;padding:10px;margin-bottom:10px}
 .expected-admissions-box{background:#fff;border:1px solid #c7d8ee;border-radius:8px;padding:10px;display:grid;gap:4px;align-content:start}
 .expected-admissions-box p{margin:0;font-size:.76rem;color:#36526f;font-weight:700}
 .expected-admissions-box strong{font-size:2rem;line-height:1;color:#1f4f8d}
