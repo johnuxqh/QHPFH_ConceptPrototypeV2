@@ -155,7 +155,9 @@
 /* Allocation Centre placeholder */
 .allocation-centre-page{background:#f4f7fb}
 .ac-header h2{margin:0 0 4px}.ac-header p{margin:0 0 14px;color:#55697f}
-.ac-filter-row{margin-bottom:14px}
+.ac-filter-row{margin-bottom:10px;flex-wrap:wrap}.ac-day-view button.active{background:#eaf2ff;border-color:#8fb0cb;color:#174f86}
+.ac-status-summary{display:grid;grid-template-columns:repeat(4,minmax(110px,1fr));gap:8px;margin:0 0 8px}.ac-status-summary div{border:1px solid #dce5ef;background:#fff;border-radius:8px;padding:8px 10px}.ac-status-summary strong{display:block;font-size:1.2rem;color:#1f3350;line-height:1}.ac-status-summary span{font-size:.72rem;color:#60758b}
+.ac-status-filters{display:flex;gap:6px;margin:0 0 12px}.ac-status-filters button{border:1px solid #cfd9e6;background:#fff;border-radius:999px;padding:5px 10px;font-size:.72rem;color:#31516f}.ac-status-filters button.active{background:#eaf2ff;border-color:#8fb0cb;color:#174f86;font-weight:700}
 .ac-layout{display:grid;grid-template-columns:1fr 320px;gap:12px;align-items:start}
 .ac-lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .ac-lane-card{background:#fff;border:1px solid #dde5ef;border-radius:10px;padding:10px;min-height:210px}
@@ -163,10 +165,13 @@
 .ac-lane-card h3{margin:0;font-size:.86rem;color:#1f3350}
 .ac-lane-card header span{font-size:.72rem;color:#5f7388}
 .ac-chip-list{display:grid;gap:7px}
-.ac-chip{border:1px solid #d9e2ed;background:#f9fbfe;border-radius:8px;padding:7px}
+.ac-chip{border:1px solid #d9e2ed;background:#f9fbfe;border-radius:8px;padding:7px;display:grid;gap:4px}
+.ac-chip-heading{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
 .ac-chip strong{display:block;font-size:.77rem;color:#274563}
-.ac-chip small{font-size:.7rem;color:#5b6f84}
+.ac-chip small{font-size:.7rem;color:#5b6f84}.ac-chip em{font-size:.68rem;color:#48627b;font-style:normal}
+.ac-status-chip{border:1px solid;border-radius:999px;padding:2px 7px;font-size:.64rem;font-weight:700;white-space:nowrap}.ac-status-chip.unallocated{border-color:#d8c69e;background:#fff8e8;color:#7b5514}.ac-status-chip.allocated{border-color:#b8d5c2;background:#edf8f0;color:#28613a}.ac-status-chip.pending-review{border-color:#c8d5e7;background:#eef5ff;color:#2b5f9e}
 .ac-destination-panel{display:grid;gap:10px}
+.ac-destination-panel article:first-child{border:1px solid #dde5ef;background:#fff;border-radius:10px;padding:10px}.ac-destination-panel h4{margin:0 0 8px;font-size:.86rem;color:#1f3350}.ac-ward-context{margin:0;color:#55697f;font-size:.76rem}
 .ac-note{border:1px dashed #bfd0df;background:#fafdff;padding:12px;color:#54708a;font-size:.8rem;border-radius:8px}
 .ac-note p{margin:0}
 .ac-ward-link{width:100%}
