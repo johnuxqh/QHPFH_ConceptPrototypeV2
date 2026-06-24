@@ -5,14 +5,33 @@
 <section class="page-shell-card bed-mgmt-page allocation-centre-page">
     <header class="ac-header">
         <h2>Allocation Centre</h2>
-        <p>Multi-ward patient movement and transfer coordination.</p>
+        <p>Review incoming pathway queues, proposed destinations and allocation status.</p>
     </header>
 
     <section class="bm-filter-row ac-filter-row">
         <div class="bm-filter"><span>Facility</span><button>QCH</button></div>
         <div class="bm-filter"><span>HHS</span><button>All</button></div>
         <div class="bm-filter"><span>Destination Ward</span><button>All</button></div>
-        <div class="bm-filter"><span>Date</span><button>Today</button></div>
+        <div class="bm-filter ac-day-view"><span>Day view</span>
+            @foreach (var option in DayViewOptions)
+            {
+                <button class="@(SelectedDayView == option ? "active" : null)" @onclick="() => SelectedDayView = option">@option</button>
+            }
+        </div>
+    </section>
+
+    <section class="ac-status-summary" aria-label="Allocation status summary">
+        <div><strong>@TotalQueued</strong><span>Total queued</span></div>
+        <div><strong>@StatusCount("Unallocated")</strong><span>Unallocated</span></div>
+        <div><strong>@StatusCount("Allocated")</strong><span>Allocated</span></div>
+        <div><strong>@StatusCount("Pending review")</strong><span>Pending review</span></div>
+    </section>
+
+    <section class="ac-status-filters" aria-label="Allocation status view options">
+        @foreach (var status in StatusFilterOptions)
+        {
+            <button class="@(SelectedStatusFilter == status ? "active" : null)" @onclick="() => SelectedStatusFilter = status">@status</button>
+        }
     </section>
 
     <div class="ac-layout">
@@ -26,11 +45,18 @@
                     </header>
 
                     <div class="ac-chip-list">
-                        @foreach (var patient in lane.Patients)
+                        @foreach (var patient in FilterPatients(lane.Patients))
                         {
                             <div class="ac-chip">
-                                <strong>@patient.FirstName @patient.LastName</strong>
-                                <small>@patient.SourceType · ETA @patient.EstimatedArrivalTime</small>
+                                <div class="ac-chip-heading">
+                                    <strong>@patient.Admission.FirstName @patient.Admission.LastName</strong>
+                                    <span class="@StatusClass(patient.Status)">@patient.Status</span>
+                                </div>
+                                <small>@patient.Admission.SourceType pathway · ETA @patient.Admission.EstimatedArrivalTime</small>
+                                @if (!string.IsNullOrWhiteSpace(patient.ProposedDestination))
+                                {
+                                    <em>Proposed destination: @patient.ProposedDestination</em>
+                                }
                             </div>
                         }
                     </div>
@@ -40,7 +66,7 @@
 
         <aside class="ac-destination-panel">
             <article>
-                <h4>Destination Panel</h4>
+                <h4>Proposed destination review</h4>
                 <div class="bm-targets">
                     @foreach (var destination in Destinations)
                     {
@@ -50,9 +76,10 @@
             </article>
 
             <article class="ac-note">
-                <p>Future workspace for cross-ward and cross-facility allocation workflows.</p>
+                <p>Destination options are decision-support only and do not confirm formal placement.</p>
             </article>
 
+            <p class="ac-ward-context">Open Ward Management for ward bed and patient context.</p>
             <button class="bm-primary ac-ward-link" @onclick="OpenWardOperations">Open Ward Management</button>
         </aside>
     </div>
@@ -69,6 +96,10 @@
         "Discharge Pending"
     ];
 
+    private static readonly string[] DayViewOptions = ["Today", "Tomorrow", "48 hrs", "Select date"];
+
+    private static readonly string[] StatusFilterOptions = ["All", "Unallocated", "Allocated", "Pending review"];
+
     private static readonly string[] Destinations =
     [
         "Ward 8A Surgical",
@@ -81,6 +112,12 @@
     ];
 
     private readonly List<QueueLane> QueueLanes = [];
+
+    private string SelectedDayView { get; set; } = "Today";
+
+    private string SelectedStatusFilter { get; set; } = "All";
+
+    private int TotalQueued => QueueLanes.Sum(lane => lane.Patients.Count);
 
     protected override void OnInitialized()
     {
@@ -98,9 +135,44 @@
                 selectedPatients = demoPatients.Take(3).ToList();
             }
 
-            QueueLanes.Add(new QueueLane(lane, selectedPatients));
+            var allocationPatients = selectedPatients
+                .Select((patient, index) => BuildAllocationPatient(lane, patient, index))
+                .ToList();
+
+            QueueLanes.Add(new QueueLane(lane, allocationPatients));
         }
     }
+
+    private int StatusCount(string status) => QueueLanes.Sum(lane => lane.Patients.Count(patient => patient.Status == status));
+
+    private IEnumerable<AllocationPatient> FilterPatients(IEnumerable<AllocationPatient> patients) =>
+        SelectedStatusFilter == "All"
+            ? patients
+            : patients.Where(patient => patient.Status == SelectedStatusFilter);
+
+    private static AllocationPatient BuildAllocationPatient(string laneName, Models.PatientAdmission patient, int index)
+    {
+        var status = (laneName, index) switch
+        {
+            ("ED Admissions", 0) => "Pending review",
+            ("IHT", 0) => "Pending review",
+            (_, 1) => "Allocated",
+            _ => "Unallocated"
+        };
+
+        var destination = status == "Allocated"
+            ? Destinations[(index + laneName.Length) % Destinations.Length]
+            : null;
+
+        return new AllocationPatient(patient, status, destination);
+    }
+
+    private static string StatusClass(string status) => status switch
+    {
+        "Allocated" => "ac-status-chip allocated",
+        "Pending review" => "ac-status-chip pending-review",
+        _ => "ac-status-chip unallocated"
+    };
 
     private static bool LaneMatchesPatient(string laneName, string sourceType, bool delayedDischarge) => laneName switch
     {
@@ -115,5 +187,7 @@
 
     private void OpenWardOperations() => Navigation.NavigateTo("ward-operations");
 
-    private sealed record QueueLane(string Name, List<Models.PatientAdmission> Patients);
+    private sealed record QueueLane(string Name, List<AllocationPatient> Patients);
+
+    private sealed record AllocationPatient(Models.PatientAdmission Admission, string Status, string? ProposedDestination);
 }
