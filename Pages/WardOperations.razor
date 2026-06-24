@@ -25,18 +25,18 @@
 
         <section class="bm-overview-cards ward-summary-strip">
             <SituationalKpiTile Title="Total Physical Beds" Value="24" Subtitle="All physical beds in this ward." IconName="open-bed-default" ColorClass="kpi-blue" InfoText="All physical beds configured in this ward." IsInfoOpen='@(OpenWardKpiInfo == "Total Physical Beds")' OnInfoClick='() => ToggleWardKpiInfo("Total Physical Beds")' AdditionalClasses="ward-kpi-card" />
-            <SituationalKpiTile Title="Open Beds" Value="20" Subtitle="Open beds refers to beds open for operational use today." IconName="open-bed-green" ColorClass="kpi-green" InfoText="Open beds are beds available for operational use today." IsInfoOpen='@(OpenWardKpiInfo == "Open Beds")' OnInfoClick='() => ToggleWardKpiInfo("Open Beds")' AdditionalClasses="ward-kpi-card" />
-            <SituationalKpiTile Title="Occupied Beds" Value="19" Subtitle="Beds currently occupied by patients." IconName="occupied-bed-default" ColorClass="kpi-gray" InfoText="Beds currently occupied by admitted patients receiving care." IsInfoOpen='@(OpenWardKpiInfo == "Occupied Beds")' OnInfoClick='() => ToggleWardKpiInfo("Occupied Beds")' AdditionalClasses="ward-kpi-card" />
-            <SituationalKpiTile Title="Pending Beds" Value="5" Subtitle="Total Beds Pending" IconName="cleaning-default" ColorClass="kpi-orange" TileType="breakdown" BreakdownItems="@WardPendingBreakdown" InfoText="Beds pending return due to cleaning, maintenance or closure." IsInfoOpen='@(OpenWardKpiInfo == "Pending Beds")' OnInfoClick='() => ToggleWardKpiInfo("Pending Beds")' AdditionalClasses="ward-kpi-card" />
-            <SituationalKpiTile Title="Isolation Beds Available" Value="0" Subtitle="Ward-level isolation capacity available now." IconName="isolation-bed-default" ColorClass="kpi-blue" InfoText="Isolation-enabled beds currently available in this ward." IsInfoOpen='@(OpenWardKpiInfo == "Isolation Beds Available")' OnInfoClick='() => ToggleWardKpiInfo("Isolation Beds Available")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Closed Beds" Value="3" Subtitle="Capacity not currently operational." IconName="cleaning-default" ColorClass="kpi-orange" InfoText="Closed beds are physical bed spaces not currently operational and are tracked separately from pending cleaning or maintenance." IsInfoOpen='@(OpenWardKpiInfo == "Closed Beds")' OnInfoClick='() => ToggleWardKpiInfo("Closed Beds")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Open Beds" Value="20" Subtitle="Open for operational use today; not the same as available." IconName="open-bed-green" ColorClass="kpi-green" InfoText="Open beds are operational bed spaces in use today. This is a capacity measure, not a count of currently available empty beds." IsInfoOpen='@(OpenWardKpiInfo == "Open Beds")' OnInfoClick='() => ToggleWardKpiInfo("Open Beds")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Occupied Beds" Value="19" Subtitle="Total occupied" IconName="occupied-bed-default" ColorClass="kpi-gray" TileType="breakdown" BreakdownItems="@WardOccupiedBreakdown" InfoText="Prototype R2.1 breakdown of occupied beds by standard, special, standard mental health and special mental health bed type." IsInfoOpen='@(OpenWardKpiInfo == "Occupied Beds")' OnInfoClick='() => ToggleWardKpiInfo("Occupied Beds")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Expected Admissions" Value="5" Subtitle="Total expected" IconName="open-bed-default" ColorClass="kpi-blue" TileType="breakdown" BreakdownItems="@WardExpectedAdmissionsBreakdown" InfoText="Expected admissions by source for ward awareness only. Allocation controls and future bed selectors remain outside this tile." IsInfoOpen='@(OpenWardKpiInfo == "Expected Admissions")' OnInfoClick='() => ToggleWardKpiInfo("Expected Admissions")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Expected Discharges" Value="—" Subtitle="Coming Soon" IconName="open-bed-default" ColorClass="kpi-green" InfoText="Expected discharge detail is planned for a future phase. This tile does not provide predicted capacity." IsInfoOpen='@(OpenWardKpiInfo == "Expected Discharges")' OnInfoClick='() => ToggleWardKpiInfo("Expected Discharges")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Isolation Beds Available" Value="0" Subtitle="Total available" IconName="isolation-bed-default" ColorClass="kpi-blue" TileType="breakdown" BreakdownItems="@WardIsolationBreakdown" InfoText="Prototype isolation availability by type. These values do not imply that every isolation type is live source-system data." IsInfoOpen='@(OpenWardKpiInfo == "Isolation Beds Available")' OnInfoClick='() => ToggleWardKpiInfo("Isolation Beds Available")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Specialist Beds Available" Value="2" Subtitle="Total available" IconName="open-bed-default" ColorClass="kpi-blue" TileType="breakdown" BreakdownItems="@WardSpecialistBreakdown" InfoText="Prototype specialist bed availability for bariatric, hard-wired telemetry and haemodialysis-enabled bed spaces." IsInfoOpen='@(OpenWardKpiInfo == "Specialist Beds Available")' OnInfoClick='() => ToggleWardKpiInfo("Specialist Beds Available")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Outliers" Value="—" Subtitle="Coming Soon" IconName="occupied-bed-default" ColorClass="kpi-gray" InfoText="Outlier visibility is planned for a future phase; no outlier workflow is included in this foundation tile." IsInfoOpen='@(OpenWardKpiInfo == "Outliers")' OnInfoClick='() => ToggleWardKpiInfo("Outliers")' AdditionalClasses="ward-kpi-card" />
+            <SituationalKpiTile Title="Average Length of Stay" Value="—" Subtitle="Coming Soon" IconName="open-bed-default" ColorClass="kpi-gray" InfoText="Average Length of Stay reporting is planned for a future phase; no ALOS workflow is included in this foundation tile." IsInfoOpen='@(OpenWardKpiInfo == "Average Length of Stay")' OnInfoClick='() => ToggleWardKpiInfo("Average Length of Stay")' AdditionalClasses="ward-kpi-card" />
         </section>
 
         <section class="ward-allocation-highlight">
-            <div class="expected-admissions-box">
-                <p>Expected Admissions</p>
-                <strong>5</strong>
-            </div>
-
             <div>
                 <h4>Incoming</h4>
 
@@ -361,11 +361,36 @@
 
     private List<BedRow> BedRows = new();
     private List<BedRow> V2BedRows = new();
-    private static readonly IReadOnlyList<SituationalKpiTile.KpiBreakdownItem> WardPendingBreakdown = new[]
+    private static readonly IReadOnlyList<SituationalKpiTile.KpiBreakdownItem> WardOccupiedBreakdown = new[]
     {
-        new SituationalKpiTile.KpiBreakdownItem("Cleaning", "1"),
-        new SituationalKpiTile.KpiBreakdownItem("Maintenance", "1"),
-        new SituationalKpiTile.KpiBreakdownItem("Closed", "3")
+        new SituationalKpiTile.KpiBreakdownItem("Standard", "15"),
+        new SituationalKpiTile.KpiBreakdownItem("Special", "2"),
+        new SituationalKpiTile.KpiBreakdownItem("Standard MH", "1"),
+        new SituationalKpiTile.KpiBreakdownItem("Special MH", "1")
+    };
+
+    private static readonly IReadOnlyList<SituationalKpiTile.KpiBreakdownItem> WardExpectedAdmissionsBreakdown = new[]
+    {
+        new SituationalKpiTile.KpiBreakdownItem("ED", "3"),
+        new SituationalKpiTile.KpiBreakdownItem("IHT", "1"),
+        new SituationalKpiTile.KpiBreakdownItem("Add-On", "1"),
+        new SituationalKpiTile.KpiBreakdownItem("Ward Transfer", "0"),
+        new SituationalKpiTile.KpiBreakdownItem("Elective / Planned", "0")
+    };
+
+    private static readonly IReadOnlyList<SituationalKpiTile.KpiBreakdownItem> WardIsolationBreakdown = new[]
+    {
+        new SituationalKpiTile.KpiBreakdownItem("Positive pressure", "0"),
+        new SituationalKpiTile.KpiBreakdownItem("Negative pressure", "0"),
+        new SituationalKpiTile.KpiBreakdownItem("Standard isolation", "0"),
+        new SituationalKpiTile.KpiBreakdownItem("Temporary respiratory isolation", "0")
+    };
+
+    private static readonly IReadOnlyList<SituationalKpiTile.KpiBreakdownItem> WardSpecialistBreakdown = new[]
+    {
+        new SituationalKpiTile.KpiBreakdownItem("Bariatric", "1"),
+        new SituationalKpiTile.KpiBreakdownItem("Hard-Wired Telemetry", "1"),
+        new SituationalKpiTile.KpiBreakdownItem("Haemodialysis", "0")
     };
 
     private void ToggleWardKpiInfo(string title) => OpenWardKpiInfo = OpenWardKpiInfo == title ? null : title;
