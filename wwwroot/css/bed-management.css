@@ -709,3 +709,17 @@
 .ward-bed-cell.room-mh span{border-color:#ddd6fe;background:#f5f3ff;color:#5b21b6}
 .ward-transfer-action{border:1px solid #b7c9df;border-radius:5px;background:#f8fbff;color:#1f4f8d;padding:4px 7px;font-size:.68rem;font-weight:750;white-space:nowrap}
 .ward-transfer-action:hover{background:#eef5ff}
+.ward-transfer-pending{display:block;margin-top:4px;color:#7a4d00;font-size:.66rem;font-weight:750}
+.ward-transfer-panel{position:fixed;inset:0;z-index:50;background:rgba(15,23,42,.32);display:flex;align-items:center;justify-content:center;padding:20px}
+.ward-transfer-panel-card{width:min(760px,96vw);max-height:90vh;overflow:auto;background:#fff;border-radius:16px;border:1px solid #cbd5e1;box-shadow:0 24px 60px rgba(15,23,42,.28);padding:18px}
+.ward-transfer-panel-card>header,.ward-transfer-panel-card>footer{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ward-transfer-panel-card h3{margin:0;color:#0f3764}
+.ward-transfer-safety{margin:12px 0;padding:10px 12px;border-radius:10px;background:#eef6ff;color:#153b62;font-weight:700}
+.ward-transfer-confirmation{margin:12px 0;padding:10px 12px;border-radius:10px;background:#e8f7ee;color:#17663a;font-weight:800}
+.ward-transfer-context,.ward-transfer-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.ward-transfer-context div,.ward-transfer-form div{border:1px solid #d8e2ef;border-radius:10px;padding:10px;background:#f8fbff}
+.ward-transfer-context span,.ward-transfer-form span{display:block;color:#64748b;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.ward-transfer-form label{display:flex;flex-direction:column;gap:6px;color:#334155;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.ward-transfer-form select,.ward-transfer-form textarea{border:1px solid #cbd5e1;border-radius:8px;padding:8px;font:inherit;color:#0f172a;text-transform:none;letter-spacing:0;background:#fff}
+.ward-transfer-form label:has(textarea){grid-column:1/-1}
+@media (max-width:760px){.ward-transfer-context,.ward-transfer-form{grid-template-columns:1fr}}

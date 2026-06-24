@@ -1,3 +1,4 @@
+@inject NavigationManager Navigation
 <footer class="utility-shell" aria-label="Utility navigation">
     @if (_isChatOpen)
     {
@@ -49,13 +50,20 @@
             <header class="utility-overlay-header">
                 <div>
                     <p class="utility-kicker">Operational Preparedness</p>
-                    <h3>Downtime / Print Preparation</h3>
+                    <h3>@(IsWardManagementFoundation ? "Downtime" : "Downtime / Print Preparation")</h3>
                 </div>
                 <button type="button" class="oncall-close" aria-label="Close downtime" @onclick="CloseDowntime">×</button>
             </header>
-            <p class="utility-overlay-copy">You have selected Downtime mode. In the full Patient Flow Hub platform this function would prepare printable operational summaries and open print options for use during downtime events, connectivity interruptions or power outages.</p>
+            @if (IsWardManagementFoundation)
+            {
+                <p class="utility-overlay-copy">Ward Management foundation downtime includes only admissions and discharges plus ward patient lists for prototype continuity review.</p>
+            }
+            else
+            {
+                <p class="utility-overlay-copy">You have selected Downtime mode. In the full Patient Flow Hub platform this function would prepare printable operational summaries and open print options for use during downtime events, connectivity interruptions or power outages.</p>
+            }
             <div class="utility-card-grid">
-                @foreach (var item in DowntimeModules)
+                @foreach (var item in ActiveDowntimeModules)
                 {
                     <article class="utility-card"><h4>@item</h4><p>Prepared for offline operational continuity.</p></article>
                 }
@@ -158,45 +166,55 @@
 
     @if (_isSupportOpen)
     {
-        <section class="utility-overlay support-drawer" aria-label="Support and FAQs">
+        <section class="utility-overlay support-drawer" aria-label="@(IsWardManagementFoundation ? "Support" : "Support and FAQs")">
             <header class="support-header">
                 <MudIcon Icon="@Icons.Material.Outlined.HelpOutline" Size="Size.Small" />
                 <h3>Support</h3>
                 <button type="button" class="oncall-close" aria-label="Close support" @onclick="CloseSupport">×</button>
             </header>
 
-            <div class="support-search">
-                <span><MudIcon Icon="@Icons.Material.Outlined.Search" Size="Size.Small" /></span>
-                <input type="search" placeholder="Search FAQs" @bind="_supportSearch" @bind:event="oninput" />
-                <button type="button">Find</button>
-            </div>
+            @if (IsWardManagementFoundation)
+            {
+                <section class="support-summary ward-support-summary">
+                    <p>Ward Management foundation support is limited to a contact support function.</p>
+                    <button type="button" class="standard-btn">Contact support</button>
+                </section>
+            }
+            else
+            {
+                <div class="support-search">
+                    <span><MudIcon Icon="@Icons.Material.Outlined.Search" Size="Size.Small" /></span>
+                    <input type="search" placeholder="Search FAQs" @bind="_supportSearch" @bind:event="oninput" />
+                    <button type="button">Find</button>
+                </div>
 
-            <section class="support-summary">
-                <p>Browse frequently asked operational questions or contact support for assistance.</p>
-                <button type="button" class="standard-btn">Contact support</button>
-            </section>
+                <section class="support-summary">
+                    <p>Browse frequently asked operational questions or contact support for assistance.</p>
+                    <button type="button" class="standard-btn">Contact support</button>
+                </section>
 
-            <section class="support-list" role="list">
-                @foreach (var faq in FilteredFaqs)
-                {
-                    var isOpen = _openFaqId == faq.Id;
-                    <article class="faq-item" role="listitem">
-                        <button type="button" class="faq-trigger" @onclick="() => ToggleFaq(faq.Id)">
-                            <span>@faq.Question</span>
-                            <MudIcon Icon="@(isOpen ? Icons.Material.Outlined.ExpandLess : Icons.Material.Outlined.ExpandMore)" Size="Size.Small" />
-                        </button>
-                        @if (isOpen)
-                        {
-                            <div class="faq-answer">@faq.Answer</div>
-                        }
-                    </article>
-                }
-            </section>
+                <section class="support-list" role="list">
+                    @foreach (var faq in FilteredFaqs)
+                    {
+                        var isOpen = _openFaqId == faq.Id;
+                        <article class="faq-item" role="listitem">
+                            <button type="button" class="faq-trigger" @onclick="() => ToggleFaq(faq.Id)">
+                                <span>@faq.Question</span>
+                                <MudIcon Icon="@(isOpen ? Icons.Material.Outlined.ExpandLess : Icons.Material.Outlined.ExpandMore)" Size="Size.Small" />
+                            </button>
+                            @if (isOpen)
+                            {
+                                <div class="faq-answer">@faq.Answer</div>
+                            }
+                        </article>
+                    }
+                </section>
+            }
         </section>
     }
 
     <div class="utility-bar" role="tablist" aria-label="Footer utilities">
-        @foreach (var item in Items)
+        @foreach (var item in ActiveItems)
         {
             var isSelected = item == _activeItem;
             <button type="button" class="utility-tab @(isSelected ? "selected" : null)" role="tab" aria-selected="@isSelected" @onclick="() => SelectItem(item)">@item</button>
@@ -206,6 +224,7 @@
 
 @code {
     private readonly string[] Items = ["Bed Managers Chat", "On Call", "Reports", "Downtime", "Support"];
+    private readonly string[] WardFoundationItems = ["Downtime", "Support"];
     private string _activeItem = string.Empty;
     private bool _isChatOpen;
     private bool _isOnCallOpen;
@@ -232,6 +251,11 @@
     private readonly string[] DowntimeModules =
     [
         "Current ward operational summary", "Bed availability snapshot", "Current hospital pressures", "Delayed discharge list", "Admissions and discharges", "Ward patient lists", "Escalation summary"
+    ];
+
+    private readonly string[] WardFoundationDowntimeModules =
+    [
+        "Admissions and discharges", "Ward patient lists"
     ];
 
     private readonly List<ReportItem> Reports =
@@ -282,6 +306,10 @@
         new(4, "How do I report an issue with data?", "Use Contact support from this panel and include ward/facility plus timestamp."),
         new(5, "Can I print downtime summaries?", "Use the Downtime utility item for printable continuity summaries.")
     ];
+
+    private bool IsWardManagementFoundation => Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/').Equals("ward-operations", StringComparison.OrdinalIgnoreCase);
+    private IEnumerable<string> ActiveItems => IsWardManagementFoundation ? WardFoundationItems : Items;
+    private IEnumerable<string> ActiveDowntimeModules => IsWardManagementFoundation ? WardFoundationDowntimeModules : DowntimeModules;
 
     private IEnumerable<DirectoryGroup> FilteredDirectoryGroups =>
         DirectoryGroups
