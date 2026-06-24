@@ -696,3 +696,16 @@
 .ward-incoming-row div span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .ward-incoming-row p{grid-column:1/-1;margin:0;color:#63788c;font-size:.66rem;}
 .ward-incoming-empty{margin:0;border:1px dashed #c8d6e5;background:#f9fbfe;border-radius:6px;padding:7px 8px;font-size:.69rem;color:#607589;}
+
+.ward-bed-cell{display:grid;gap:2px;padding-left:7px;border-left:4px solid #98a2b3;line-height:1.15}
+.ward-bed-cell span{display:inline-flex;width:max-content;border:1px solid #d0d5dd;border-radius:999px;background:#f8fafc;padding:1px 6px;color:#475467;font-size:.62rem;font-weight:700}
+.ward-bed-cell.room-isolation{border-left-color:#4f46e5}
+.ward-bed-cell.room-isolation span{border-color:#c7d2fe;background:#eef2ff;color:#3730a3}
+.ward-bed-cell.room-cohorting{border-left-color:#d97706}
+.ward-bed-cell.room-cohorting span{border-color:#fed7aa;background:#fff7ed;color:#9a3412}
+.ward-bed-cell.room-specialist{border-left-color:#0f766e}
+.ward-bed-cell.room-specialist span{border-color:#99f6e4;background:#f0fdfa;color:#115e59}
+.ward-bed-cell.room-mh{border-left-color:#7c3aed}
+.ward-bed-cell.room-mh span{border-color:#ddd6fe;background:#f5f3ff;color:#5b21b6}
+.ward-transfer-action{border:1px solid #b7c9df;border-radius:5px;background:#f8fbff;color:#1f4f8d;padding:4px 7px;font-size:.68rem;font-weight:750;white-space:nowrap}
+.ward-transfer-action:hover{background:#eef5ff}
