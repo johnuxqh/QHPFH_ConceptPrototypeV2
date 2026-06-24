@@ -723,3 +723,9 @@
 .ward-transfer-form select,.ward-transfer-form textarea{border:1px solid #cbd5e1;border-radius:8px;padding:8px;font:inherit;color:#0f172a;text-transform:none;letter-spacing:0;background:#fff}
 .ward-transfer-form label:has(textarea){grid-column:1/-1}
 @media (max-width:760px){.ward-transfer-context,.ward-transfer-form{grid-template-columns:1fr}}
+
+.ac-day-view{flex-wrap:wrap}.ac-day-view button{min-width:auto}.ac-day-view button.active,.ac-status-filters button.active{background:#e7f0fb;border-color:#8fb0cb;color:#174a7c}
+.ac-status-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0 0 10px}.ac-status-summary div{background:#fff;border:1px solid #d9e4ef;border-radius:8px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}.ac-status-summary strong{font-size:.96rem;color:#193e67}.ac-status-summary span{font-size:.72rem;color:#5f7388;text-align:right}
+.ac-status-filters{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}.ac-status-filters button{border:1px solid #cfd8e2;background:#fff;border-radius:999px;padding:5px 10px;font-size:.72rem;color:#28435a;font-weight:600}
+.ac-chip-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.ac-status-chip{border-radius:999px;padding:2px 7px;font-size:.62rem;font-weight:700;white-space:nowrap;border:1px solid transparent}.ac-status-chip.unallocated{background:#fff7e6;border-color:#f0cc7a;color:#7a4a00}.ac-status-chip.allocated{background:#e8f4ed;border-color:#94c8a7;color:#24613c}.ac-status-chip.pending-review{background:#eef3ff;border-color:#9db8e4;color:#1f4f8e}.ac-chip em{display:block;margin-top:4px;font-size:.68rem;color:#45657f;font-style:normal}.ac-ward-context{margin:0;color:#5f7388;font-size:.76rem}
+@media (max-width: 980px){.ac-status-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
