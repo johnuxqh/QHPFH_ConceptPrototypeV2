@@ -84,18 +84,19 @@
                 <thead>
                     <tr>
                         <th>Bed</th>
-                        <th>Status</th>
-                        <th>Patient identifiers</th>
-                        <th>Team</th>
-                        <th>Allergies &amp; Alerts</th>
-                        <th>Referrals</th>
-                        <th>EDD</th>
-                        <th>Discharge progress</th>
-                        <th>Requests &amp; Results</th>
+                        <th>Bed status</th>
+                        <th>Patient</th>
+                        <th>Full name</th>
+                        <th>MRN</th>
+                        <th>Date of birth</th>
+                        <th>Age</th>
+                        <th>Sex</th>
+                        <th>Admitting doctor</th>
+                        <th>Doctor name</th>
+                        <th>Doctor specialty</th>
+                        <th>Allergies &amp; alerts</th>
                         <th>Diet</th>
-                        <th>EWS</th>
-                        <th>Waiting for</th>
-                        <th class="actions-col">Actions</th>
+                        <th class="actions-col">Action</th>
                     </tr>
                 </thead>
 
@@ -103,7 +104,12 @@
                     @foreach (var bed in BedRows)
                     {
                         <tr class="state-@bed.StatusClass">
-                            <td><strong>@bed.BedLabel</strong></td>
+                            <td>
+                                <div class="ward-bed-cell room-@bed.RoomTypeClass">
+                                    <strong>@bed.BedLabel</strong>
+                                    <span>@bed.RoomType</span>
+                                </div>
+                            </td>
 
                             <td>
                                 <div class="bm-status-pill">
@@ -112,45 +118,22 @@
                                 </div>
                             </td>
 
-                            <td>
-                                @if (bed.HasPatient)
-                                {
-                                    <div class="bm-bed-patient">@bed.PatientName</div>
-                                    <small>@bed.Demographics</small>
-                                }
-                                else
-                                {
-                                    <strong>—</strong>
-                                }
-
-                            </td>
-
-                            <td>@bed.Team</td>
+                            <td>@(bed.HasPatient ? "Current patient" : "No patient")</td>
+                            <td>@(bed.HasPatient ? bed.PatientName : "—")</td>
+                            <td>@(bed.HasPatient ? bed.Mrn : "—")</td>
+                            <td>@(bed.HasPatient ? bed.DateOfBirth : "—")</td>
+                            <td>@(bed.HasPatient ? bed.Age : "—")</td>
+                            <td>@(bed.HasPatient ? bed.Sex : "—")</td>
+                            <td>@(bed.HasPatient ? bed.AdmittingDoctor : "—")</td>
+                            <td>@(bed.HasPatient ? bed.DoctorName : "—")</td>
+                            <td>@(bed.HasPatient ? bed.DoctorSpecialty : "—")</td>
                             <td>@bed.Allergies</td>
-                            <td>@bed.Referral</td>
-                            <td>@bed.Edd</td>
-
-                            <td>
-                                <div class="progress">
-                                    <span style="@($"width:{bed.DischargeProgress}%")"></span>
-                                </div>
-                                @bed.DischargeProgress%
-                            </td>
-
-                            <td>@bed.Requests</td>
                             <td>@bed.Diet</td>
-                            <td>@bed.Ews</td>
-                            <td>@bed.WaitingFor</td>
 
                             <td>
-                                <div class="bm-inline-actions compact-actions">
-                                    <button type="button" title="View">
-                                        <MudIcon Icon="@Icons.Material.Outlined.Visibility" Size="Size.Small" />
-                                    </button>
-                                    <button type="button" title="Note">
-                                        <MudIcon Icon="@Icons.Material.Outlined.StickyNote2" Size="Size.Small" />
-                                    </button>
-                                </div>
+                                <button type="button" class="ward-transfer-action" title="Request Internal Transfer">
+                                    Request transfer
+                                </button>
                             </td>
                         </tr>
                     }
@@ -484,13 +467,19 @@
             "Katniss Everdeen","Bruce Banner","Selina Kyle","Luke Skywalker","Arthur Curry","Logan Howlett","Barry Allen","Padme Amidala"
         };
         var patientName = fictionalNames[(n - 1) % fictionalNames.Length];
+        var dob = new DateTime(1945 + (n % 45), ((n - 1) % 12) + 1, ((n * 2) % 27) + 1);
+        var age = 30 + n % 35;
+        var sex = n % 2 == 0 ? "F" : "M";
+        var roomType = n % 10 == 0 ? "MH" : n % 8 == 0 ? "Specialist" : n % 6 == 0 ? "Cohorting" : n % 5 == 0 ? "Isolation" : "Standard";
+        var doctorName = n % 3 == 0 ? "Dr Priya Shah" : n % 3 == 1 ? "Dr Marcus Lee" : "Dr Aisha Rahman";
+        var doctorSpecialty = n % 4 == 0 ? "Orthopaedics" : n % 4 == 1 ? "General Surgery" : n % 4 == 2 ? "Respiratory" : "Geriatric Medicine";
 
         return new(
             $"Bed {n}",
             "Occupied",
             patientName,
-            $"MRN DEMO{n:000} | {(30 + n % 35)}y | {(n % 2 == 0 ? "F" : "M")}",
-            "General Surgery",
+            $"MRN DEMO{n:000} | {age}y | {sex}",
+            doctorSpecialty,
             n % 4 == 0 ? "Penicillin" : "NKA",
             n % 3 == 0 ? "IHT" : "ED",
             "26 May",
@@ -498,7 +487,15 @@
             "Bloods pending",
             n % 2 == 0 ? "Diabetic" : "Regular",
             ews,
-            "Clinical review");
+            "Clinical review",
+            roomType,
+            $"DEMO{n:000}",
+            dob.ToString("dd MMM yyyy"),
+            age.ToString(),
+            sex,
+            "Admitting consultant",
+            doctorName,
+            doctorSpecialty);
     }
 
     private static void AllowDrop(DragEventArgs _)
@@ -718,7 +715,15 @@
             string requests,
             string diet,
             int ews,
-            string waitingFor)
+            string waitingFor,
+            string roomType = "Standard",
+            string mrn = "",
+            string dateOfBirth = "",
+            string age = "",
+            string sex = "",
+            string admittingDoctor = "",
+            string doctorName = "",
+            string doctorSpecialty = "")
         {
             BedLabel = bedLabel;
             Status = status;
@@ -733,6 +738,14 @@
             Diet = diet;
             Ews = ews;
             WaitingFor = waitingFor;
+            RoomType = roomType;
+            Mrn = mrn;
+            DateOfBirth = dateOfBirth;
+            Age = age;
+            Sex = sex;
+            AdmittingDoctor = admittingDoctor;
+            DoctorName = doctorName;
+            DoctorSpecialty = doctorSpecialty;
         }
 
         public string BedLabel { get; }
@@ -748,7 +761,16 @@
         public string Diet { get; set; }
         public int Ews { get; set; }
         public string WaitingFor { get; set; }
+        public string RoomType { get; set; }
+        public string Mrn { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Age { get; set; }
+        public string Sex { get; set; }
+        public string AdmittingDoctor { get; set; }
+        public string DoctorName { get; set; }
+        public string DoctorSpecialty { get; set; }
         public bool HasPatient => !string.IsNullOrWhiteSpace(PatientName);
+        public string RoomTypeClass => RoomType.ToLowerInvariant().Replace(" ", "-");
 
         public string StatusClass => Status
             .ToLowerInvariant()
@@ -760,6 +782,13 @@
             Status = "Occupied";
             PatientName = card.Name;
             Demographics = $"MRN {card.Code} | incoming";
+            Mrn = card.Code;
+            DateOfBirth = "TBC";
+            Age = "TBC";
+            Sex = "TBC";
+            AdmittingDoctor = "Admitting consultant";
+            DoctorName = "TBC";
+            DoctorSpecialty = "TBC";
             Referral = card.Source;
             Edd = "TBC";
             Requests = card.Reason;
@@ -782,6 +811,13 @@
         {
             PatientName = string.Empty;
             Demographics = string.Empty;
+            Mrn = string.Empty;
+            DateOfBirth = string.Empty;
+            Age = string.Empty;
+            Sex = string.Empty;
+            AdmittingDoctor = string.Empty;
+            DoctorName = string.Empty;
+            DoctorSpecialty = string.Empty;
             Allergies = "—";
             Referral = "Ward";
             Edd = "—";
