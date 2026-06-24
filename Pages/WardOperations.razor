@@ -10,8 +10,8 @@
     </header>
 
     <div class="bm-view-row">
-        <button class="bm-ghost version @(WardVersion == "V1" ? "active" : null)" @onclick='() => WardVersion = "V1"'>Version 1</button>
-        <button class="bm-ghost version @(WardVersion == "V2" ? "active" : null)" @onclick='() => WardVersion = "V2"'>V3 Future Whiteboard</button>
+        <button class="bm-ghost version @(WardVersion == "V1" ? "active" : null)" @onclick='() => WardVersion = "V1"'>R2.1 Foundation</button>
+        <button class="bm-ghost version @(WardVersion == "V2" ? "active" : null)" @onclick='() => WardVersion = "V2"'>V3 Future Whiteboard Prototype</button>
     </div>
 
     <p class="ward-scope-note">Ward Management is the ward-level operational workspace for beds, patients, room types, admissions, discharges and local ward actions. R2.1 foundation does not include full allocation or unrestricted drag-and-drop.</p>
@@ -62,7 +62,7 @@
                             <p class="bm-patient-reason">@card.Reason</p>
 
                             <label class="future-bed-label">
-                                Future bed
+                                Planned bed note
                                 <select value="@card.FutureBed" @onchange="(e) => UpdateFutureBed(card, e.Value?.ToString())">
                                     <option value="">Unallocated</option>
                                     @for (var i = 1; i <= 24; i++)
@@ -123,7 +123,7 @@
 
                                 @if (!string.IsNullOrWhiteSpace(bed.FutureAllocation))
                                 {
-                                    <div class="future-allocation-chip">Planned next: @bed.FutureAllocation</div>
+                                    <div class="future-allocation-chip">Local plan: @bed.FutureAllocation</div>
                                 }
                             </td>
 
@@ -165,7 +165,7 @@
     else
     {
         <section class="bm-capacity-banner red">
-            <strong>HOSPITAL CAPACITY STATUS: RED</strong>
+            <strong>FUTURE WHITEBOARD PROTOTYPE</strong>
             <span>Future-state only — not R2.1 foundation. Prototype drag-and-drop whiteboard interactions are preserved for exploration only.</span>
         </section>
 
@@ -227,7 +227,7 @@
 
             <aside class="bm-right-panel">
                 <article>
-                    <h4>Incoming</h4>
+                    <h4>Prototype Incoming</h4>
 
                     <div class="bm-allocation-tabs">
                         @foreach (var tab in V2IncomingTabs)
@@ -254,7 +254,7 @@
                 </article>
 
                 <article>
-                    <h4>Quick Actions</h4>
+                    <h4>Prototype Quick Actions</h4>
 
                     <div class="bm-actions">
                         @foreach (var action in V2ActionDefs)
@@ -273,7 +273,7 @@
                 </article>
 
                 <article>
-                    <h4>Drop Zones</h4>
+                    <h4>Prototype Drop Zones</h4>
 
                     <div class="bm-targets">
                         @foreach (var target in V2MoveTargets)
