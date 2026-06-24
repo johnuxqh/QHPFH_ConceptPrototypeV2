@@ -677,3 +677,22 @@
 }
 
 .ward-scope-note{margin:8px 0 12px;padding:8px 10px;border:1px solid #d7e2ee;background:#f8fbff;color:#31516d;border-radius:8px;font-size:.82rem;line-height:1.35}
+
+
+/* Ward Management R2.1 compact incoming admissions */
+.ward-incoming-compact{border:1px solid #dde5ef;background:#fff;border-radius:8px;padding:9px 10px;margin-bottom:8px;}
+.ward-incoming-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:7px;}
+.ward-incoming-head h4{margin:0;font-size:.86rem;color:#1f3350;}
+.ward-incoming-head p{margin:2px 0 0;font-size:.69rem;color:#607589;}
+.ward-source-tabs{margin-bottom:7px;flex-wrap:wrap;}
+.ward-source-tabs button{display:inline-flex;align-items:center;gap:6px;border-radius:999px;}
+.ward-source-tabs button strong{font-size:.68rem;color:#264864;background:#eef3f8;border-radius:999px;padding:1px 6px;}
+.ward-source-tabs button.active strong{background:#fff;color:#1f4f7f;}
+.ward-incoming-preview{display:grid;gap:5px;}
+.ward-incoming-row{display:grid;grid-template-columns:minmax(170px,1.2fr) 90px 130px 150px;gap:8px;align-items:center;border:1px solid #e2e9f2;background:#fbfdff;border-radius:6px;padding:6px 8px;font-size:.69rem;}
+.ward-incoming-row div{display:flex;gap:6px;align-items:baseline;min-width:0;}
+.ward-incoming-row strong{color:#284966;white-space:nowrap;}
+.ward-incoming-row span{color:#4e647a;min-width:0;}
+.ward-incoming-row div span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ward-incoming-row p{grid-column:1/-1;margin:0;color:#63788c;font-size:.66rem;}
+.ward-incoming-empty{margin:0;border:1px dashed #c8d6e5;background:#f9fbfe;border-radius:6px;padding:7px 8px;font-size:.69rem;color:#607589;}
