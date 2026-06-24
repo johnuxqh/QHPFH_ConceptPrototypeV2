@@ -6,13 +6,15 @@
 
 <section class="page-shell-card bed-mgmt-page ward-ops ward-view-page" @onclick="CloseKpiInfo">
     <header>
-        <h2>Ward Operations</h2>
+        <h2>Ward Management</h2>
     </header>
 
     <div class="bm-view-row">
         <button class="bm-ghost version @(WardVersion == "V1" ? "active" : null)" @onclick='() => WardVersion = "V1"'>Version 1</button>
-        <button class="bm-ghost version @(WardVersion == "V2" ? "active" : null)" @onclick='() => WardVersion = "V2"'>Version 2 (Interactive)</button>
+        <button class="bm-ghost version @(WardVersion == "V2" ? "active" : null)" @onclick='() => WardVersion = "V2"'>V3 Future Whiteboard</button>
     </div>
+
+    <p class="ward-scope-note">Ward Management is the ward-level operational workspace for beds, patients, room types, admissions, discharges and local ward actions. R2.1 foundation does not include full allocation or unrestricted drag-and-drop.</p>
 
     @if (WardVersion == "V1")
     {
@@ -164,7 +166,7 @@
     {
         <section class="bm-capacity-banner red">
             <strong>HOSPITAL CAPACITY STATUS: RED</strong>
-            <span>Interactive ward workflow: drag incoming cards to ready beds, and drag beds to quick actions.</span>
+            <span>Future-state only — not R2.1 foundation. Prototype drag-and-drop whiteboard interactions are preserved for exploration only.</span>
         </section>
 
         <div class="bm-main-grid">
