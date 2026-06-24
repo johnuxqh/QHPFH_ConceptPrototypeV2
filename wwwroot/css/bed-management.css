@@ -664,3 +664,5 @@
     overflow-x:auto;
   }
 }
+
+.ward-scope-note{margin:8px 0 12px;padding:8px 10px;border:1px solid #d7e2ee;background:#f8fbff;color:#31516d;border-radius:8px;font-size:.82rem;line-height:1.35}
