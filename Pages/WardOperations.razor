@@ -131,9 +131,13 @@
                             <td>@bed.Diet</td>
 
                             <td>
-                                <button type="button" class="ward-transfer-action" title="Request Internal Transfer">
+                                <button type="button" class="ward-transfer-action" title="Request Internal Transfer" @onclick="() => OpenTransferRequest(bed)" disabled="@(!bed.HasPatient)">
                                     Request transfer
                                 </button>
+                                @if (PendingTransferRequests.Contains(bed.BedLabel))
+                                {
+                                    <span class="ward-transfer-pending">Pending bed manager review</span>
+                                }
                             </td>
                         </tr>
                     }
@@ -142,6 +146,72 @@
 
             <footer>Showing 1–24 of 24 beds</footer>
         </section>
+
+        @if (SelectedTransferBed is not null)
+        {
+            <section class="ward-transfer-panel" aria-label="Request Internal Transfer">
+                <div class="ward-transfer-panel-card">
+                    <header>
+                        <div>
+                            <p class="utility-kicker">Prototype-safe ward request</p>
+                            <h3>Request Internal Transfer</h3>
+                        </div>
+                        <button type="button" class="oncall-close" aria-label="Close request" @onclick="CloseTransferRequest">×</button>
+                    </header>
+
+                    @if (!string.IsNullOrWhiteSpace(TransferConfirmation))
+                    {
+                        <div class="ward-transfer-confirmation">@TransferConfirmation</div>
+                    }
+
+                    <p class="ward-transfer-safety">This request does not move the patient, assign a bed, or update formal bed status. It records a review request for the bed manager only.</p>
+
+                    <div class="ward-transfer-context">
+                        <div><span>Patient</span><strong>@SelectedTransferBed.PatientName</strong></div>
+                        <div><span>MRN</span><strong>@SelectedTransferBed.Mrn</strong></div>
+                        <div><span>Current bed</span><strong>@SelectedTransferBed.BedLabel</strong></div>
+                        <div><span>Current ward</span><strong>Ward Management</strong></div>
+                    </div>
+
+                    <div class="ward-transfer-form">
+                        <label>Requested destination
+                            <select @bind="TransferDestination">
+                                @foreach (var option in TransferDestinations)
+                                {
+                                    <option>@option</option>
+                                }
+                            </select>
+                        </label>
+                        <label>Reason
+                            <select @bind="TransferReason">
+                                @foreach (var option in TransferReasons)
+                                {
+                                    <option>@option</option>
+                                }
+                            </select>
+                        </label>
+                        <label>Priority
+                            <select @bind="TransferPriority">
+                                @foreach (var option in TransferPriorities)
+                                {
+                                    <option>@option</option>
+                                }
+                            </select>
+                        </label>
+                        <label>Notes
+                            <textarea rows="3" placeholder="Add review context for the bed manager" @bind="TransferNotes"></textarea>
+                        </label>
+                        <div><span>Requested by</span><strong>Ward user</strong></div>
+                        <div><span>Submitted time</span><strong>@TransferSubmittedTime</strong></div>
+                    </div>
+
+                    <footer>
+                        <button type="button" class="standard-btn" @onclick="CloseTransferRequest">Cancel</button>
+                        <button type="button" class="standard-btn selected" @onclick="SubmitTransferRequest">Request submitted for review</button>
+                    </footer>
+                </div>
+            </section>
+        }
     }
     else
     {
@@ -289,6 +359,14 @@
     private string IncomingTab { get; set; } = "ED";
     private string V2IncomingTab { get; set; } = "ED";
     private string? OpenWardKpiInfo { get; set; }
+    private BedRow? SelectedTransferBed { get; set; }
+    private string TransferDestination { get; set; } = "Review by bed manager";
+    private string TransferReason { get; set; } = "Clinical flow review";
+    private string TransferPriority { get; set; } = "Routine";
+    private string TransferNotes { get; set; } = string.Empty;
+    private string TransferSubmittedTime { get; set; } = "Not submitted";
+    private string TransferConfirmation { get; set; } = string.Empty;
+    private readonly HashSet<string> PendingTransferRequests = new();
 
     private string? _hoverAction;
     private string _dragMode = string.Empty;
@@ -297,6 +375,9 @@
 
     private static readonly string[] IncomingTabs = { "ED", "IHT", "Add-On", "Ward Transfer", "Elective / Planned" };
     private static readonly string[] V2IncomingTabs = { "ED", "IHT", "OPD", "Other" };
+    private static readonly string[] TransferDestinations = { "8A Surgical", "11B Medical", "Logan Hospital", "QCH 9A", "Review by bed manager" };
+    private static readonly string[] TransferReasons = { "Cohorting / room suitability", "Isolation requirement", "Specialist bed need", "Family / care-by-parent room need", "Clinical flow review", "Other" };
+    private static readonly string[] TransferPriorities = { "Routine", "Today", "Urgent review" };
 
     private readonly Dictionary<string, List<IncomingCard>> IncomingByTab = new()
     {
@@ -377,6 +458,40 @@
 
     private void ToggleWardKpiInfo(string title) => OpenWardKpiInfo = OpenWardKpiInfo == title ? null : title;
     private void CloseKpiInfo() => OpenWardKpiInfo = null;
+
+    private void OpenTransferRequest(BedRow bed)
+    {
+        if (!bed.HasPatient)
+        {
+            return;
+        }
+
+        SelectedTransferBed = bed;
+        TransferDestination = "Review by bed manager";
+        TransferReason = "Clinical flow review";
+        TransferPriority = "Routine";
+        TransferNotes = string.Empty;
+        TransferSubmittedTime = "Not submitted";
+        TransferConfirmation = string.Empty;
+    }
+
+    private void SubmitTransferRequest()
+    {
+        if (SelectedTransferBed is null)
+        {
+            return;
+        }
+
+        PendingTransferRequests.Add(SelectedTransferBed.BedLabel);
+        TransferSubmittedTime = DateTime.Now.ToString("dd MMM yyyy HH:mm");
+        TransferConfirmation = "Internal transfer request recorded for prototype review. Pending bed manager review.";
+    }
+
+    private void CloseTransferRequest()
+    {
+        SelectedTransferBed = null;
+        TransferConfirmation = string.Empty;
+    }
 
     protected override void OnInitialized()
     {
