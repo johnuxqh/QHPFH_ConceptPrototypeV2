@@ -15,7 +15,7 @@
         new("⌁", "Beds Pending", BedsPending.ToString(), $"Cleaning: {Snapshot.PendingCleaning} · Maint: {Snapshot.PendingMaintenance}", "is-orange"),
         new("◒", "Operational Pressure", Snapshot.EscalationStatus, "Capacity Response", "is-red"),
         new("●", "Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "ED: 42 · Elective: 35 · IHT: 5", "is-teal"),
-        new("◷", "Delayed Flow Patients", DelayedFlow.ToString(), "5.2% of occupied", "is-red")
+        new("◷", "Current Flow Constraints", DelayedFlow.ToString(), "5.2% of occupied", "is-red")
     ];
     private sealed record Metric(string Icon, string Label, string Value, string Detail, string Tone);
 }

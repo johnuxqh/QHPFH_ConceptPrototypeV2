@@ -16,9 +16,9 @@
     [Parameter] public BedManagementVersion Version { get; set; } = BedManagementVersion.V1DataInsights;
     private string Title => Version == BedManagementVersion.V3Operational ? "Flow Overview — Current Serve & Response" : "Flow Overview";
     private IReadOnlyList<FlowLane> Lanes => [
-        new("Demand", Snapshot.ExpectedAdmissions.ToString(), "Expected admissions", "Logan ED demand surge", "ED surge review · Regional Flow", "11:00 AM", "is-purple"),
+        new("Demand", Snapshot.ExpectedAdmissions.ToString(), "Admissions today", "Logan ED demand surge", "ED surge review · Regional Flow", "11:00 AM", "is-purple"),
         new("Emergency", "+22%", "Above Logan baseline", "PAH capacity response", "Capacity response · HHS Capacity Team", "10:30 AM", "is-red"),
         new("Inpatient Flow", Snapshot.TransferRequests.ToString(), "Cross-facility transfer requests", "QEII available capacity", "Transfer review · Flow Team", "11:30 AM", "is-blue"),
-        new("Discharge & Exit", Snapshot.PlannedDischarges.ToString(), "Predicted discharges", "Redland discharge improving", "Discharge pathway check · Flow Team", "12:00 PM", "is-green")];
+        new("Discharge & Exit", Snapshot.PlannedDischarges.ToString(), "Planned discharge summary", "Redland discharge improving", "Discharge pathway check · Flow Team", "12:00 PM", "is-green")];
     private sealed record FlowLane(string Name, string Value, string Detail, string Signal, string Response, string NextReview, string Tone);
 }

@@ -12,7 +12,7 @@
         new("Occupied Beds", Snapshot.OccupiedBeds.ToString(), $"{Snapshot.OccupancyPercentage}% occupancy", "is-purple"),
         new("Beds Pending", (Snapshot.PendingCleaning + Snapshot.PendingMaintenance).ToString(), $"Cleaning: {Snapshot.PendingCleaning} · Maintenance: {Snapshot.PendingMaintenance}", "is-orange"),
         new("Isolation Beds Available", "0", "Fully utilised", "is-red"),
-        new("Expected Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "ED 3 · IHT 1 · Add-On 1", "is-teal")
+        new("Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "ED 3 · IHT 1 · Add-On 1", "is-teal")
     ];
     private sealed record Metric(string Label, string Value, string Detail, string Tone);
 }

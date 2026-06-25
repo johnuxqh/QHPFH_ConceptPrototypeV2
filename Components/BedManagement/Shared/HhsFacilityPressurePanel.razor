@@ -21,7 +21,7 @@
     private string Description => Version == BedManagementVersion.V3Operational ? "Current facility support, ownership and next operational update." : "Ranked facility pressure and operating state across the HHS.";
     private IReadOnlyList<PressureRow> Rows => [
         new("PAH", "Tier 3", 97, "Occupancy above 95%", "Escalation active", "Capacity response", "HHS Capacity Team", "10:30 AM", "is-critical"),
-        new("Logan", "Tier 2", 91, "ED demand 22% above forecast", "Under review", "ED surge response", "Regional Flow", "11:00 AM", "is-high"),
+        new("Logan", "Tier 2", 91, "ED demand 22% above current baseline", "Under review", "ED surge response", "Regional Flow", "11:00 AM", "is-high"),
         new("QEII", "Tier 1", 78, "Operating within capacity", "Supporting transfers", "Capacity available", "Flow Team", "11:30 AM", "is-normal"),
         new("Redland", "Tier 1", 74, "Discharge flow improving", "Improving", "Inpatient capacity watch", "Flow Team", "12:00 PM", "is-improving"),
         new("Beaudesert", "Tier 1", 68, "Operating within capacity", "Stable", "On watch", "Regional Flow", "12:30 PM", "is-normal")];

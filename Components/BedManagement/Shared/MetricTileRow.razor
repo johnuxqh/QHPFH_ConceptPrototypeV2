@@ -58,9 +58,9 @@ else
         new("kpi-inpatients", "Inpatients", Snapshot.OccupiedBeds.ToString(), "Patients occupying open beds across the HHS", "Current HHS inpatient load across facilities.", "patient", "default", "blue"),
         new("kpi-available", "Available Beds", Snapshot.AvailableBeds.ToString(), "Ready capacity across HHS facilities", "Open, unoccupied beds visible across HHS facilities.", "open-bed", "green", "green"),
         new("kpi-occupancy", "Occupancy", $"{Snapshot.OccupancyPercentage}%", "Current use of open HHS beds", "Occupied beds compared with open HHS capacity.", "occupied-bed", "orange", "orange"),
-        new("kpi-admissions", "Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "Expected admissions in current snapshot", "Expected admissions indicate incoming HHS demand.", "admission", "orange", "orange"),
-        new("kpi-delayed", "Delayed Flow Patients", DelayedFlowCohort.ToString(), "Current cross-facility flow constraints", "Delayed flow combines visible turnaround and transfer constraints.", "ddp-flow", "red", "red"),
-        new("kpi-discharges", "Predicted Discharges", Snapshot.PlannedDischarges.ToString(), "Planned discharge opportunities today", "Predicted discharges identify capacity expected to become available.", "activity", "green", "green")
+        new("kpi-admissions", "Admissions Today", Snapshot.ExpectedAdmissions.ToString(), "Admissions in current snapshot", "Current admissions indicate incoming HHS demand.", "admission", "orange", "orange"),
+        new("kpi-delayed", "Current Flow Constraints", DelayedFlowCohort.ToString(), "Current cross-facility flow constraints", "Current flow combines visible turnaround and transfer constraints.", "ddp-flow", "red", "red"),
+        new("kpi-discharges", "Planned Discharges", Snapshot.PlannedDischarges.ToString(), "Planned discharges today", "Planned discharges are tracked as today's discharge activity.", "activity", "green", "green")
     ];
 
     private IReadOnlyList<StatewideMetric> StatewideMetrics =>
@@ -68,9 +68,9 @@ else
         new("kpi-inpatients", "Inpatients", Snapshot.OccupiedBeds.ToString(), "Patients occupying open beds statewide", "Current occupied beds shows the statewide inpatient load, helping teams understand how much open capacity is already committed.", "patient", "default", "blue"),
         new("kpi-available", "Available Beds", Snapshot.AvailableBeds.ToString(), "Ready capacity across the network", "Available beds are open, unoccupied beds visible now; they matter because they represent immediate placement capacity.", "open-bed", "green", "green"),
         new("kpi-occupancy", "Occupancy", $"{Snapshot.OccupancyPercentage}%", "Current use of open statewide beds", "Occupancy compares occupied beds with open beds, signalling pressure before demand exceeds safe visible capacity.", "occupied-bed", "orange", "orange"),
-        new("kpi-demand", "Predicted ED Demand", Snapshot.ExpectedAdmissions.ToString(), "Expected admissions in current snapshot", "Predicted ED demand uses expected admissions to show likely incoming pressure and where coordination may be needed.", "admission", "orange", "orange"),
-        new("kpi-delayed", "Delayed Flow Cohort", DelayedFlowCohort.ToString(), "Cleaning, maintenance and transfer constraints", "Delayed flow combines cleaning, maintenance and transfer constraints, highlighting patients or beds that may block movement.", "ddp-flow", "red", "red"),
-        new("kpi-discharges", "Discharges Today", Snapshot.PlannedDischarges.ToString(), "Planned discharge opportunities today", "Planned discharges identify capacity that can be protected or accelerated to offset admissions and reduce pressure.", "activity", "green", "green")
+        new("kpi-demand", "Current ED Demand", Snapshot.ExpectedAdmissions.ToString(), "Admissions in current snapshot", "Current ED demand shows visible incoming pressure and where coordination may be needed.", "admission", "orange", "orange"),
+        new("kpi-delayed", "Current Flow Constraints", DelayedFlowCohort.ToString(), "Cleaning, maintenance and transfer constraints", "Current flow combines cleaning, maintenance and transfer constraints, highlighting patients or beds that may block movement.", "ddp-flow", "red", "red"),
+        new("kpi-discharges", "Discharges Today", Snapshot.PlannedDischarges.ToString(), "Planned discharges today", "Planned discharges show today's discharge activity without projecting capacity.", "activity", "green", "green")
     ];
 
     private bool CanOpenDetail(StatewideMetric metric) => OnDetailRequested.HasDelegate && (Version switch
@@ -90,9 +90,9 @@ else
         ?
         [
             ("Occupancy", $"{Snapshot.OccupancyPercentage}%"),
-            ("Available capacity", Snapshot.AvailableBeds.ToString()),
-            ("Expected admissions", Snapshot.ExpectedAdmissions.ToString()),
-            ("Discharge opportunity", Snapshot.PlannedDischarges.ToString()),
+            ("Available beds", Snapshot.AvailableBeds.ToString()),
+            ("Admissions today", Snapshot.ExpectedAdmissions.ToString()),
+            ("Discharges today", Snapshot.PlannedDischarges.ToString()),
             ("Transfer concerns", Snapshot.TransferRequests.ToString())
         ]
         :
