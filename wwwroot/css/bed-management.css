@@ -734,3 +734,283 @@
 .ac-status-filters{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}.ac-status-filters button{border:1px solid #cfd8e2;background:#fff;border-radius:999px;padding:5px 10px;font-size:.72rem;color:#28435a;font-weight:600}
 .ac-chip-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.ac-status-chip{border-radius:999px;padding:2px 7px;font-size:.62rem;font-weight:700;white-space:nowrap;border:1px solid transparent}.ac-status-chip.unallocated{background:#fff7e6;border-color:#f0cc7a;color:#7a4a00}.ac-status-chip.allocated{background:#e8f4ed;border-color:#94c8a7;color:#24613c}.ac-status-chip.pending-review{background:#eef3ff;border-color:#9db8e4;color:#1f4f8e}.ac-chip em{display:block;margin-top:4px;font-size:.68rem;color:#45657f;font-style:normal}.ac-ward-context{margin:0;color:#5f7388;font-size:.76rem}
 @media (max-width: 980px){.ac-status-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* P8 visual resilience polish: keep foundation dashboards dense and stable. */
+.ward-ops .ward-summary-strip {
+  grid-template-columns: repeat(auto-fit, minmax(156px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-card {
+  min-width: 0;
+  min-height: 112px;
+  padding: 8px 9px;
+  overflow-wrap: anywhere;
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-title {
+  min-height: 22px;
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-value {
+  font-size: clamp(1.65rem, 3vw, 2.25rem);
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-subtitle {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-subtitle:has(+ *) {
+  color: inherit;
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-card:has(.situational-kpi-subtitle) .situational-kpi-subtitle {
+  font-weight: 650;
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-card.kpi-gray .situational-kpi-subtitle,
+.ward-ops .ward-summary-strip .situational-kpi-card.kpi-green .situational-kpi-subtitle {
+  color: #5f7388;
+}
+
+.ward-ops .ward-summary-strip .situational-kpi-breakdown-row,
+.ward-ops .ward-summary-strip .situational-kpi-breakdown-total {
+  font-size: 11px;
+}
+
+.ward-incoming-compact {
+  padding: 8px 9px;
+  margin-bottom: 8px;
+}
+
+.ward-incoming-head {
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ward-source-tabs {
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.ward-incoming-preview {
+  max-height: 128px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.ward-incoming-row {
+  grid-template-columns: minmax(145px, 1.2fr) minmax(70px, .55fr) minmax(108px, .75fr) minmax(112px, .7fr);
+  padding: 5px 7px;
+  font-size: 11px;
+}
+
+.ward-incoming-row p,
+.ward-incoming-empty {
+  font-size: 11px;
+}
+
+.ward-ops .bm-ward-table-wrap {
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+}
+
+.ward-ops .bm-ward-table {
+  min-width: 1420px;
+  table-layout: fixed;
+}
+
+.ward-ops .bm-ward-table th,
+.ward-ops .bm-ward-table td {
+  padding: 5px 7px;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.ward-ops .bm-ward-table th {
+  white-space: nowrap;
+}
+
+.ward-ops .bm-ward-table td {
+  overflow-wrap: anywhere;
+}
+
+.ward-ops .bm-ward-table th:nth-child(1),
+.ward-ops .bm-ward-table td:nth-child(1) { width: 105px; }
+.ward-ops .bm-ward-table th:nth-child(2),
+.ward-ops .bm-ward-table td:nth-child(2) { width: 118px; }
+.ward-ops .bm-ward-table th:nth-child(3),
+.ward-ops .bm-ward-table td:nth-child(3) { width: 105px; }
+.ward-ops .bm-ward-table th:nth-child(4),
+.ward-ops .bm-ward-table td:nth-child(4) { width: 150px; }
+.ward-ops .bm-ward-table th:nth-child(9),
+.ward-ops .bm-ward-table td:nth-child(9),
+.ward-ops .bm-ward-table th:nth-child(10),
+.ward-ops .bm-ward-table td:nth-child(10),
+.ward-ops .bm-ward-table th:nth-child(11),
+.ward-ops .bm-ward-table td:nth-child(11) { width: 132px; }
+.ward-ops .bm-ward-table th.actions-col,
+.ward-ops .bm-ward-table td:last-child { width: 116px; max-width: 116px; }
+
+.ward-bed-cell {
+  padding-left: 6px;
+  border-left-width: 3px;
+}
+
+.ward-bed-cell span {
+  max-width: 88px;
+  padding: 1px 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.ward-transfer-action {
+  padding: 3px 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ward-transfer-pending {
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.ward-transfer-panel {
+  background: rgba(15, 23, 42, .24);
+}
+
+.ward-transfer-panel-card {
+  width: min(680px, 96vw);
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.ward-transfer-panel-card h3 {
+  font-size: 1rem;
+}
+
+.ward-transfer-safety,
+.ward-transfer-confirmation {
+  margin: 9px 0;
+  padding: 8px 10px;
+  font-size: .78rem;
+}
+
+.ward-transfer-context,
+.ward-transfer-form {
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.ward-transfer-context div,
+.ward-transfer-form div {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.ward-transfer-form select,
+.ward-transfer-form textarea {
+  padding: 6px 7px;
+}
+
+.allocation-centre-page .ac-filter-row {
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.allocation-centre-page .bm-filter button {
+  min-width: 112px;
+}
+
+.allocation-centre-page .ac-day-view {
+  flex: 1 1 310px;
+  min-width: 0;
+}
+
+.allocation-centre-page .ac-day-view button {
+  min-width: 0;
+  height: 32px;
+  padding: 5px 9px;
+}
+
+.ac-status-summary {
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.ac-status-summary div {
+  min-height: 44px;
+  padding: 6px 9px;
+}
+
+.ac-status-summary strong {
+  font-size: 1rem;
+}
+
+.ac-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 300px);
+}
+
+.ac-lanes {
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 8px;
+}
+
+.ac-lane-card {
+  min-height: 0;
+  padding: 9px;
+}
+
+.ac-chip {
+  padding: 6px 7px;
+}
+
+.ac-chip-heading strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ac-status-chip {
+  flex: 0 0 auto;
+  font-size: 11px;
+}
+
+.ac-destination-panel article:first-child {
+  border-style: solid;
+  background: #fff;
+}
+
+.ac-destination-panel .bm-targets {
+  gap: 6px;
+}
+
+.ac-destination-panel .bm-move-target {
+  min-height: 34px;
+  padding: 8px 10px;
+  border-style: solid;
+  background: #fbfdff;
+  font-size: .74rem;
+}
+
+.ac-note {
+  padding: 9px 10px;
+  font-size: .76rem;
+}
+
+@media (max-width: 980px) {
+  .ac-layout { grid-template-columns: 1fr; }
+  .ac-destination-panel { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .ward-ops .ward-summary-strip { grid-template-columns: repeat(auto-fit, minmax(142px, 1fr)); }
+  .ward-incoming-head { align-items: flex-start; }
+  .ward-incoming-row { grid-template-columns: 1fr 1fr; }
+  .ward-incoming-row p { grid-column: 1 / -1; }
+}
