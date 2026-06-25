@@ -14,7 +14,7 @@
     </header>
     <div class="bm-statewide-performance-table__scroll" role="region" aria-label="Statewide HHS performance rows" tabindex="0">
         <table><thead><tr>
-            @Header("hhs", "HHS") @Header("occupancy", "Occupancy") @Header("beds", "Available Beds") @Header("admissions", "Admissions") @Header("discharges", "Discharges") @Header("delayed", "Delayed Flow Patients") @Header("tier", "Pressure Tier") @Header("status", "Escalation Status") @Header("support", "State Support Action") @Header("trend", "Trend") @Header("yesterday", "vs Yesterday")
+            @Header("hhs", "HHS") @Header("occupancy", "Occupancy") @Header("beds", "Available Beds") @Header("admissions", "Admissions") @Header("discharges", "Discharges") @Header("delayed", "Current Flow Constraints") @Header("tier", "Pressure Tier") @Header("status", "Escalation Status") @Header("support", "State Support Action") @Header("trend", "Trend") @Header("yesterday", "vs Yesterday")
             @foreach (var column in OptionalColumns.Where(c => IsVisible(c.Key))) { @Header(column.Key, column.Label) }
             <th scope="col">Action</th>
         </tr></thead><tbody>

@@ -126,7 +126,7 @@ public static class BedManagementDemoData
         Signals =
         [
             new InsightSignal { Id = "state-flow-watch", Label = "Flow pressure requires support", Detail = "Metro South has the strongest admission, transfer and bed turnaround pressure in the demo hierarchy.", Severity = "Watch", SupportedVersion = BedManagementVersion.V2Balanced },
-            new InsightSignal { Id = "state-early-discharge", Label = "Early discharge opportunity", Detail = "Planned discharges should be protected to release capacity ahead of expected admissions.", Severity = "Opportunity", SupportedVersion = BedManagementVersion.V2Balanced },
+            new InsightSignal { Id = "state-early-discharge", Label = "Discharge readiness focus", Detail = "Review discharge-ready patients alongside current admissions pressure.", Severity = "Opportunity", SupportedVersion = BedManagementVersion.V2Balanced },
             new InsightSignal { Id = "state-senior-review", Label = "Senior engagement focus", Detail = "Escalated services should confirm senior review and discharge barriers during the next coordination check.", Severity = "Review", SupportedVersion = BedManagementVersion.V2Balanced },
             new InsightSignal { Id = "state-transfer-focus", Label = "Transfer coordination focus", Detail = "Cross-facility transfer pressure is concentrated in Metro South demo data.", Severity = "Info", SupportedVersion = BedManagementVersion.V3Operational }
         ]
@@ -227,8 +227,8 @@ public static class BedManagementDemoData
         Signals =
         [
             new InsightSignal { Id = "qch-8a-flow", Label = "Ward 8A is blocking flow", Detail = "Admissions, transfer delays, cleaning turnaround and discharge timing converge on Ward 8A.", Severity = "Amber", SupportedVersion = BedManagementVersion.V2Balanced },
-            new InsightSignal { Id = "qch-early-discharge", Label = "Early discharge opportunities", Detail = "Prioritise discharge-ready patients and resolve medicines, transport and home oxygen barriers.", Severity = "Opportunity", SupportedVersion = BedManagementVersion.V2Balanced },
-            new InsightSignal { Id = "qch-senior-review", Label = "Senior review required", Detail = "High-acuity and delayed-flow patients need visible senior review before the next capacity check.", Severity = "Review", SupportedVersion = BedManagementVersion.V2Balanced }
+            new InsightSignal { Id = "qch-early-discharge", Label = "Discharge readiness actions", Detail = "Prioritise discharge-ready patients and resolve medicines, transport and home oxygen barriers.", Severity = "Opportunity", SupportedVersion = BedManagementVersion.V2Balanced },
+            new InsightSignal { Id = "qch-senior-review", Label = "Senior review required", Detail = "High-acuity and current-flow patients need visible senior review before the next capacity check.", Severity = "Review", SupportedVersion = BedManagementVersion.V2Balanced }
         ]
     };
 
@@ -273,13 +273,13 @@ public static class BedManagementDemoData
         OperationalEvents =
         [
             new OperationalEvent { Id = "8a-clean", TimeLabel = "12:05", Type = "Bed turnaround", Summary = "8A-03 terminal clean in progress for the next ED admission.", Severity = "Info" },
-            new OperationalEvent { Id = "8a-discharge", TimeLabel = "12:10", Type = "Early discharge", Summary = "8A-06 is discharge ready and awaiting family pickup.", Severity = "Green" },
+            new OperationalEvent { Id = "8a-discharge", TimeLabel = "12:10", Type = "Discharge readiness", Summary = "8A-06 is discharge ready and awaiting family pickup.", Severity = "Green" },
             new OperationalEvent { Id = "8a-maintenance", TimeLabel = "12:20", Type = "Utilisation constraint", Summary = "8A-08 remains closed for facilities review.", Severity = "Amber" },
             new OperationalEvent { Id = "8a-senior-review", TimeLabel = "12:25", Type = "Senior review", Summary = "8A-09 requires senior respiratory review before the next journey decision.", Severity = "Review" }
         ],
         OperationalSignals =
         [
-            new OperationalSignal { Id = "8a-next-bed", Label = "Flow: next bed decision", Detail = "Prioritise 8A-03 clean completion and 8A-06 early discharge movement.", Owner = "Bed manager", DueLabel = "Next 30 min", Severity = "Amber" },
+            new OperationalSignal { Id = "8a-next-bed", Label = "Flow: next bed decision", Detail = "Prioritise 8A-03 clean completion and 8A-06 discharge readiness movement.", Owner = "Bed manager", DueLabel = "Next 30 min", Severity = "Amber" },
             new OperationalSignal { Id = "8a-senior-review", Label = "Senior review", Detail = "Confirm senior respiratory review for 8A-09 before the next journey decision.", Owner = "Clinical team", DueLabel = "By 13:00", Severity = "Review" },
             new OperationalSignal { Id = "8a-discharge-barrier", Label = "Discharge barrier", Detail = "Resolve home oxygen confirmation for 8A-05 to protect discharge potential.", Owner = "Flow coordinator", DueLabel = "By 14:00", Severity = "Amber" },
             new OperationalSignal { Id = "8a-transfer-delay", Label = "Transfer delay", Detail = "Move 8A-12 to the transit lounge and confirm the PICU step-down plan.", Owner = "Bed manager", DueLabel = "Next 30 min", Severity = "Watch" },

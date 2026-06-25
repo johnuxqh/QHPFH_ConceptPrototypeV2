@@ -7,4 +7,4 @@
 <FacilityWardPerformanceTable Version="@BedManagementVersion.V2Balanced" />
 <section class="bm-shared-panel bm-facility-reports"><header><div><h3>Quick Reports & Insights</h3><p>Lightweight facility reporting shortcuts.</p></div></header><div>@foreach(var report in Reports){<button type="button">@report <span>View</span></button>}</div></section>
 </section>
-@code { [Parameter, EditorRequired] public Facility Facility { get; set; } = default!; private CapacitySnapshot Snapshot => BedManagementDemoData.GetFacilitySnapshot(Facility.Id)!; private static readonly string[] Reports=["Daily Bed Census","Ward Capacity Report","Delayed Flow Report","Discharge Performance","Admissions Overview"]; }
+@code { [Parameter, EditorRequired] public Facility Facility { get; set; } = default!; private CapacitySnapshot Snapshot => BedManagementDemoData.GetFacilitySnapshot(Facility.Id)!; private static readonly string[] Reports=["Daily Bed Census","Ward Capacity Report","Flow Constraints Report","Discharge Performance","Admissions Overview"]; }

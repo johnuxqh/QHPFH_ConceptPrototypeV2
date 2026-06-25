@@ -284,7 +284,7 @@
         BedManagementLevel.Statewide => $"Scope: one statewide hierarchy with {CurrentSnapshot.PhysicalBeds} demo physical beds aggregated from HHS, facility and ward children.",
         BedManagementLevel.Hhs => $"Scope: HHS selection reads from the shared hierarchy; {CurrentSnapshot.OccupancyPercentage}% occupancy is derived from child facilities.",
         BedManagementLevel.Facility => $"Scope: Facility view treats ward as All Wards and derives {CurrentSnapshot.AvailableBeds} available beds from child wards.",
-        BedManagementLevel.Ward => $"Scope: Ward view exposes all selectors; {CurrentSnapshot.Label} has {CurrentSnapshot.ExpectedAdmissions} expected admissions and {CurrentSnapshot.PlannedDischarges} planned discharges.",
+        BedManagementLevel.Ward => $"Scope: Ward view exposes all selectors; {CurrentSnapshot.Label} has {CurrentSnapshot.ExpectedAdmissions} admissions today and {CurrentSnapshot.PlannedDischarges} planned discharges.",
         _ => string.Empty
     };
 
