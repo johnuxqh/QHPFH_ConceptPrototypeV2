@@ -2449,3 +2449,60 @@
   .bm-facility-main-grid { grid-template-columns: 1fr; }
   .bm-v1-view--facility .bm-facility-reports { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* P8 visual resilience polish for Bed Management foundation and V3 labels. */
+.bm-facility-kpis article,
+.bm-ward-kpis article,
+.bm-facility-opportunities article,
+.bm-ward-command article {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.bm-facility-kpis span,
+.bm-ward-kpis span,
+.bm-facility-opportunities span,
+.bm-ward-command span {
+  line-height: 1.2;
+}
+
+.bm-facility-kpis small,
+.bm-ward-kpis small,
+.bm-facility-opportunities small,
+.bm-ward-command small {
+  line-height: 1.25;
+}
+
+.bm-facility-dashboard .bm-shared-panel header h3,
+.bm-ward-experience .bm-shared-panel header h3,
+.bm-facility-forecast header h3 {
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.bm-facility-forecast header h3,
+.bm-v3-view .bm-shared-panel header span,
+.bm-v3-view .bm-shared-banner span {
+  color: var(--pfh-text-secondary, #475467);
+}
+
+.bm-facility-forecast__chart {
+  min-width: 260px;
+  overflow: visible;
+}
+
+.bm-facility-two-column--forecast {
+  align-items: stretch;
+}
+
+.bm-facility-table__scroll,
+.bm-ward-bed-table__scroll {
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 980px) {
+  .bm-facility-kpis,
+  .bm-ward-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
