@@ -7,7 +7,7 @@
         <div>
             <p class="bwh-kicker">Bed &amp; Ward</p>
             <h2>DD Hub</h2>
-            <p>Single front door into the current bed management, ward management and allocation workspaces.</p>
+            <p>Single front door into the current bed management, ward operations and allocation workspaces.</p>
         </div>
         <div class="bwh-hero-actions">
             <button type="button" class="bm-ghost" @onclick='() => Navigation.NavigateTo("bed-management")'>Open Bed Management</button>
@@ -85,7 +85,7 @@
     private static readonly WorkspaceLink[] Workspaces =
     [
         new("Orchestration", "Bed Management", "Coordinate system pressure, ward actions, scenarios and recommended interventions.", "bed-management"),
-        new("Ward team workspace", "Ward Management", "Manage ward beds, patients, room types, admissions, discharges and local ward actions.", "ward-operations"),
+        new("Ward team workspace", "Ward Operations", "Manage ward beds, patients, room types, admissions, discharges and local ward actions.", "ward-operations"),
         new("Patient movement", "Allocation Centre", "Triage incoming ED, OPD, IHT and elective demand against ward destinations.", "allocation-centre")
     ];
 
