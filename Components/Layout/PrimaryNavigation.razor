@@ -62,7 +62,7 @@
         new("myhub", "MyHub", false, []),
         new("hospital", "Hospital Overview", false, []),
         new("dd", "Delayed Discharge", true, ["DD Hub", "Patient Management", "Census Management", "DDP Census"]),
-        new("bed", "Bed & Ward", true, ["DD Hub", "Bed Management", "Ward Management", "Allocation Centre"]),
+        new("bed", "Bed & Ward", true, ["DD Hub", "Bed Management", "Ward Operations", "Allocation Centre", "Mapping Admin"]),
         new("scenario", "Scenario Mapping", false, []),
         new("journey", "Patient Journey", false, []),
         new("apps", "Connected Apps", false, [])
@@ -111,8 +111,9 @@
             "" => ("home", string.Empty),
             "bed-and-ward-hub" => ("bed", "DD Hub"),
             "bed-management" => ("bed", "Bed Management"),
-            "ward-operations" => ("bed", "Ward Management"),
+            "ward-operations" => ("bed", "Ward Operations"),
             "allocation-centre" => ("bed", "Allocation Centre"),
+            "mapping-admin" => ("bed", "Mapping Admin"),
             _ => ("home", string.Empty)
         };
 
@@ -128,8 +129,9 @@
             {
                 "DD Hub" => "bed-and-ward-hub",
                 "Bed Management" => "bed-management",
-                "Ward Management" => "ward-operations",
+                "Ward Operations" => "ward-operations",
                 "Allocation Centre" => "allocation-centre",
+                "Mapping Admin" => "mapping-admin",
                 _ => string.Empty
             },
             _ => string.Empty

@@ -6,7 +6,7 @@
 
 <section class="page-shell-card bed-mgmt-page ward-ops ward-view-page" @onclick="CloseKpiInfo">
     <header>
-        <h2>Ward Management</h2>
+        <h2>Ward Operations</h2>
     </header>
 
     <div class="bm-view-row">
@@ -14,7 +14,7 @@
         <button class="bm-ghost version @(WardVersion == "V2" ? "active" : null)" @onclick='() => WardVersion = "V2"'>V3 Future Whiteboard Prototype</button>
     </div>
 
-    <p class="ward-scope-note">Ward Management is the ward-level operational workspace for beds, patients, room types, admissions, discharges and local ward actions. R2.1 foundation does not include full allocation or unrestricted drag-and-drop.</p>
+    <p class="ward-scope-note">Ward Operations is the ward-level operational workspace for beds, patients, room types, admissions, discharges and local ward actions. R2.1 foundation does not include full allocation or unrestricted drag-and-drop.</p>
 
     @if (WardVersion == "V1")
     {
@@ -170,7 +170,7 @@
                         <div><span>Patient</span><strong>@SelectedTransferBed.PatientName</strong></div>
                         <div><span>MRN</span><strong>@SelectedTransferBed.Mrn</strong></div>
                         <div><span>Current bed</span><strong>@SelectedTransferBed.BedLabel</strong></div>
-                        <div><span>Current ward</span><strong>Ward Management</strong></div>
+                        <div><span>Current ward</span><strong>Ward Operations</strong></div>
                     </div>
 
                     <div class="ward-transfer-form">

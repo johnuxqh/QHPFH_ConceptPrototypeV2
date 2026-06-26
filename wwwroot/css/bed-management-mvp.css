@@ -2506,3 +2506,35 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* P10 Mapping Admin prototype and statewide flow grid refinement */
+.mapping-admin-page { display: grid; gap: 16px; }
+.mapping-admin-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.mapping-admin-hero h2 { margin: 0; color: var(--pfh-text-primary, #101828); }
+.mapping-admin-hero p { margin: 4px 0 0; color: var(--pfh-text-secondary, #475467); }
+.mapping-admin-note { max-width: 360px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--pfh-primary-blue, #005eb8) 24%, var(--pfh-border, #e4e7ec)); border-radius: 10px; background: color-mix(in srgb, var(--pfh-primary-blue, #005eb8) 7%, var(--pfh-surface, #fff)); color: var(--pfh-text-primary, #101828); font-size: .78rem; font-weight: 750; }
+.mapping-admin-note.inline { max-width: none; margin: 10px 0 0; }
+.mapping-profile-panel { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; padding: 12px; border: 1px solid var(--pfh-border, #e4e7ec); border-radius: 14px; background: var(--pfh-surface, #fff); }
+.mapping-profile-panel div, .mapping-current { display: grid; gap: 3px; min-width: 0; }
+.mapping-profile-panel span, .mapping-current span { color: var(--pfh-text-secondary, #475467); font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.mapping-profile-panel strong, .mapping-current strong { color: var(--pfh-text-primary, #101828); font-size: .82rem; }
+.mapping-admin-tabs { margin: 0; }
+.mapping-admin-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(300px, .72fr); gap: 14px; align-items: start; }
+.mapping-table-panel { min-width: 0; }
+.mapping-selected { outline: 2px solid color-mix(in srgb, var(--pfh-primary-blue, #005eb8) 38%, transparent); outline-offset: -2px; }
+.mapping-detail-panel, .mapping-changes-panel { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--pfh-border, #e4e7ec); border-radius: 14px; background: var(--pfh-surface, #fff); }
+.mapping-detail-panel h3, .mapping-changes-panel h3 { margin: 0; color: var(--pfh-text-primary, #101828); }
+.mapping-detail-panel label, .mapping-attributes { display: grid; gap: 6px; color: var(--pfh-text-secondary, #475467); font-size: .75rem; font-weight: 800; }
+.mapping-detail-panel select, .mapping-detail-panel textarea { width: 100%; border: 1px solid var(--pfh-border, #d0d5dd); border-radius: 9px; padding: 8px 10px; background: var(--pfh-surface, #fff); color: var(--pfh-text-primary, #101828); font: inherit; font-weight: 650; }
+.mapping-toggle { grid-template-columns: auto 1fr; align-items: center; justify-content: start; }
+.mapping-current { padding: 10px; border-radius: 10px; background: var(--pfh-background, #f8fafc); }
+.mapping-current em { color: var(--pfh-text-secondary, #475467); font-size: .72rem; font-style: normal; }
+.mapping-validation { margin: 0; padding: 8px 10px; border-radius: 8px; background: #fff4ed; color: #b42318; font-size: .76rem; font-weight: 800; }
+.mapping-confirmation { padding: 10px 12px; border: 1px solid #abefc6; border-radius: 10px; background: #ecfdf3; color: #067647; font-size: .82rem; font-weight: 850; }
+.mapping-attributes { grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--pfh-border, #e4e7ec); border-radius: 10px; padding: 10px; }
+.mapping-attributes legend { grid-column: 1 / -1; padding: 0 4px; color: var(--pfh-text-secondary, #475467); }
+.mapping-attributes label { grid-template-columns: auto 1fr; align-items: center; font-weight: 700; }
+.mapping-changes-panel { overflow-x: auto; }
+.bm-statewide-flow__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; overflow-x: visible; }
+@media (max-width: 1180px) { .bm-statewide-flow__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mapping-admin-grid, .mapping-profile-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mapping-detail-panel { grid-column: 1 / -1; } }
+@media (max-width: 720px) { .mapping-admin-hero { flex-direction: column; } .mapping-admin-note { max-width: none; } .mapping-profile-panel, .mapping-admin-grid, .mapping-attributes, .bm-statewide-flow__grid { grid-template-columns: 1fr; } }
