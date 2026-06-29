@@ -3,34 +3,22 @@
 
 <section class="page-shell-card bed-mgmt-page mapping-admin-page">
     <header class="mapping-admin-hero">
-        <div>
+        <div class="mapping-admin-hero__copy">
             <p class="utility-kicker">Administration prototype</p>
             <h2>Mapping Admin</h2>
-            <p>Bed Mapping foundation for the selected HHS, facility, division, ward and bed hierarchy.</p>
+            <p>Review and maintain division, ward and bed mapping for the selected facility.</p>
+            <div class="mapping-admin-note">Prototype mapping changes are recorded locally for review and do not update source systems.</div>
         </div>
-        <div class="mapping-admin-note">Prototype mapping changes are recorded locally for review and do not update source systems.</div>
+
+        <section class="mapping-profile-panel" aria-label="Current user profile scope">
+            <div><span>HHS</span><strong>Children’s Health Queensland HHS</strong></div>
+            <div><span>HHS abbreviation</span><strong>CHQ</strong></div>
+            <div><span>HHS code</span><strong>CHQHHS</strong></div>
+            <div><span>Facility</span><strong>Queensland Children’s Hospital</strong></div>
+            <div><span>Facility abbreviation</span><strong>QCH</strong></div>
+            <div><span>Facility code</span><strong>QCH</strong></div>
+        </section>
     </header>
-
-    <section class="mapping-profile-panel" aria-label="Current user profile scope">
-        <div><span>HHS</span><strong>Children’s Health Queensland HHS</strong></div>
-        <div><span>HHS abbreviation</span><strong>CHQ</strong></div>
-        <div><span>HHS code</span><strong>CHQHHS</strong></div>
-        <div><span>Facility</span><strong>Queensland Children’s Hospital</strong></div>
-        <div><span>Facility abbreviation</span><strong>QCH</strong></div>
-        <div><span>Facility code</span><strong>QCH</strong></div>
-    </section>
-
-    <section class="mapping-foundation-panel" aria-label="Mapping foundation">
-        <div>
-            <h3>Mapping foundation</h3>
-            <p>Mapping Admin defines the static physical and clinical characteristics of wards and beds. Operational screens consume this mapping to calculate capacity, availability and allocation options. Temporary closures and daily operational changes are managed outside this admin view.</p>
-        </div>
-        <div class="mapping-flow-tags" aria-label="Downstream consumers">
-            <span>Bed Management</span>
-            <span>Ward Operations</span>
-            <span>Allocation Centre</span>
-        </div>
-    </section>
 
     @if (!string.IsNullOrWhiteSpace(ConfirmationMessage))
     {
@@ -71,13 +59,47 @@
             </div>
         </section>
 
-        <aside class="mapping-detail-panel" aria-label="Selected mapping details">
+        <section class="mapping-records-panel" aria-label="Mapped records">
             <div class="mapping-panel-heading">
                 <div>
-                    <p class="utility-kicker">Selected mapping details</p>
+                    <p class="utility-kicker">Reference records</p>
+                    <h3>Mapped Records</h3>
+                </div>
+                <span>@Beds.Count beds</span>
+            </div>
+            <div class="mapping-record-tabs" role="tablist" aria-label="Mapped record types">
+                <button type="button">Divisions</button>
+                <button type="button">Wards</button>
+                <button type="button" class="active">Beds</button>
+            </div>
+            <div class="mapping-record-tools">
+                <input aria-label="Search mapped records" placeholder="Search mapped records..." />
+                <button type="button">Filters</button>
+            </div>
+            <div class="mapping-record-table-wrap">
+                <table class="mapping-record-table">
+                    <thead>
+                        <tr><th>ID</th><th>Label</th><th>Ward</th><th>Group</th><th>Type</th><th>Attributes</th><th>Source Status</th><th>Active</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var bed in Beds)
+                        {
+                            <tr class="@(SelectedEntityType == "Bed" && SelectedBed == bed ? "mapping-selected" : null)">
+                                <td>@bed.Id</td><td>@bed.Name</td><td>@bed.Ward</td><td>@bed.Group</td><td>@bed.Type</td><td>@FormatAttributes(bed.Attributes)</td><td>@bed.StaticStatus</td><td>Yes</td><td><button type="button" @onclick="() => SelectBed(bed)">View / Edit</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <aside class="mapping-detail-panel" aria-label="Selected mapping details">
+            <div class="mapping-detail-header">
+                <div>
+                    <p class="utility-kicker">Selected Mapping Details</p>
                     <h3>@SelectedEntityName</h3>
                 </div>
-                <span>@SelectedEntityType</span>
+                <div class="mapping-detail-chips"><span>@SelectedEntityType</span><span>Active</span></div>
             </div>
             @if (!string.IsNullOrWhiteSpace(ValidationMessage)) { <p class="mapping-validation">@ValidationMessage</p> }
 
@@ -86,10 +108,9 @@
                 <div class="mapping-current"><span>Current mapped values</span><strong>@SelectedDivision.Name</strong><em>Mapped value: @SelectedDivision.MappedValue · Wards: @SelectedDivision.Wards · Status: @SelectedDivision.Status</em><em>@SelectedDivision.SourceNote</em></div>
                 <label>Division name<input value="@SelectedDivision.Name" readonly /></label>
                 <label>Mapped value<select @bind="DivisionMappedValue">@foreach (var option in DivisionOptions){<option>@option</option>}</select></label>
-                <label>Number of wards<input value="@SelectedDivision.Wards" readonly /></label>
-                <label>Status<input value="@SelectedDivision.Status" readonly /></label>
+                <div class="mapping-field-grid"><label>Number of wards<input value="@SelectedDivision.Wards" readonly /></label><label>Status<input value="@SelectedDivision.Status" readonly /></label></div>
                 <p class="mapping-admin-note inline">Division values are maintained as portal mapping values. Source-system alignment remains to be confirmed.</p>
-                <label>Reason for division mapping change<textarea rows="3" @bind="DivisionReason"></textarea></label>
+                <label class="mapping-reason-field">Reason for division mapping change<textarea rows="3" @bind="DivisionReason"></textarea></label>
                 <button type="button" class="bm-primary" @onclick="UpdateDivision">Update mapping</button>
             }
             else if (SelectedEntityType == "Ward")
@@ -100,47 +121,48 @@
                 <label>Division<select @bind="WardDivision">@foreach (var option in DivisionOptions){<option>@option</option>}</select></label>
                 <label>Admitting consultant<input @bind="WardConsultant" /></label>
                 <label class="mapping-toggle"><input type="checkbox" @bind="WardActive" /> Active</label>
-                <label>Ward type<select @bind="WardType">@foreach (var option in WardTypes){<option>@option</option>}</select></label>
-                <label>Ward group<select @bind="WardGroup">@foreach (var option in WardGroups){<option>@option</option>}</select></label>
+                <div class="mapping-field-grid"><label>Ward type<select @bind="WardType">@foreach (var option in WardTypes){<option>@option</option>}</select></label><label>Ward group<select @bind="WardGroup">@foreach (var option in WardGroups){<option>@option</option>}</select></label></div>
                 <label>Specialist type<select @bind="WardSpecialistType">@foreach (var option in SpecialistTypes){<option>@option</option>}</select></label>
                 <p class="mapping-admin-note inline">Ward mapping describes the ward’s intended clinical grouping. Day-to-day bed availability is managed operationally.</p>
-                <label>Reason for ward mapping change<textarea rows="3" @bind="WardReason"></textarea></label>
+                <label class="mapping-reason-field">Reason for ward mapping change<textarea rows="3" @bind="WardReason"></textarea></label>
                 <button type="button" class="bm-primary" @onclick="UpdateWard">Update mapping</button>
             }
             else
             {
-                <div class="mapping-current"><span>Current mapped values</span><strong>@SelectedBed.Name</strong><em>@SelectedBed.Ward · @SelectedBed.Group / @SelectedBed.Type / @FormatAttributes(SelectedBed.Attributes)</em><em>Static/source status: @SelectedBed.StaticStatus · Operational status shown for context only: @SelectedBed.OperationalStatus</em></div>
+                <div class="mapping-current"><span>Current mapped values</span><strong>@SelectedBed.Name</strong><em>@SelectedBed.Ward · @SelectedBed.Group / @SelectedBed.Type / @FormatAttributes(SelectedBed.Attributes)</em><em>Static/source status: @SelectedBed.StaticStatus</em></div>
                 <div class="mapping-field-grid"><label>Bed ID<input value="@SelectedBed.Id" readonly /></label><label>Bed label / bed number<input @bind="BedLabel" /></label></div>
                 <label>Assigned ward<select @bind="BedAssignedWard">@foreach (var ward in Wards){<option>@ward.Name</option>}</select></label>
-                <label>Bed group<select @bind="BedGroup">@foreach (var option in BedGroups){<option>@option</option>}</select></label>
-                <label>Bed type<select @bind="BedType">@foreach (var option in BedTypes){<option>@option</option>}</select></label>
+                <div class="mapping-field-grid"><label>Bed group<select @bind="BedGroup">@foreach (var option in BedGroups){<option>@option</option>}</select></label><label>Bed type<select @bind="BedType">@foreach (var option in BedTypes){<option>@option</option>}</select></label></div>
                 <fieldset class="mapping-attributes"><legend>Bed attributes</legend>@foreach (var option in BedAttributes){<label><input type="checkbox" checked="@BedSelectedAttributes.Contains(option)" @onchange="args => ToggleBedAttribute(option, args)" /> @option</label>}</fieldset>
-                <label>Static/source status<input value="@SelectedBed.StaticStatus" readonly /></label>
-                <label>Operational status context only<input value="@SelectedBed.OperationalStatus" readonly /></label>
+                <div class="mapping-field-grid"><label>Static/source status<input value="@SelectedBed.StaticStatus" readonly /></label><label class="mapping-context-field">Operational status context only<input value="@SelectedBed.OperationalStatus" readonly /></label></div>
                 <p class="mapping-admin-note inline">Ward Group to Bed Group relationship remains to be confirmed.</p>
                 <p class="mapping-admin-note inline">Rooms, bays, physical spaces and blueprint constraints are recognised future requirements and are not modelled in this prototype pass.</p>
-                <label>Reason for bed mapping change<textarea rows="3" @bind="BedReason"></textarea></label>
-                <button type="button" class="bm-primary" @onclick="UpdateBed">Update mapping</button>
+                <label class="mapping-reason-field">Reason for bed mapping change<textarea rows="3" @bind="BedReason"></textarea></label>
+                <div class="mapping-detail-actions"><button type="button" class="bm-primary" @onclick="UpdateBed">Update mapping</button></div>
             }
         </aside>
     </div>
 
-    <section class="mapping-discovery-panel">
-        <h3>Future discovery</h3>
-        <ul>
-            <li>room / bay / physical space mapping</li>
-            <li>physical constraints such as oxygen, telemetry, isolation capability</li>
-            <li>temporary surge spaces</li>
-            <li>planned closures such as air-conditioning or maintenance works</li>
-            <li>relationship between physical space, bed, and patient</li>
-        </ul>
-    </section>
+    <div class="mapping-support-row">
+        <section class="mapping-foundation-panel" aria-label="Mapping foundation">
+            <div>
+                <h3>Mapping Foundation</h3>
+                <p>Mapping Admin defines the static physical and clinical characteristics of wards and beds. Operational screens consume this mapping to calculate capacity, availability and allocation options.</p>
+            </div>
+            <div class="mapping-flow-tags" aria-label="Downstream consumers"><span>Bed Management</span><span>Ward Operations</span><span>Allocation Centre</span></div>
+        </section>
 
-    <section class="mapping-changes-panel">
-        <h3>Recent prototype changes</h3>
-        @if (RecentChanges.Count == 0) { <p>No local prototype mapping changes recorded yet.</p> }
-        else { <table class="bm-ward-table"><thead><tr><th>Entity</th><th>Field changed</th><th>Previous value</th><th>New value</th><th>Reason</th><th>Changed by</th><th>Changed at</th></tr></thead><tbody>@foreach (var change in RecentChanges){<tr><td>@change.Entity</td><td>@change.FieldChanged</td><td>@change.PreviousValue</td><td>@change.NewValue</td><td>@change.Reason</td><td>@change.ChangedBy</td><td>@change.ChangedAt</td></tr>}</tbody></table> }
-    </section>
+        <section class="mapping-discovery-panel">
+            <h3>Future Discovery</h3>
+            <ul><li>room / bay / physical space mapping</li><li>physical constraints such as oxygen, telemetry, isolation capability</li><li>temporary surge spaces</li><li>planned closures such as air-conditioning or maintenance works</li><li>relationship between physical space, bed and patient</li></ul>
+        </section>
+
+        <section class="mapping-changes-panel">
+            <h3>Recent Prototype Changes</h3>
+            @if (RecentChanges.Count == 0) { <p class="mapping-empty-state">No local prototype mapping changes recorded yet.</p> }
+            else { <table class="mapping-record-table mapping-changes-table"><thead><tr><th>Entity</th><th>Previous value</th><th>New value</th><th>Reason</th><th>Changed by</th><th>Changed at</th></tr></thead><tbody>@foreach (var change in RecentChanges){<tr><td>@change.Entity</td><td>@change.PreviousValue</td><td>@change.NewValue</td><td>@change.Reason</td><td>@change.ChangedBy</td><td>@change.ChangedAt</td></tr>}</tbody></table> }
+        </section>
+    </div>
 </section>
 
 @code {
@@ -161,7 +183,7 @@
     private DivisionRow SelectedDivision = default!; private WardRow SelectedWard = default!; private BedRow SelectedBed = default!;
     private string DivisionMappedValue = string.Empty, DivisionReason = string.Empty, WardDivision = string.Empty, WardConsultant = string.Empty, WardType = string.Empty, WardGroup = string.Empty, WardSpecialistType = string.Empty, WardReason = string.Empty, BedLabel = string.Empty, BedAssignedWard = string.Empty, BedGroup = string.Empty, BedType = "Standard", BedReason = string.Empty; private bool WardActive = true;
     private List<string> BedSelectedAttributes = []; private List<ChangeRow> RecentChanges = [];
-    protected override void OnInitialized(){ SelectDivision(Divisions[0]); SelectedWard=Wards[0]; SelectedBed=Beds[0]; }
+    protected override void OnInitialized(){ SelectedDivision=Divisions[0]; SelectedWard=Wards[0]; SelectBed(Beds[0]); }
     private bool IsSelected(DivisionRow row) => SelectedEntityType == "Division" && SelectedDivision == row; private bool IsSelected(WardRow row) => SelectedEntityType == "Ward" && SelectedWard == row; private bool IsSelected(BedRow row) => SelectedEntityType == "Bed" && SelectedBed == row;
     private void SelectDivision(DivisionRow row){ SelectedEntityType="Division"; SelectedDivision=row; DivisionMappedValue=row.MappedValue; DivisionReason=ValidationMessage=ConfirmationMessage=string.Empty; }
     private void SelectWard(WardRow row){ SelectedEntityType="Ward"; SelectedWard=row; WardDivision=row.Division; WardConsultant=row.Consultant; WardType=row.Type; WardGroup=row.Group; WardSpecialistType=row.SpecialistType; WardActive=row.Active; WardReason=ValidationMessage=ConfirmationMessage=string.Empty; }
