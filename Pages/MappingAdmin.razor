@@ -85,7 +85,7 @@
                         @foreach (var bed in Beds)
                         {
                             <tr class="@(SelectedEntityType == "Bed" && SelectedBed == bed ? "mapping-selected" : null)">
-                                <td>@bed.Id</td><td>@bed.Name</td><td>@bed.Ward</td><td>@bed.Group</td><td>@bed.Type</td><td>@FormatAttributes(bed.Attributes)</td><td>@bed.StaticStatus</td><td>Yes</td><td><button type="button" @onclick="() => SelectBed(bed)">View / Edit</button></td>
+                                <td>@bed.Id</td><td>@bed.Name</td><td>@bed.Ward</td><td><span class="mapping-table-chip">@bed.Group</span></td><td><span class="mapping-table-chip">@bed.Type</span></td><td>@FormatAttributes(bed.Attributes)</td><td>@bed.StaticStatus</td><td><span class="mapping-status-chip">Active</span></td><td><button type="button" @onclick="() => SelectBed(bed)">View / Edit</button></td>
                             </tr>
                         }
                     </tbody>
