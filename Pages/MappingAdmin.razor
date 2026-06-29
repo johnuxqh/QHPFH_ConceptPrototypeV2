@@ -6,7 +6,8 @@
         <div class="mapping-admin-hero__copy">
             <p class="utility-kicker">Administration prototype</p>
             <h2>Mapping Admin</h2>
-            <p>Review and maintain division, ward and bed mapping for the selected facility.</p>
+            <p>Maintain the bed mapping list that defines which beds and spaces exist, what they are capable of, and which ward or bay they are mapped into.</p>
+            <p class="mapping-admin-secondary">Operational teams use this mapping before patients can be assigned to beds in Bed Management, Ward Operations or Allocation Centre.</p>
             <div class="mapping-admin-note">Prototype mapping changes are recorded locally for review and do not update source systems.</div>
         </div>
 
@@ -24,6 +25,13 @@
     {
         <div class="mapping-confirmation">@ConfirmationMessage</div>
     }
+
+    <section class="mapping-summary" aria-label="Bed Mapping summary counts">
+        <div><span>Possible beds/spaces</span><strong>20</strong><em>Prototype facility capacity count</em></div>
+        <div><span>Currently mapped</span><strong>10</strong><em>Mapped to selected ward context</em></div>
+        <div><span>Available to map</span><strong>10</strong><em>Beds/spaces not yet mapped here</em></div>
+        <div><span>Surge / temporary capable</span><strong>2</strong><em>Mapping capability, not live occupancy</em></div>
+    </section>
 
     <div class="mapping-admin-grid mapping-admin-grid--foundation">
         <section class="mapping-hierarchy-panel" aria-label="Mapping hierarchy">
@@ -65,7 +73,7 @@
                     <p class="utility-kicker">Reference records</p>
                     <h3>Mapped Records</h3>
                 </div>
-                <span>@Beds.Count beds</span>
+                <span>Bed Mapping extract view</span>
             </div>
             <div class="mapping-record-tabs" role="tablist" aria-label="Mapped record types">
                 <button type="button">Divisions</button>
@@ -79,13 +87,13 @@
             <div class="mapping-record-table-wrap">
                 <table class="mapping-record-table">
                     <thead>
-                        <tr><th>ID</th><th>Label</th><th>Ward</th><th>Group</th><th>Type</th><th>Attributes</th><th>Source Status</th><th>Active</th><th>Action</th></tr>
+                        <tr><th>Bed</th><th>Ward</th><th>Division</th><th>Ward Type</th><th>Ward Group</th><th>Bed Type</th><th>Specialist Type</th><th>Attributes</th><th>HBCIS Status</th><th>Operational Status</th><th>Action</th></tr>
                     </thead>
                     <tbody>
                         @foreach (var bed in Beds)
                         {
                             <tr class="@(SelectedEntityType == "Bed" && SelectedBed == bed ? "mapping-selected" : null)">
-                                <td>@bed.Id</td><td>@bed.Name</td><td>@bed.Ward</td><td><span class="mapping-table-chip">@bed.Group</span></td><td><span class="mapping-table-chip">@bed.Type</span></td><td>@FormatAttributes(bed.Attributes)</td><td>@bed.StaticStatus</td><td><span class="mapping-status-chip">Active</span></td><td><button type="button" @onclick="() => SelectBed(bed)">View / Edit</button></td>
+                                <td>@bed.Name</td><td>@bed.Ward</td><td>@GetWardForBed(bed).Division</td><td><span class="mapping-table-chip">@GetWardForBed(bed).Type</span></td><td><span class="mapping-table-chip">@GetWardForBed(bed).Group</span></td><td><span class="mapping-table-chip">@bed.Type</span></td><td><span class="mapping-table-chip">@GetWardForBed(bed).SpecialistType</span></td><td>@FormatAttributes(bed.Attributes)</td><td><span class="mapping-table-chip mapping-source-chip">@bed.HbcisStatus</span></td><td><span class="mapping-table-chip mapping-operational-chip">@bed.OperationalStatus</span></td><td><button type="button" @onclick="() => SelectBed(bed)">View / Edit</button></td>
                             </tr>
                         }
                     </tbody>
@@ -129,39 +137,16 @@
             }
             else
             {
-                <div class="mapping-current"><span>Current mapped values</span><strong>@SelectedBed.Name</strong><em>@SelectedBed.Ward · @SelectedBed.Group / @SelectedBed.Type / @FormatAttributes(SelectedBed.Attributes)</em><em>Static/source status: @SelectedBed.StaticStatus</em></div>
-                <div class="mapping-field-grid"><label>Bed ID<input value="@SelectedBed.Id" readonly /></label><label>Bed label / bed number<input @bind="BedLabel" /></label></div>
-                <label>Assigned ward<select @bind="BedAssignedWard">@foreach (var ward in Wards){<option>@ward.Name</option>}</select></label>
-                <div class="mapping-field-grid"><label>Bed group<select @bind="BedGroup">@foreach (var option in BedGroups){<option>@option</option>}</select></label><label>Bed type<select @bind="BedType">@foreach (var option in BedTypes){<option>@option</option>}</select></label></div>
-                <fieldset class="mapping-attributes"><legend>Bed attributes</legend>@foreach (var option in BedAttributes){<label><input type="checkbox" checked="@BedSelectedAttributes.Contains(option)" @onchange="args => ToggleBedAttribute(option, args)" /> @option</label>}</fieldset>
-                <div class="mapping-field-grid"><label>Static/source status<input value="@SelectedBed.StaticStatus" readonly /></label><label class="mapping-context-field">Operational status context only<input value="@SelectedBed.OperationalStatus" readonly /></label></div>
-                <p class="mapping-admin-note inline">Ward Group to Bed Group relationship remains to be confirmed.</p>
-                <p class="mapping-admin-note inline">Rooms, bays, physical spaces and blueprint constraints are recognised future requirements and are not modelled in this prototype pass.</p>
-                <label class="mapping-reason-field">Reason for bed mapping change<textarea rows="3" @bind="BedReason"></textarea></label>
+                var selectedWard = GetWardForBed(SelectedBed);
+                <div class="mapping-current"><span>Current mapped values</span><strong>@SelectedBed.Name</strong><em>@selectedWard.Name · @selectedWard.Division / @selectedWard.Type / @selectedWard.Group / @selectedWard.SpecialistType</em><em>Status from HBCIS: @SelectedBed.HbcisStatus · Operational status context only: @SelectedBed.OperationalStatus</em></div>
+                <p class="mapping-admin-note inline">Beds and temporary spaces must be mapped into a ward/bay before they can be used for patient assignment.</p>
+                <section class="mapping-detail-section"><h4>Source context / read-only values</h4><div class="mapping-field-grid"><label>District / HHS<input value="@District" readonly /></label><label>Facility name<input value="@FacilityName" readonly /></label><label>Facility code<input value="@FacilityCode" readonly /></label><label>Facility<input value="@Facility" readonly /></label><label>Ward ID<input value="@selectedWard.Id" readonly /></label><label>Ward code<input value="@selectedWard.Code" readonly /></label><label>Ward name<input value="@selectedWard.Name" readonly /></label><label>Extract date/time<input value="@ExtractDateTime" readonly /></label></div></section>
+                <section class="mapping-detail-section"><h4>Editable mapping fields</h4><div class="mapping-field-grid"><label>Division<select @bind="WardDivision">@foreach (var option in DivisionOptions){<option>@option</option>}</select></label><label>Ward type<select @bind="WardType">@foreach (var option in WardTypes){<option>@option</option>}</select></label><label>Ward group<select @bind="WardGroup">@foreach (var option in WardGroups){<option>@option</option>}</select></label><label>Ward specialist type<select @bind="WardSpecialistType">@foreach (var option in SpecialistTypes){<option>@option</option>}</select></label><label>Bed label / bed mapping<input @bind="BedLabel" /></label><label>Bed type<select @bind="BedType">@foreach (var option in BedTypes){<option>@option</option>}</select></label></div><fieldset class="mapping-attributes"><legend>Bed attributes</legend>@foreach (var option in BedAttributes){<label><input type="checkbox" checked="@BedSelectedAttributes.Contains(option)" @onchange="args => ToggleBedAttribute(option, args)" /> @option</label>}</fieldset></section>
+                <section class="mapping-detail-section"><h4>Status context</h4><div class="mapping-field-grid"><label>Status from HBCIS<input value="@SelectedBed.HbcisStatus" readonly /></label><label class="mapping-context-field">Operational status context only<input value="@SelectedBed.OperationalStatus" readonly /></label><label>Open Beds<input value="@selectedWard.OpenSourceStatusCount" readonly /></label><label>Total Capacity<input value="@selectedWard.TotalPhysicalBeds" readonly /></label><label>UpdatedBy<input value="@SelectedBed.UpdatedBy" readonly /></label><label>LastUpdatedAt<input value="@SelectedBed.LastUpdatedAt" readonly /></label></div></section>
+                <label class="mapping-reason-field">Reason for change<textarea rows="3" @bind="BedReason"></textarea></label>
                 <div class="mapping-detail-actions"><button type="button" class="bm-primary" @onclick="UpdateBed">Update mapping</button></div>
             }
         </aside>
-    </div>
-
-    <div class="mapping-support-row">
-        <section class="mapping-foundation-panel" aria-label="Mapping foundation">
-            <div>
-                <h3>Mapping Foundation</h3>
-                <p>Mapping Admin defines the static physical and clinical characteristics of wards and beds. Operational screens consume this mapping to calculate capacity, availability and allocation options.</p>
-            </div>
-            <div class="mapping-flow-tags" aria-label="Downstream consumers"><span>Bed Management</span><span>Ward Operations</span><span>Allocation Centre</span></div>
-        </section>
-
-        <section class="mapping-discovery-panel">
-            <h3>Future Discovery</h3>
-            <ul><li>room / bay / physical space mapping</li><li>physical constraints such as oxygen, telemetry, isolation capability</li><li>temporary surge spaces</li><li>planned closures such as air-conditioning or maintenance works</li><li>relationship between physical space, bed and patient</li></ul>
-        </section>
-
-        <section class="mapping-changes-panel">
-            <h3>Recent Prototype Changes</h3>
-            @if (RecentChanges.Count == 0) { <p class="mapping-empty-state">No local prototype mapping changes recorded yet.</p> }
-            else { <table class="mapping-record-table mapping-changes-table"><thead><tr><th>Entity</th><th>Previous value</th><th>New value</th><th>Reason</th><th>Changed by</th><th>Changed at</th></tr></thead><tbody>@foreach (var change in RecentChanges){<tr><td>@change.Entity</td><td>@change.PreviousValue</td><td>@change.NewValue</td><td>@change.Reason</td><td>@change.ChangedBy</td><td>@change.ChangedAt</td></tr>}</tbody></table> }
-        </section>
     </div>
 </section>
 
@@ -174,29 +159,34 @@
     private readonly string[] WardTypes = ["Inpatient", "Short Stay", "Critical Care", "Mental Health", "Emergency", "Ambulatory"];
     private readonly string[] WardGroups = ["Medical", "Surgical", "Critical Care", "Emergency", "Mental Health", "Other"];
     private readonly string[] SpecialistTypes = ["General", "Paediatric", "Oncology", "Cardiac", "Renal", "Respiratory", "Neurology", "Orthopaedic", "Other"];
-    private readonly string[] BedGroups = ["Standard", "Isolation", "Cohorting", "Specialist", "Mental Health", "Critical Care"];
-    private readonly string[] BedTypes = ["Standard", "Single room", "Shared room", "Isolation", "Critical care", "Mental health", "Treatment space"];
+    private readonly string[] BedTypes = ["Standard", "Single room", "Shared room", "Isolation", "Critical care", "Mental health", "Treatment space", "Cot", "Carer bed", "Surge space", "Temporary bay"];
+    private const string District = "Children’s Health Queensland HHS";
+    private const string FacilityName = "Queensland Children’s Hospital";
+    private const string Facility = "QCH";
+    private const string FacilityCode = "QCH";
+    private const string ExtractDateTime = "23 Jan 2026 09:00";
     private readonly string[] BedAttributes = ["Positive pressure", "Negative pressure", "Standard isolation", "Temporary respiratory isolation", "Bariatric", "Hard-wired telemetry", "Haemodialysis", "Care-by-parent", "Infection control", "Specialist equipment", "Paediatric capable"];
     private List<DivisionRow> Divisions = [new("Critical Care", "Critical Care", 1, "Mapped", "Portal category for critical care wards."), new("Medical", "Medical Services", 1, "Mapped", "Portal category mapped for medical services."), new("Surgical", "Surgical Services", 1, "Review due", "Portal category requiring review."), new("Emergency and Acute Care", "Emergency and Acute Care", 1, "Mapped", "Portal category mapped for ED and acute care.")];
     private List<WardRow> Wards = [new("W-PICU", "PICU", "PICU", "Critical Care", "Dr Lee", true, "Critical Care", "Critical Care", "Paediatric", 2, 2), new("W-9A", "9A", "9A Medical", "Medical", "Dr Patel", true, "Inpatient", "Medical", "Respiratory", 2, 2), new("W-8A", "8A", "8A Surgical", "Surgical", "Dr Nguyen", true, "Inpatient", "Surgical", "Orthopaedic", 2, 2), new("W-EDSS", "EDSS", "ED Short Stay", "Emergency and Acute Care", "Dr Smith", true, "Short Stay", "Emergency", "General", 2, 1)];
-    private List<BedRow> Beds = [new("B-PICU-01", "Bed 01", "PICU", "Critical Care", "Critical care", ["Hard-wired telemetry", "Paediatric capable"], "Active in source", "Open"), new("B-PICU-02", "Bed 02", "PICU", "Isolation", "Isolation", ["Negative pressure", "Infection control", "Paediatric capable"], "Active in source", "Cleaning"), new("B-9A-01", "Bed 01", "9A Medical", "Specialist", "Single room", ["Haemodialysis", "Paediatric capable"], "Active in source", "Open"), new("B-9A-02", "Bed 02", "9A Medical", "Standard", "Shared room", ["Care-by-parent", "Paediatric capable"], "Active in source", "Open"), new("B-8A-01", "Bed 01", "8A Surgical", "Standard", "Standard", ["Care-by-parent", "Paediatric capable"], "Active in source", "Open"), new("B-8A-02", "Bed 02", "8A Surgical", "Isolation", "Isolation", ["Negative pressure", "Infection control", "Paediatric capable"], "Active in source", "Open"), new("B-EDSS-01", "Bed 01", "ED Short Stay", "Standard", "Treatment space", ["Paediatric capable"], "Active in source", "Open"), new("B-EDSS-02", "Bed 02", "ED Short Stay", "Cohorting", "Treatment space", ["Temporary respiratory isolation", "Paediatric capable"], "Active in source", "Nurse hold")];
+    private List<BedRow> Beds = [new("B-PICU-01", "Bed 01", "PICU", "Critical care", ["Hard-wired telemetry", "Paediatric capable"], "Active", "Open", "Mapping Admin", "23 Jan 2026 09:10"), new("B-PICU-02", "Bed 02", "PICU", "Isolation", ["Negative pressure", "Infection control", "Paediatric capable"], "Active", "Cleaning", "Mapping Admin", "23 Jan 2026 09:12"), new("B-9A-01", "Bed 01", "9A Medical", "Single room", ["Haemodialysis", "Paediatric capable"], "Active", "Open", "Mapping Admin", "23 Jan 2026 09:15"), new("B-9A-02", "Bed 02", "9A Medical", "Shared room", ["Care-by-parent", "Paediatric capable"], "Active", "Open", "Mapping Admin", "23 Jan 2026 09:16"), new("B-8A-01", "Bed 01", "8A Surgical", "Standard", ["Care-by-parent", "Paediatric capable"], "Active", "Open", "Mapping Admin", "23 Jan 2026 09:18"), new("B-8A-02", "Bed 02", "8A Surgical", "Isolation", ["Negative pressure", "Infection control", "Paediatric capable"], "Active", "Open", "Mapping Admin", "23 Jan 2026 09:19"), new("B-EDSS-01", "Bed 01", "ED Short Stay", "Treatment space", ["Paediatric capable"], "Active", "Open", "Mapping Admin", "23 Jan 2026 09:20"), new("B-EDSS-02", "Temp Bay 02", "ED Short Stay", "Temporary bay", ["Temporary respiratory isolation", "Paediatric capable"], "Active", "Nurse hold", "Mapping Admin", "23 Jan 2026 09:21")];
     private DivisionRow SelectedDivision = default!; private WardRow SelectedWard = default!; private BedRow SelectedBed = default!;
-    private string DivisionMappedValue = string.Empty, DivisionReason = string.Empty, WardDivision = string.Empty, WardConsultant = string.Empty, WardType = string.Empty, WardGroup = string.Empty, WardSpecialistType = string.Empty, WardReason = string.Empty, BedLabel = string.Empty, BedAssignedWard = string.Empty, BedGroup = string.Empty, BedType = "Standard", BedReason = string.Empty; private bool WardActive = true;
+    private string DivisionMappedValue = string.Empty, DivisionReason = string.Empty, WardDivision = string.Empty, WardConsultant = string.Empty, WardType = string.Empty, WardGroup = string.Empty, WardSpecialistType = string.Empty, WardReason = string.Empty, BedLabel = string.Empty, BedAssignedWard = string.Empty, BedType = "Standard", BedReason = string.Empty; private bool WardActive = true;
     private List<string> BedSelectedAttributes = []; private List<ChangeRow> RecentChanges = [];
     protected override void OnInitialized(){ SelectedDivision=Divisions[0]; SelectedWard=Wards[0]; SelectBed(Beds[0]); }
     private bool IsSelected(DivisionRow row) => SelectedEntityType == "Division" && SelectedDivision == row; private bool IsSelected(WardRow row) => SelectedEntityType == "Ward" && SelectedWard == row; private bool IsSelected(BedRow row) => SelectedEntityType == "Bed" && SelectedBed == row;
     private void SelectDivision(DivisionRow row){ SelectedEntityType="Division"; SelectedDivision=row; DivisionMappedValue=row.MappedValue; DivisionReason=ValidationMessage=ConfirmationMessage=string.Empty; }
     private void SelectWard(WardRow row){ SelectedEntityType="Ward"; SelectedWard=row; WardDivision=row.Division; WardConsultant=row.Consultant; WardType=row.Type; WardGroup=row.Group; WardSpecialistType=row.SpecialistType; WardActive=row.Active; WardReason=ValidationMessage=ConfirmationMessage=string.Empty; }
-    private void SelectBed(BedRow row){ SelectedEntityType="Bed"; SelectedBed=row; BedLabel=row.Name; BedAssignedWard=row.Ward; BedGroup=row.Group; BedType=row.Type; BedSelectedAttributes=[..row.Attributes]; BedReason=ValidationMessage=ConfirmationMessage=string.Empty; }
+    private void SelectBed(BedRow row){ SelectedEntityType="Bed"; SelectedBed=row; BedLabel=row.Name; BedAssignedWard=row.Ward; BedType=row.Type; var ward = GetWardForBed(row); WardDivision=ward.Division; WardType=ward.Type; WardGroup=ward.Group; WardSpecialistType=ward.SpecialistType; BedSelectedAttributes=[..row.Attributes]; BedReason=ValidationMessage=ConfirmationMessage=string.Empty; }
     private void UpdateDivision(){ if (RequireReason(DivisionReason)) return; AddChange(SelectedDivision.Name, "Mapped value", SelectedDivision.MappedValue, DivisionMappedValue, DivisionReason); SelectedDivision.MappedValue=DivisionMappedValue; DivisionReason=""; ConfirmationMessage="Division mapping update recorded for prototype review."; }
     private void UpdateWard(){ if (RequireReason(WardReason)) return; var previous=$"Division: {SelectedWard.Division} / Consultant: {SelectedWard.Consultant} / {SelectedWard.Type} / {SelectedWard.Group} / {SelectedWard.SpecialistType} / Active: {(SelectedWard.Active ? "Yes" : "No")}"; var next=$"Division: {WardDivision} / Consultant: {WardConsultant} / {WardType} / {WardGroup} / {WardSpecialistType} / Active: {(WardActive ? "Yes" : "No")}"; AddChange(SelectedWard.Name, "Ward mapping fields", previous, next, WardReason); SelectedWard.Division=WardDivision; SelectedWard.Consultant=WardConsultant; SelectedWard.Type=WardType; SelectedWard.Group=WardGroup; SelectedWard.SpecialistType=WardSpecialistType; SelectedWard.Active=WardActive; WardReason=""; ConfirmationMessage="Ward mapping update recorded for prototype review."; }
-    private void UpdateBed(){ if (RequireReason(BedReason)) return; var previous=$"Label: {SelectedBed.Name} / Ward: {SelectedBed.Ward} / {SelectedBed.Group} / {SelectedBed.Type} / {FormatAttributes(SelectedBed.Attributes)}"; var next=$"Label: {BedLabel} / Ward: {BedAssignedWard} / {BedGroup} / {BedType} / {FormatAttributes(BedSelectedAttributes)}"; AddChange(SelectedBed.Name, "Bed mapping fields", previous, next, BedReason); SelectedBed.Name=BedLabel; SelectedBed.Ward=BedAssignedWard; SelectedBed.Group=BedGroup; SelectedBed.Type=BedType; SelectedBed.Attributes=[..BedSelectedAttributes]; BedReason=""; ConfirmationMessage="Bed mapping update recorded for prototype review."; }
+    private void UpdateBed(){ if (RequireReason(BedReason)) return; var previous=$"Label: {SelectedBed.Name} / Ward: {SelectedBed.Ward} / {GetWardForBed(SelectedBed).Division} / {GetWardForBed(SelectedBed).Type} / {GetWardForBed(SelectedBed).Group} / {GetWardForBed(SelectedBed).SpecialistType} / {SelectedBed.Type} / {FormatAttributes(SelectedBed.Attributes)}"; var next=$"Label: {BedLabel} / Ward: {BedAssignedWard} / {WardDivision} / {WardType} / {WardGroup} / {WardSpecialistType} / {BedType} / {FormatAttributes(BedSelectedAttributes)}"; AddChange(SelectedBed.Name, "Bed mapping fields", previous, next, BedReason); SelectedBed.Name=BedLabel; SelectedBed.Ward=BedAssignedWard; SelectedBed.Type=BedType; var targetWard = Wards.FirstOrDefault(w => w.Name == BedAssignedWard); if (targetWard is not null) { targetWard.Division=WardDivision; targetWard.Type=WardType; targetWard.Group=WardGroup; targetWard.SpecialistType=WardSpecialistType; } SelectedBed.Attributes=[..BedSelectedAttributes]; BedReason=""; ConfirmationMessage="Bed mapping update recorded for prototype review."; }
     private bool RequireReason(string reason){ if (!string.IsNullOrWhiteSpace(reason)){ ValidationMessage=""; return false; } ValidationMessage=$"Reason for {SelectedEntityType.ToLowerInvariant()} mapping change is required before update."; ConfirmationMessage=""; return true; }
     private void ToggleBedAttribute(string option, ChangeEventArgs args){ if (args.Value is bool selected && selected && !BedSelectedAttributes.Contains(option)) BedSelectedAttributes.Add(option); else BedSelectedAttributes.Remove(option); }
+    private WardRow GetWardForBed(BedRow bed) => Wards.FirstOrDefault(ward => ward.Name == bed.Ward) ?? Wards[0];
     private static string FormatAttributes(IEnumerable<string> attributes) => attributes.Any() ? string.Join(", ", attributes) : "No attributes selected";
     private void AddChange(string entity, string fieldChanged, string previous, string next, string reason) => RecentChanges.Insert(0, new(entity, fieldChanged, previous, next, reason, "Current Admin User", DateTime.Now.ToString("dd MMM yyyy HH:mm")));
     private sealed class DivisionRow { public DivisionRow(string name, string mappedValue, int wards, string status, string sourceNote) => (Name, MappedValue, Wards, Status, SourceNote) = (name, mappedValue, wards, status, sourceNote); public string Name { get; } public string MappedValue { get; set; } public int Wards { get; } public string Status { get; } public string SourceNote { get; } }
     private sealed class WardRow { public WardRow(string id, string code, string name, string division, string consultant, bool active, string type, string group, string specialistType, int totalPhysicalBeds, int openSourceStatusCount) => (Id, Code, Name, Division, Consultant, Active, Type, Group, SpecialistType, TotalPhysicalBeds, OpenSourceStatusCount) = (id, code, name, division, consultant, active, type, group, specialistType, totalPhysicalBeds, openSourceStatusCount); public string Id { get; } public string Code { get; } public string Name { get; } public string Division { get; set; } public string Consultant { get; set; } public bool Active { get; set; } public string Type { get; set; } public string Group { get; set; } public string SpecialistType { get; set; } public int TotalPhysicalBeds { get; } public int OpenSourceStatusCount { get; } }
-    private sealed class BedRow { public BedRow(string id, string name, string ward, string group, string type, List<string> attributes, string staticStatus, string operationalStatus) => (Id, Name, Ward, Group, Type, Attributes, StaticStatus, OperationalStatus) = (id, name, ward, group, type, attributes, staticStatus, operationalStatus); public string Id { get; } public string Name { get; set; } public string Ward { get; set; } public string Group { get; set; } public string Type { get; set; } public List<string> Attributes { get; set; } public string StaticStatus { get; } public string OperationalStatus { get; } }
+    private sealed class BedRow { public BedRow(string id, string name, string ward, string type, List<string> attributes, string hbcisStatus, string operationalStatus, string updatedBy, string lastUpdatedAt) => (Id, Name, Ward, Type, Attributes, HbcisStatus, OperationalStatus, UpdatedBy, LastUpdatedAt) = (id, name, ward, type, attributes, hbcisStatus, operationalStatus, updatedBy, lastUpdatedAt); public string Id { get; } public string Name { get; set; } public string Ward { get; set; } public string Type { get; set; } public List<string> Attributes { get; set; } public string HbcisStatus { get; } public string OperationalStatus { get; } public string UpdatedBy { get; } public string LastUpdatedAt { get; } }
     private sealed record ChangeRow(string Entity, string FieldChanged, string PreviousValue, string NewValue, string Reason, string ChangedBy, string ChangedAt);
 }

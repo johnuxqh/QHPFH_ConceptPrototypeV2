@@ -1127,3 +1127,21 @@
 @media (max-width: 1280px) { .mapping-admin-page .mapping-admin-grid--foundation { grid-template-columns: minmax(250px, .82fr) minmax(0, 1.18fr); } .mapping-admin-page .mapping-detail-panel { grid-column: 1 / -1; } .mapping-admin-page .mapping-support-row { grid-template-columns: 1fr; } }
 @media (max-width: 1180px) { .mapping-admin-page .mapping-admin-hero { grid-template-columns: 1fr; } .mapping-admin-page .mapping-profile-panel { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 720px) { .mapping-admin-page .mapping-admin-hero, .mapping-admin-page .mapping-panel-heading, .mapping-admin-page .mapping-detail-header { display: grid; } .mapping-admin-page .mapping-profile-panel, .mapping-admin-page .mapping-admin-grid, .mapping-admin-page .mapping-attributes, .mapping-admin-page .mapping-field-grid, .mapping-admin-page .mapping-record-tools { grid-template-columns: 1fr; } .mapping-admin-page .mapping-tree-row.level-4 { padding-left: 38px; } }
+
+.mapping-admin-page .mapping-admin-secondary { font-size: .82rem; font-weight: 750; }
+.mapping-admin-page .mapping-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.mapping-admin-page .mapping-summary div { display: grid; gap: 3px; padding: 10px 12px; border: 1px solid var(--pfh-border, #e4e7ec); border-radius: 12px; background: var(--pfh-surface, #fff); box-shadow: 0 1px 2px rgba(16,24,40,.04); }
+.mapping-admin-page .mapping-summary span { color: var(--pfh-text-secondary, #475467); font-size: .62rem; font-weight: 850; text-transform: uppercase; letter-spacing: .04em; }
+.mapping-admin-page .mapping-summary strong { color: var(--pfh-primary-blue, #005eb8); font-size: 1.25rem; line-height: 1; }
+.mapping-admin-page .mapping-summary em { color: var(--pfh-text-secondary, #475467); font-size: .66rem; font-style: normal; }
+.mapping-admin-page .mapping-detail-section { display: grid; gap: 9px; padding: 10px; border: 1px solid var(--pfh-border, #e4e7ec); border-radius: 12px; background: color-mix(in srgb, var(--pfh-surface-subtle, #f2f4f7) 55%, var(--pfh-surface, #fff)); }
+.mapping-admin-page .mapping-detail-section h4 { margin: 0; color: var(--pfh-text-primary, #101828); font-size: .78rem; }
+.mapping-admin-page .mapping-source-chip { background: color-mix(in srgb, #005eb8 10%, #fff); color: #005eb8; }
+.mapping-admin-page .mapping-operational-chip { background: color-mix(in srgb, #7a5af8 10%, #fff); color: #5925dc; }
+.mapping-admin-page .mapping-record-table { min-width: 1120px; }
+.mapping-updates-panel .mapping-updates-content { display: grid; gap: .5rem; padding: .55rem; }
+.mapping-updates-panel .utility-card ul { margin: .35rem 0 0; padding-left: 1.1rem; font-size: .72rem; }
+.mapping-updates-panel .mapping-flow-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: .45rem; }
+.mapping-updates-panel .mapping-flow-tags span { padding: 5px 8px; border-radius: 999px; background: color-mix(in srgb, var(--pfh-primary-blue, #005eb8) 9%, var(--pfh-surface, #fff)); color: var(--pfh-primary-blue, #005eb8); font-size: .68rem; font-weight: 850; }
+@media (max-width: 900px) { .mapping-admin-page .mapping-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .mapping-admin-page .mapping-summary { grid-template-columns: 1fr; } }
