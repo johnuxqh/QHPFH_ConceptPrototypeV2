@@ -50,11 +50,11 @@
             <header class="utility-overlay-header">
                 <div>
                     <p class="utility-kicker">Operational Preparedness</p>
-                    <h3>@(IsWardManagementFoundation ? "Downtime" : "Downtime / Print Preparation")</h3>
+                    <h3>@(IsWardOperationsFoundation ? "Downtime" : "Downtime / Print Preparation")</h3>
                 </div>
                 <button type="button" class="oncall-close" aria-label="Close downtime" @onclick="CloseDowntime">×</button>
             </header>
-            @if (IsWardManagementFoundation)
+            @if (IsWardOperationsFoundation)
             {
                 <p class="utility-overlay-copy">Ward Operations foundation downtime includes only admissions and discharges plus ward patient lists for prototype continuity review.</p>
             }
@@ -100,6 +100,42 @@
                 <button type="button" class="standard-btn" @onclick="CloseReports">Close</button>
                 <button type="button" class="standard-btn selected" @onclick="CloseReports">Return to prototype</button>
             </footer>
+        </section>
+    }
+
+    @if (_isPageUpdatesOpen)
+    {
+        <section class="utility-overlay utility-modal mapping-updates-panel" aria-label="Page Updates">
+            <header class="utility-overlay-header">
+                <div>
+                    <p class="utility-kicker">Mapping Admin</p>
+                    <h3>Page Updates</h3>
+                </div>
+                <button type="button" class="oncall-close" aria-label="Close page updates" @onclick="ClosePageUpdates">×</button>
+            </header>
+            <div class="mapping-updates-content">
+                <article class="utility-card">
+                    <h4>Mapping Foundation</h4>
+                    <p>Mapping Admin defines the static physical and clinical characteristics of wards and beds. Operational screens consume this mapping to calculate capacity, availability and allocation options.</p>
+                    <div class="mapping-flow-tags" aria-label="Downstream consumers"><span>Bed Management</span><span>Ward Operations</span><span>Allocation Centre</span></div>
+                </article>
+                <article class="utility-card">
+                    <h4>Bed Mapping Use Case</h4>
+                    <p>Use this page to map beds, cots, surge spaces or temporary bays into a ward before patients are assigned to those beds in operational workflows.</p>
+                </article>
+                <article class="utility-card">
+                    <h4>Future Discovery</h4>
+                    <ul><li>room / bay / physical space mapping</li><li>physical constraints such as oxygen, telemetry, isolation capability</li><li>temporary surge spaces</li><li>planned closures such as air-conditioning or maintenance works</li><li>relationship between physical space, bed and patient</li><li>relationship between Ward Group and Bed Group</li></ul>
+                </article>
+                <article class="utility-card">
+                    <h4>Recent Prototype Changes</h4>
+                    <p>No local prototype mapping changes recorded yet.</p>
+                </article>
+                <article class="utility-card">
+                    <h4>Future utility candidates</h4>
+                    <p>Bed Managers Chat and Reports are not active Mapping Admin utilities in this foundation view. They may be considered as future support/reporting functions if required.</p>
+                </article>
+            </div>
         </section>
     }
 
@@ -166,14 +202,14 @@
 
     @if (_isSupportOpen)
     {
-        <section class="utility-overlay support-drawer" aria-label="@(IsWardManagementFoundation ? "Support" : "Support and FAQs")">
+        <section class="utility-overlay support-drawer" aria-label="@(IsWardOperationsFoundation ? "Support" : "Support and FAQs")">
             <header class="support-header">
                 <MudIcon Icon="@Icons.Material.Outlined.HelpOutline" Size="Size.Small" />
                 <h3>Support</h3>
                 <button type="button" class="oncall-close" aria-label="Close support" @onclick="CloseSupport">×</button>
             </header>
 
-            @if (IsWardManagementFoundation)
+            @if (IsWardOperationsFoundation)
             {
                 <section class="support-summary ward-support-summary">
                     <p>Ward Operations foundation support is limited to a contact support function.</p>
@@ -225,6 +261,7 @@
 @code {
     private readonly string[] Items = ["Bed Managers Chat", "On Call", "Reports", "Downtime", "Support"];
     private readonly string[] WardFoundationItems = ["Downtime", "Support"];
+    private readonly string[] MappingAdminItems = ["Page Updates", "On Call", "Downtime", "Support"];
     private string _activeItem = string.Empty;
     private bool _isChatOpen;
     private bool _isOnCallOpen;
@@ -232,6 +269,7 @@
     private bool _isReportsOpen;
     private bool _isDowntimeOpen;
     private bool _isDirectoryOpen;
+    private bool _isPageUpdatesOpen;
 
     private string _selectedAvatar = "👩‍⚕️";
     private string _draftMessage = string.Empty;
@@ -307,9 +345,10 @@
         new(5, "Can I print downtime summaries?", "Use the Downtime utility item for printable continuity summaries.")
     ];
 
-    private bool IsWardManagementFoundation => Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/').Equals("ward-operations", StringComparison.OrdinalIgnoreCase);
-    private IEnumerable<string> ActiveItems => IsWardManagementFoundation ? WardFoundationItems : Items;
-    private IEnumerable<string> ActiveDowntimeModules => IsWardManagementFoundation ? WardFoundationDowntimeModules : DowntimeModules;
+    private bool IsWardOperationsFoundation => Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/').Equals("ward-operations", StringComparison.OrdinalIgnoreCase);
+    private bool IsMappingAdmin => Navigation.ToBaseRelativePath(Navigation.Uri).TrimEnd('/').Equals("mapping-admin", StringComparison.OrdinalIgnoreCase);
+    private IEnumerable<string> ActiveItems => IsMappingAdmin ? MappingAdminItems : IsWardOperationsFoundation ? WardFoundationItems : Items;
+    private IEnumerable<string> ActiveDowntimeModules => IsWardOperationsFoundation ? WardFoundationDowntimeModules : DowntimeModules;
 
     private IEnumerable<DirectoryGroup> FilteredDirectoryGroups =>
         DirectoryGroups
@@ -330,10 +369,11 @@
         _isReportsOpen = item == "Reports" && !_isReportsOpen;
         _isDowntimeOpen = item == "Downtime" && !_isDowntimeOpen;
         _isSupportOpen = item == "Support" && !_isSupportOpen;
+        _isPageUpdatesOpen = item == "Page Updates" && !_isPageUpdatesOpen;
         _isDirectoryOpen = false;
 
         _activeItem = item;
-        if (!_isChatOpen && !_isOnCallOpen && !_isReportsOpen && !_isDowntimeOpen && !_isSupportOpen)
+        if (!_isChatOpen && !_isOnCallOpen && !_isReportsOpen && !_isDowntimeOpen && !_isSupportOpen && !_isPageUpdatesOpen)
         {
             _activeItem = string.Empty;
         }
@@ -362,6 +402,7 @@
     private void CloseDowntime() { _isDowntimeOpen = false; if (_activeItem == "Downtime") _activeItem = string.Empty; }
     private void CloseDirectory() => _isDirectoryOpen = false;
     private void CloseSupport() { _isSupportOpen = false; if (_activeItem == "Support") _activeItem = string.Empty; }
+    private void ClosePageUpdates() { _isPageUpdatesOpen = false; if (_activeItem == "Page Updates") _activeItem = string.Empty; }
     private void OpenDirectory() => _isDirectoryOpen = true;
     private void ToggleFaq(int id) => _openFaqId = _openFaqId == id ? -1 : id;
 
