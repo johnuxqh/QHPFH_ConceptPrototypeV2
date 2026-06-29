@@ -2538,3 +2538,56 @@
 .bm-statewide-flow__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; overflow-x: visible; }
 @media (max-width: 1180px) { .bm-statewide-flow__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mapping-admin-grid, .mapping-profile-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mapping-detail-panel { grid-column: 1 / -1; } }
 @media (max-width: 720px) { .mapping-admin-hero { flex-direction: column; } .mapping-admin-note { max-width: none; } .mapping-profile-panel, .mapping-admin-grid, .mapping-attributes, .bm-statewide-flow__grid { grid-template-columns: 1fr; } }
+
+.mapping-foundation-panel,
+.mapping-discovery-panel {
+  display: grid;
+  gap: 10px;
+  padding: 13px 14px;
+  border: 1px solid var(--pfh-border, #e4e7ec);
+  border-radius: 14px;
+  background: var(--pfh-surface, #fff);
+}
+.mapping-foundation-panel { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.mapping-foundation-panel h3,
+.mapping-discovery-panel h3,
+.mapping-panel-heading h3 { margin: 0; color: var(--pfh-text-primary, #101828); }
+.mapping-foundation-panel p,
+.mapping-discovery-panel ul { margin: 4px 0 0; color: var(--pfh-text-secondary, #475467); font-size: .8rem; line-height: 1.45; }
+.mapping-flow-tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.mapping-flow-tags span { padding: 5px 8px; border-radius: 999px; background: color-mix(in srgb, var(--pfh-primary-blue, #005eb8) 9%, var(--pfh-surface, #fff)); color: var(--pfh-primary-blue, #005eb8); font-size: .7rem; font-weight: 850; }
+.mapping-admin-grid--foundation { grid-template-columns: minmax(320px, .82fr) minmax(0, 1.18fr); }
+.mapping-hierarchy-panel { display: grid; gap: 12px; min-width: 0; padding: 14px; border: 1px solid var(--pfh-border, #e4e7ec); border-radius: 14px; background: var(--pfh-surface, #fff); }
+.mapping-panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.mapping-panel-heading > span { flex: 0 0 auto; padding: 5px 8px; border-radius: 999px; background: var(--pfh-surface-subtle, #f2f4f7); color: var(--pfh-text-secondary, #475467); font-size: .68rem; font-weight: 850; }
+.mapping-tree { display: grid; gap: 3px; }
+.mapping-tree-row { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; align-items: center; gap: 7px; width: 100%; min-height: 30px; border: 0; border-radius: 8px; background: transparent; color: var(--pfh-text-primary, #101828); text-align: left; font: inherit; }
+button.mapping-tree-row { cursor: pointer; }
+button.mapping-tree-row:hover,
+.mapping-tree-row.selected { background: color-mix(in srgb, var(--pfh-primary-blue, #005eb8) 10%, var(--pfh-surface, #fff)); }
+.mapping-tree-row.static { color: var(--pfh-text-secondary, #475467); }
+.mapping-tree-row strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8rem; }
+.mapping-tree-row em { color: var(--pfh-text-muted, #667085); font-size: .66rem; font-style: normal; font-weight: 800; text-transform: uppercase; }
+.mapping-tree-row.level-0 { padding-left: 0; }
+.mapping-tree-row.level-1 { padding-left: 14px; }
+.mapping-tree-row.level-2 { padding-left: 28px; }
+.mapping-tree-row.level-3 { padding-left: 46px; }
+.mapping-tree-row.level-4 { padding-left: 64px; }
+.mapping-detail-panel input { width: 100%; border: 1px solid var(--pfh-border, #d0d5dd); border-radius: 9px; padding: 8px 10px; background: var(--pfh-surface, #fff); color: var(--pfh-text-primary, #101828); font: inherit; font-weight: 650; }
+.mapping-detail-panel input[readonly] { background: var(--pfh-surface-subtle, #f2f4f7); color: var(--pfh-text-secondary, #475467); }
+.mapping-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.mapping-discovery-panel ul { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px 14px; padding-left: 18px; }
+.mapping-discovery-panel li { min-width: 0; }
+
+@media (max-width: 1180px) {
+  .mapping-foundation-panel,
+  .mapping-admin-grid--foundation,
+  .mapping-discovery-panel ul { grid-template-columns: 1fr; }
+  .mapping-flow-tags { justify-content: flex-start; }
+}
+@media (max-width: 720px) {
+  .mapping-panel-heading,
+  .mapping-foundation-panel { display: grid; }
+  .mapping-field-grid { grid-template-columns: 1fr; }
+  .mapping-tree-row.level-4 { padding-left: 42px; }
+}
