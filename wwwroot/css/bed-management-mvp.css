@@ -1730,7 +1730,7 @@
 .bm-statewide-slideout__backdrop {
   z-index: 90;
   top: calc(var(--pfh-header-height) + var(--pfh-primary-nav-height) + var(--pfh-secondary-nav-height));
-  bottom: var(--pfh-utility-height);
+  bottom: 0;
   height: auto;
   background: rgba(15, 23, 42, .14);
 }
@@ -1738,8 +1738,8 @@
 .bm-statewide-slideout {
   z-index: 95;
   top: calc(var(--pfh-header-height) + var(--pfh-primary-nav-height) + var(--pfh-secondary-nav-height));
-  right: max(0px, calc((100vw - 1440px) / 2));
-  bottom: var(--pfh-utility-height);
+  right: 0;
+  bottom: 0;
 }
 
 .bm-statewide-slideout__header {
