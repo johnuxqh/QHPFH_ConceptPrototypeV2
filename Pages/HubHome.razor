@@ -1,6 +1,5 @@
 @inject QHPFH_ConceptPrototype.Components.Shells.NavigationState NavigationState
 @page "/"
-@page "/myhub"
 @implements IDisposable
 
 @if (IsHomePage)
@@ -32,7 +31,7 @@ else
 }
 
 @code {
-    private bool IsHomePage => NavigationState.ActivePrimaryKey is "home" or "myhub";
+    private bool IsHomePage => NavigationState.ActivePrimaryKey == "home";
     private bool IsBedAndWardHubPage =>
         NavigationState.ActivePrimaryKey == "bed" &&
         NavigationState.ActiveSubItem == "DD Hub";

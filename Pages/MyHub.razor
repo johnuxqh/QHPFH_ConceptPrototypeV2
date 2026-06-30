@@ -1,0 +1,34 @@
+@page "/myhub"
+@inject NavigationManager Nav
+
+<PageTitle>My Hub</PageTitle>
+
+<section class="page-shell-card" style="padding:24px;">
+    <p class="home-eyebrow">Prototype Placeholder</p>
+    <h1>My Hub</h1>
+    <p>Personal Workspace</p>
+
+    <p>This workspace will become the clinician's personalised landing page.</p>
+
+    <p>Future capabilities may include:</p>
+    <ul>
+        <li>Favourite modules</li>
+        <li>Drag-and-drop dashboard</li>
+        <li>Saved layouts</li>
+        <li>Personal shortcuts</li>
+        <li>Pinned patients</li>
+        <li>Favourite wards</li>
+        <li>Personal widgets</li>
+        <li>User preferences</li>
+        <li>Custom filters</li>
+    </ul>
+
+    <p><strong>Prototype Placeholder</strong></p>
+    <p>This workspace is intentionally reserved for future personalisation and is not part of the current MVP.</p>
+
+    <button type="button" @onclick="ReturnToHubHome">Return to Hub Home</button>
+</section>
+
+@code {
+    private void ReturnToHubHome() => Nav.NavigateTo(string.Empty);
+}
