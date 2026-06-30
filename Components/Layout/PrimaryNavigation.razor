@@ -4,7 +4,7 @@
     <div class="primary-nav-track" role="menubar">
         @if (IsCompact)
         {
-            <button type="button" class="nav-link selected compact-active"><span>@PrimaryItems.First(x => x.Key == _activePrimaryKey).Label</span></button>
+            <button type="button" class="nav-link selected compact-active"><span>@CompactActiveLabel</span></button>
         }
         else
         {
@@ -73,6 +73,10 @@
 
     private IReadOnlyList<string> CurrentSubItems => GetSubItemsForKey(_activePrimaryKey);
 
+    private string CompactActiveLabel => _activePrimaryKey == "home"
+        ? "Home"
+        : PrimaryItems.FirstOrDefault(x => x.Key == _activePrimaryKey)?.Label ?? "Home";
+
     [Parameter] public bool IsDarkMode { get; set; }
     [Parameter] public bool IsCompact { get; set; }
     [Parameter] public EventCallback OnToggleCompact { get; set; }
@@ -109,11 +113,20 @@
         (_activePrimaryKey, _activeSubItem) = relativePath switch
         {
             "" => ("home", string.Empty),
+            "myhub" => ("myhub", string.Empty),
+            "hospital-overview" => ("hospital", string.Empty),
+            "delayed-discharge" => ("dd", "DD Hub"),
+            "delayed-discharge/patient-management" => ("dd", "Patient Management"),
+            "delayed-discharge/census-management" => ("dd", "Census Management"),
+            "delayed-discharge/ddp-census" => ("dd", "DDP Census"),
             "bed-and-ward-hub" => ("bed", "DD Hub"),
             "bed-management" => ("bed", "Bed Management"),
             "ward-operations" => ("bed", "Ward Operations"),
             "allocation-centre" => ("bed", "Allocation Centre"),
             "mapping-admin" => ("bed", "Mapping Admin"),
+            "scenario-mapping" => ("scenario", string.Empty),
+            "patient-journey" => ("journey", string.Empty),
+            "connected-apps" => ("apps", string.Empty),
             _ => ("home", string.Empty)
         };
 
@@ -125,6 +138,16 @@
         var route = primaryKey switch
         {
             "home" => string.Empty,
+            "myhub" => "myhub",
+            "hospital" => "hospital-overview",
+            "dd" => subItem switch
+            {
+                "DD Hub" => "delayed-discharge",
+                "Patient Management" => "delayed-discharge/patient-management",
+                "Census Management" => "delayed-discharge/census-management",
+                "DDP Census" => "delayed-discharge/ddp-census",
+                _ => "delayed-discharge"
+            },
             "bed" => subItem switch
             {
                 "DD Hub" => "bed-and-ward-hub",
@@ -134,6 +157,9 @@
                 "Mapping Admin" => "mapping-admin",
                 _ => string.Empty
             },
+            "scenario" => "scenario-mapping",
+            "journey" => "patient-journey",
+            "apps" => "connected-apps",
             _ => string.Empty
         };
 
