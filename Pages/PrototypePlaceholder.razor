@@ -1,0 +1,33 @@
+@page "/hospital-overview"
+@page "/delayed-discharge"
+@page "/delayed-discharge/patient-management"
+@page "/delayed-discharge/census-management"
+@page "/delayed-discharge/ddp-census"
+@page "/scenario-mapping"
+@page "/patient-journey"
+@page "/connected-apps"
+
+<section class="page-shell-card prototype-placeholder-page" aria-label="Prototype placeholder workspace">
+    <div>
+        <p class="home-eyebrow">QH Patient Flow Hub</p>
+        <h1>@Title</h1>
+        <p>Prototype placeholder — this workspace is not yet implemented.</p>
+    </div>
+</section>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+
+    private string Title => Navigation.ToBaseRelativePath(Navigation.Uri).Trim('/').ToLowerInvariant() switch
+    {
+        "hospital-overview" => "Hospital Overview",
+        "delayed-discharge" => "Delayed Discharge",
+        "delayed-discharge/patient-management" => "Delayed Discharge — Patient Management",
+        "delayed-discharge/census-management" => "Delayed Discharge — Census Management",
+        "delayed-discharge/ddp-census" => "Delayed Discharge — DDP Census",
+        "scenario-mapping" => "Scenario Mapping",
+        "patient-journey" => "Patient Journey",
+        "connected-apps" => "Connected Apps",
+        _ => "Prototype Workspace"
+    };
+}

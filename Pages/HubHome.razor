@@ -1,5 +1,6 @@
 @inject QHPFH_ConceptPrototype.Components.Shells.NavigationState NavigationState
 @page "/"
+@page "/myhub"
 @implements IDisposable
 
 @if (IsHomePage)
@@ -25,13 +26,13 @@ else if (IsAllocationCentrePage)
 else
 {
     <section class="page-shell-card" style="padding:24px;">
-        <h3>Content in design</h3>
-        <p>Future release modules.</p>
+        <h3>Prototype placeholder</h3>
+        <p>Prototype placeholder — this workspace is not yet implemented.</p>
     </section>
 }
 
 @code {
-    private bool IsHomePage => NavigationState.ActivePrimaryKey == "home";
+    private bool IsHomePage => NavigationState.ActivePrimaryKey is "home" or "myhub";
     private bool IsBedAndWardHubPage =>
         NavigationState.ActivePrimaryKey == "bed" &&
         NavigationState.ActiveSubItem == "DD Hub";
